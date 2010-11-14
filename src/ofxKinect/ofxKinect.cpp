@@ -161,7 +161,10 @@ void ofxKinect::update(){
 		
 		try{		
 			for(int k = 0; k < width*height; k++){
-				depthPixels[k] = (float) (2048 * 256) / (2048 - (float)depthPixelsBack[k]);			
+				depthPixels[k] = (float) (2048 * 256) / (2048 - depthPixelsBack[k]);	
+				
+				// using equation from https://github.com/OpenKinect/openkinect/wiki/Imaging-Information
+				distancePixels[k] = 100 / (-0.00307f * depthPixelsBack[k] + 3.33f);	
 			}
 			memcpy(rgbPixels, rgbPixelsBack, width*height*3);
 		}
