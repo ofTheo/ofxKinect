@@ -38,6 +38,8 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		/// get the pixels of the most recent depth frame
 		unsigned char 	* getDepthPixels();		// grey scale values
 		unsigned short	* getRawDepthPixels();	// raw 11 bit values
+		
+		/// get the distance in centimeters to a given point
 		float* getDistancePixels();
 		
 		/// get the rgb texture
