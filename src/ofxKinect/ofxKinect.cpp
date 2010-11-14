@@ -32,7 +32,7 @@ ofxKinect::ofxKinect(){
 //--------------------------------------------------------------------
 ofxKinect::~ofxKinect(){
 	close();
-    clear();
+	clear();
 }
 
 //--------------------------------------------------------------------
@@ -75,14 +75,11 @@ ofTexture & ofxKinect::getRgbTextureReference(){
 //--------------------------------------------------------------------
 bool ofxKinect::open(){
 	if(!bGrabberInited){
-    	ofLog(OF_LOG_WARNING, "ofxKinect: Cannot open, init not called");
-        return false;
-    }
+		ofLog(OF_LOG_WARNING, "ofxKinect: Cannot open, init not called");
+		return false;
+	}
 	
-	//libusb_init(NULL);
-	//libusb_set_debug(0, 3);
-	
-    startThread(false, false);	// non blocking, not verbose
+	startThread(false, false);	// non blocking, not verbose
 	
 	return true;
 }
@@ -101,7 +98,7 @@ void ofxKinect::close(){
 bool ofxKinect::init(bool setUseTexture){
 	clear();
     
-    bUseTexture = setUseTexture;
+	bUseTexture = setUseTexture;
     
 	int length = width*height;
 	depthPixels = new unsigned char[length];
@@ -112,23 +109,22 @@ bool ofxKinect::init(bool setUseTexture){
 	rgbPixelsBack = new unsigned char[length*3];
 	
 	memset(depthPixels, 0, length*sizeof(unsigned char));
-    memset(depthPixelsRaw, 0, length*sizeof(unsigned short));
+	memset(depthPixelsRaw, 0, length*sizeof(unsigned short));
 	memset(depthPixelsBack, 0, length*sizeof(unsigned short));
 	
 	memset(rgbPixels, 0, length*3*sizeof(unsigned char));
 	memset(rgbPixelsBack, 0, length*3*sizeof(unsigned char));
 	
-    if(bUseTexture){
-        depthTex.allocate(width, height, GL_LUMINANCE);
+	if(bUseTexture){
+		depthTex.allocate(width, height, GL_LUMINANCE);
 		rgbTex.allocate(width, height, GL_RGB);
-    }
-	
-    bGrabberInited = true;
-    if(bVerbose){
-		cout << "ofxKinect: Inited" << endl;
 	}
+
+	bGrabberInited = true;
 	
-    return bGrabberInited;
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Inited" << endl);
+	
+	return bGrabberInited;
 }
 
 void ofxKinect::clear(){
@@ -144,7 +140,7 @@ void ofxKinect::clear(){
 	depthTex.clear();
 	rgbTex.clear();
     
-    bGrabberInited = false;
+	bGrabberInited = false;
 }
 
 //----------------------------------------------------------
@@ -180,10 +176,10 @@ void ofxKinect::update(){
 	}
 
 	if(bUseTexture){
-        depthTex.loadData(depthPixels, width, height, GL_LUMINANCE);
+		depthTex.loadData(depthPixels, width, height, GL_LUMINANCE);
 		rgbTex.loadData(rgbPixelsBack, width, height, GL_RGB);
 		bUpdateTex = false;
-    } 
+	} 
 }
 
 //------------------------------------
@@ -193,7 +189,9 @@ void ofxKinect::setUseTexture(bool bUse){
 
 //----------------------------------------------------------
 void ofxKinect::draw(float _x, float _y, float _w, float _h){
-    if(bUseTexture) depthTex.draw(_x, _y, _w, _h);    
+	if(bUseTexture) {
+		depthTex.draw(_x, _y, _w, _h);
+	}
 }
 
 void ofxKinect::draw(float _x, float _y){
@@ -202,7 +200,9 @@ void ofxKinect::draw(float _x, float _y){
 
 //----------------------------------------------------------
 void ofxKinect::drawRgb(float _x, float _y, float _w, float _h){
-    if(bUseTexture) rgbTex.draw(_x, _y, _w, _h);    
+	if(bUseTexture) {
+		rgbTex.draw(_x, _y, _w, _h);
+	}
 }
 
 void ofxKinect::drawRgb(float _x, float _y){
@@ -232,7 +232,7 @@ void ofxKinect::grabDepthFrame(uint16_t *buf, int width, int height){
 		}
 		thisKinect->unlock();
 	}else{
-			ofLog(OF_LOG_WARNING, "ofxKinect: grabDepthFrame unable to lock mutex");
+		ofLog(OF_LOG_WARNING, "ofxKinect: grabDepthFrame unable to lock mutex");
 	}	
 
 }
@@ -248,7 +248,7 @@ void ofxKinect::grabRgbFrame(uint8_t *buf, int width, int height){
 		}
 		thisKinect->unlock();
 	}else{
-			ofLog(OF_LOG_WARNING, "ofxKinect: grabRgbFrame unable to lock mutex");
+		ofLog(OF_LOG_WARNING, "ofxKinect: grabRgbFrame unable to lock mutex");
 	}
 }
 
@@ -265,9 +265,7 @@ void ofxKinect::threadedFunction(){
 	
 	cams_init(kinectDev, &grabDepthFrame, &grabRgbFrame);
 	
-	if(bVerbose){
-    	cout << "ofxKinect: Connection opened" << endl;
-	}
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection opened");
 	
 	while(isThreadRunning()){
 		struct timeval tv = { 0, 0 };
@@ -276,17 +274,15 @@ void ofxKinect::threadedFunction(){
 			ofLog(OF_LOG_ERROR, "ofxKinect: libusb error: " + ofToString(ret));
 			break;
 		}
-    }
+	}
     
 	libusb_release_interface(kinectDev, 0);
 	
-    if(kinectDev){
+	if(kinectDev){
 		libusb_close(kinectDev);
 	}
 	
 	libusb_exit(NULL);
 	
-	if(bVerbose){
-    	cout << "ofxKinect: Connection closed" << endl;
-	}
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection closed");
 }
