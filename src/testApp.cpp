@@ -29,7 +29,7 @@ void testApp::update()
 //--------------------------------------------------------------
 void testApp::draw()
 {
-	kinect.drawRgb(10, 10, 400, 300);
+	kinect.drawDepth(10, 10, 400, 300);
 	kinect.draw(450, 10, 400, 300);
 }
 

@@ -18,7 +18,7 @@ ofxKinect::ofxKinect(){
 	depthPixelsBack			= NULL;
 	rgbPixels		  		= NULL;
 	rgbPixelsBack			= NULL;
-	distancePixels = NULL;
+	distancePixels 			= NULL;
 
 	bNeedsUpdate			= false;
 	bUpdateTex				= false;
@@ -42,15 +42,15 @@ void ofxKinect::setVerbose(bool bTalkToMe){
 
 //---------------------------------------------------------------------------
 unsigned char * ofxKinect::getPixels(){
+	return rgbPixels;
+}
+
+unsigned char	* ofxKinect::getDepthPixels(){
 	return depthPixels;
 }
 
-unsigned short	* ofxKinect::getRawPixels(){
+unsigned short 	* ofxKinect::getRawDepthPixels(){
 	return depthPixelsRaw;
-}
-
-unsigned char 	* ofxKinect::getRgbPixels(){
-	return rgbPixels;
 }
 
 float* ofxKinect::getDistancePixels() {
@@ -59,15 +59,15 @@ float* ofxKinect::getDistancePixels() {
 
 //------------------------------------
 ofTexture & ofxKinect::getTextureReference(){
-	if(!depthTex.bAllocated()){
+	if(!rgbTex.bAllocated()){
 		ofLog(OF_LOG_WARNING, "ofxKinect: getTextureReference - texture is not allocated");
 	}
 	return depthTex;
 }
 
-ofTexture & ofxKinect::getRgbTextureReference(){
-	if(!rgbTex.bAllocated()){
-		ofLog(OF_LOG_WARNING, "ofxKinect: getRgbTextureReference - texture is not allocated");
+ofTexture & ofxKinect::getDepthTextureReference(){
+	if(!depthTex.bAllocated()){
+		ofLog(OF_LOG_WARNING, "ofxKinect: getDepthTextureReference - texture is not allocated");
 	}
 	return rgbTex;
 }
@@ -112,6 +112,7 @@ bool ofxKinect::init(bool setUseTexture){
 	memset(depthPixels, 0, length*sizeof(unsigned char));
 	memset(depthPixelsRaw, 0, length*sizeof(unsigned short));
 	memset(depthPixelsBack, 0, length*sizeof(unsigned short));
+	memset(distancePixels, 0, length*sizeof(float));
 	
 	memset(rgbPixels, 0, length*3*sizeof(unsigned char));
 	memset(rgbPixelsBack, 0, length*3*sizeof(unsigned char));
@@ -199,7 +200,7 @@ void ofxKinect::setUseTexture(bool bUse){
 //----------------------------------------------------------
 void ofxKinect::draw(float _x, float _y, float _w, float _h){
 	if(bUseTexture) {
-		depthTex.draw(_x, _y, _w, _h);
+		rgbTex.draw(_x, _y, _w, _h);
 	}
 }
 
@@ -208,14 +209,14 @@ void ofxKinect::draw(float _x, float _y){
 }
 
 //----------------------------------------------------------
-void ofxKinect::drawRgb(float _x, float _y, float _w, float _h){
+void ofxKinect::drawDepth(float _x, float _y, float _w, float _h){
 	if(bUseTexture) {
-		rgbTex.draw(_x, _y, _w, _h);
+		depthTex.draw(_x, _y, _w, _h);
 	}
 }
 
-void ofxKinect::drawRgb(float _x, float _y){
-	drawRgb(_x, _y, (float)width, (float)height);
+void ofxKinect::drawDepth(float _x, float _y){
+	drawDepth(_x, _y, (float)width, (float)height);
 }
 
 //----------------------------------------------------------
