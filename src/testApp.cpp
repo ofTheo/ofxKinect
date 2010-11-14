@@ -8,7 +8,7 @@ void testApp::setup()
 	kinect.setVerbose(true);
 	kinect.open();
     
-    colorImg.allocate(kinect.width, kinect.height);
+	colorImg.allocate(kinect.width, kinect.height);
 	grayImage.allocate(kinect.width, kinect.height);
 	grayBg.allocate(kinect.width, kinect.height);
 	grayDiff.allocate(kinect.width, kinect.height);
@@ -29,8 +29,7 @@ void testApp::update()
 //--------------------------------------------------------------
 void testApp::draw()
 {
-
-    kinect.drawRgb(10, 10, 400, 300);
+	kinect.drawRgb(10, 10, 400, 300);
 	kinect.draw(450, 10, 400, 300);
 }
 

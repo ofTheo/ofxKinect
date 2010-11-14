@@ -23,16 +23,15 @@ class testApp : public ofBaseApp
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
 
-        //ofxIpCamera	cam;
 		ofxKinect kinect;
         
-        ofxCvColorImage		colorImg;
+		ofxCvColorImage		colorImg;
 
-        ofxCvGrayscaleImage 	grayImage;
+		ofxCvGrayscaleImage 	grayImage;
 		ofxCvGrayscaleImage 	grayBg;
 		ofxCvGrayscaleImage 	grayDiff;
 
-        ofxCvContourFinder 	contourFinder;
+		ofxCvContourFinder 	contourFinder;
 
 		int 				threshold;
 		bool				bLearnBakground;

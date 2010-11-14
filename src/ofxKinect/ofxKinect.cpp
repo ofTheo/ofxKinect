@@ -122,7 +122,7 @@ bool ofxKinect::init(bool setUseTexture){
 
 	bGrabberInited = true;
 	
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Inited" << endl);
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Inited");
 	
 	return bGrabberInited;
 }
