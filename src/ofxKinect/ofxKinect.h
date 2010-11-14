@@ -87,6 +87,9 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		
 		unsigned short *	depthPixelsBack;	// depth back
 		unsigned char *		rgbPixelsBack;		// rgb back
+		
+		bool bNeedsUpdate;
+		bool bUpdateTex;
 
 		unsigned int frameCount;	// make sure we have at least 2 frames ...
 		
