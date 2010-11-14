@@ -214,7 +214,7 @@ float ofxKinect::getDistanceAt(ofPoint p) {
 
 //------------------------------------
 ofColor	ofxKinect::getColorAt(int x, int y) {
-	int index = y * width + x;
+	int index = (y * width + x) * 3;
 	ofColor c;
 	c.r = rgbPixels[index++];
 	c.g = rgbPixels[index++];
