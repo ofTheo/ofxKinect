@@ -104,6 +104,7 @@ bool ofxKinect::init(bool setUseTexture){
 	depthPixels = new unsigned char[length];
 	depthPixelsRaw = new unsigned short[length];
 	depthPixelsBack = new unsigned short[length];
+	distancePixels = new float[length];
 	
 	rgbPixels = new unsigned char[length*3];
 	rgbPixelsBack = new unsigned char[length*3];
@@ -132,6 +133,7 @@ void ofxKinect::clear(){
 		delete[] depthPixels; depthPixels = NULL;
 		delete[] depthPixelsRaw; depthPixelsRaw = NULL;
 		delete[] depthPixelsBack; depthPixelsBack = NULL;
+		delete[] distancePixels; distancePixels = NULL;
 	
 		delete[] rgbPixels; rgbPixels = NULL;
 		delete[] rgbPixelsBack; rgbPixelsBack = NULL;
