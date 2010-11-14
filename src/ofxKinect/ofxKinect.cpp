@@ -201,6 +201,35 @@ void ofxKinect::update(){
 	} 
 }
 
+
+//------------------------------------
+float ofxKinect::getDistanceAt(int x, int y) {
+	return distancePixels[y * width + x];
+}
+
+//------------------------------------
+float ofxKinect::getDistanceAt(ofPoint p) {
+	return getDistanceAt(p.x, p.y);
+}
+
+//------------------------------------
+ofColor	ofxKinect::getColorAt(int x, int y) {
+	int index = y * width + x;
+	ofColor c;
+	c.r = rgbPixels[index++];
+	c.g = rgbPixels[index++];
+	c.b = rgbPixels[index];
+	c.a = 255;
+	
+	return c;
+}
+
+//------------------------------------
+ofColor ofxKinect::getColorAt(ofPoint p) {
+	return getColorAt(p.x, p.y);
+}
+
+
 //------------------------------------
 void ofxKinect::setUseTexture(bool bUse){
 	bUseTexture = bUse;

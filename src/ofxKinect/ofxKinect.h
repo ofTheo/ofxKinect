@@ -31,6 +31,13 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
         
 		/// clear resources
 		void clear();
+	
+	float getDistanceAt(int x, int y);
+	float getDistanceAt(ofPoint p);
+	
+	ofColor	getColorAt(int x, int y);
+	ofColor getColorAt(ofPoint p);
+	
 		
 		/// get the pixels of the most recent rgb frame
 		unsigned char	* getPixels();
