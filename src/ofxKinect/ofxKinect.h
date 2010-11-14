@@ -1,5 +1,4 @@
-#ifndef _OFX_KINECT
-#define _OFX_KINECT
+#pragma once
 
 #include "ofConstants.h"
 #include "ofTexture.h"
@@ -21,32 +20,33 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		/// is the current frame new?
 		bool isFrameNew() {return true;}
         
-        /// open the connection and start grabbing images
-        bool open();
+		/// open the connection and start grabbing images
+		bool open();
         
-        /// close the connection and stop grabbing images
+		/// close the connection and stop grabbing images
 		void close();
         
-        /// initialize resources, must be called before open()
+		/// initialize resources, must be called before open()
 		bool init(bool bTexture=true);
         
-        /// clear resources
-        void clear();
-        
-        /// get the pixels of the most recent depth frame
+		/// clear resources
+		void clear();
+		
+		/// get the pixels of the most recent depth frame
 		unsigned char 	* getPixels();		// grey scale values
 		unsigned short	* getRawPixels();	// raw 11 bit values
+		float* getDistancePixels();
 		
 		/// get the pixels of the most recent rgb frame
 		unsigned char	* getRgbPixels();
 		
 		/// get the greyscale depth texture
-        ofTexture &		getTextureReference();
+		ofTexture &		getTextureReference();
 		
 		/// get the rgb texture
 		ofTexture &		getRgbTextureReference();
 		
-        void 			setVerbose(bool bTalkToMe);
+		void 			setVerbose(bool bTalkToMe);
         
 		void 			setUseTexture(bool bUse);
 		void 			draw(float x, float y, float w, float h);
@@ -55,12 +55,12 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		void 			drawRgb(float x, float y, float w, float h);
 		void 			drawRgb(float x, float y);
 		
-        /**
-        	\brief	updates the pixel buffers and textures
-            
-            make sure to call this to update to the latetst incoming frames
-        */
-        void update();
+		/**
+			\brief	updates the pixel buffers and textures
+				
+				make sure to call this to update to the latetst incoming frames
+		*/
+		void update();
 
 		float 			getHeight();
 		float 			getWidth();
@@ -77,9 +77,10 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		bool 					bGrabberInited;
 		
 		unsigned char *			depthPixels;
-	    unsigned char *			rgbPixels;
+		unsigned char *			rgbPixels;
 		
 		unsigned short *		depthPixelsRaw;
+		float* distancePixels;
         
     private:
 
@@ -90,12 +91,11 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 
 		unsigned int frameCount;	// make sure we have at least 2 frames ...
 		
-        // libfreenect callbacks
-        static void grabDepthFrame(uint16_t *buf, int width, int height);
+		// libfreenect callbacks
+		static void grabDepthFrame(uint16_t *buf, int width, int height);
 		static void grabRgbFrame(uint8_t *buf, int width, int height);
     
-        // thread function
-        void threadedFunction();
+		// thread function
+		void threadedFunction();
 };
 
-#endif

@@ -16,6 +16,7 @@ ofxKinect::ofxKinect(){
 	depthPixelsBack			= NULL;
 	rgbPixels		  		= NULL;
 	rgbPixelsBack			= NULL;
+	distancePixels = NULL;
 	
 	kinectDev = NULL;
 	
@@ -45,6 +46,10 @@ unsigned short	* ofxKinect::getRawPixels(){
 
 unsigned char 	* ofxKinect::getRgbPixels(){
 	return rgbPixels;
+}
+
+float* ofxKinect::getDistancePixels() {
+	return distancePixels;
 }
 
 //------------------------------------
