@@ -32,19 +32,21 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		/// clear resources
 		void clear();
 		
+		/// get the pixels of the most recent rgb frame
+		unsigned char	* getPixels();
+		
 		/// get the pixels of the most recent depth frame
-		unsigned char 	* getPixels();		// grey scale values
-		unsigned short	* getRawPixels();	// raw 11 bit values
+		unsigned char 	* getDepthPixels();		// grey scale values
+		unsigned short	* getRawDepthPixels();	// raw 11 bit values
+		
+		/// get the distance in centimeters to a given point
 		float* getDistancePixels();
 		
-		/// get the pixels of the most recent rgb frame
-		unsigned char	* getRgbPixels();
-		
-		/// get the greyscale depth texture
+		/// get the rgb texture
 		ofTexture &		getTextureReference();
 		
-		/// get the rgb texture
-		ofTexture &		getRgbTextureReference();
+		/// get the greyscale depth texture
+		ofTexture &		getDepthTextureReference();
 		
 		void 			setVerbose(bool bTalkToMe);
         
@@ -52,8 +54,8 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		void 			draw(float x, float y, float w, float h);
 		void 			draw(float x, float y);
 		
-		void 			drawRgb(float x, float y, float w, float h);
-		void 			drawRgb(float x, float y);
+		void 			drawDepth(float x, float y, float w, float h);
+		void 			drawDepth(float x, float y);
 		
 		/**
 			\brief	updates the pixel buffers and textures
@@ -80,7 +82,7 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		unsigned char *			rgbPixels;
 		
 		unsigned short *		depthPixelsRaw;
-		float* distancePixels;
+		float * 				distancePixels;
         
     private:
 
@@ -91,8 +93,6 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		
 		bool bNeedsUpdate;
 		bool bUpdateTex;
-
-		unsigned int frameCount;	// make sure we have at least 2 frames ...
 		
 		// libfreenect callbacks
 		static void grabDepthFrame(uint16_t *buf, int width, int height);
