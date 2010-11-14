@@ -168,7 +168,7 @@ void ofxKinect::update(){
 					depthPixels[k] = 0;
 				} else {
 					// using equation from https://github.com/OpenKinect/openkinect/wiki/Imaging-Information
-					distancePixels[k] = 100 / (-0.00307f * depthPixelsBack[k] + 3.33f);	
+					distancePixels[k] = 100.f / (-0.00307f * depthPixelsBack[k] + 3.33f);	
 					depthPixels[k] = (float) (2048 * 256) / (2048 - depthPixelsBack[k]);
 				}
 			}
