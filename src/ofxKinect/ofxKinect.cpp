@@ -7,6 +7,8 @@ ofxKinect* thisKinect = NULL;
 
 //--------------------------------------------------------------------
 ofxKinect::ofxKinect(){
+	
+	//TODO: reset the right ones of these on close
 	// common
 	bVerbose 				= false;
 	bGrabberInited 			= false;
@@ -17,6 +19,9 @@ ofxKinect::ofxKinect(){
 	rgbPixels		  		= NULL;
 	rgbPixelsBack			= NULL;
 	distancePixels = NULL;
+
+	bNeedsUpdate			= false;
+	bUpdateTex				= false;
 	
 	kinectDev = NULL;
 	
@@ -146,27 +151,38 @@ void ofxKinect::clear(){
 void ofxKinect::update(){
 	// you need to call init() before running!
 	//assert(depthPixels);
-	if(!kinectDev)
+	if(!kinectDev){
 		return;
+	}
+	
+	if(!bNeedsUpdate){
+		return;
+	}else{
+		bUpdateTex = true;
+	}
 
-	this->lock();
-	try{
-		memcpy(depthPixels, depthPixelsBack, width*height);
+	if( this->lock() ){
 		
-		for(int k = 0; k < width*height; k++){
-			depthPixels[k] = (float) (2048 * 256) / (2048 - (float)depthPixelsBack[k]);			
+		try{		
+			for(int k = 0; k < width*height; k++){
+				depthPixels[k] = (float) (2048 * 256) / (2048 - (float)depthPixelsBack[k]);			
+			}
+			memcpy(rgbPixels, rgbPixelsBack, width*height*3);
+		}
+		catch(...){
+			ofLog(OF_LOG_ERROR, "ofxKinect: update memcpy failed");
 		}
 		
-		memcpy(rgbPixels, rgbPixelsBack, width*height*3);
+		//we have done the update
+		bNeedsUpdate = false;
+
+		this->unlock();
 	}
-	catch(...){
-		ofLog(OF_LOG_ERROR, "ofxKinect: update memcpy failed");
-	}
-    this->unlock();
 
 	if(bUseTexture){
         depthTex.loadData(depthPixels, width, height, GL_LUMINANCE);
 		rgbTex.loadData(rgbPixelsBack, width, height, GL_RGB);
+		bUpdateTex = false;
     } 
 }
 
@@ -205,22 +221,34 @@ float ofxKinect::getWidth(){
 /* ***** PRIVATE ***** */
 
 void ofxKinect::grabDepthFrame(uint16_t *buf, int width, int height){
-	// raw data
-	try{
-		memcpy(thisKinect->depthPixelsBack, buf, width*height*sizeof(uint16_t));
-	}
-	catch(...){
-		ofLog(OF_LOG_ERROR, "ofxKinect: Depth memcpy failed");
-	}
+	if(thisKinect->lock()){		
+		// raw data
+		try{
+			memcpy(thisKinect->depthPixelsBack, buf, width*height*sizeof(uint16_t));
+			thisKinect->bNeedsUpdate = true;
+		}
+		catch(...){
+			ofLog(OF_LOG_ERROR, "ofxKinect: Depth memcpy failed");
+		}
+		thisKinect->unlock();
+	}else{
+			ofLog(OF_LOG_WARNING, "ofxKinect: grabDepthFrame unable to lock mutex");
+	}	
 
 }
 
 void ofxKinect::grabRgbFrame(uint8_t *buf, int width, int height){
-	try{
-		memcpy(thisKinect->rgbPixelsBack, buf, width*height*3);
-	}
-	catch(...){
-		ofLog(OF_LOG_ERROR, "ofxKinect: Rgb memcpy failed");
+	if(thisKinect->lock()){
+		try{
+			memcpy(thisKinect->rgbPixelsBack, buf, width*height*3);
+			thisKinect->bNeedsUpdate = true;
+		}
+		catch(...){
+			ofLog(OF_LOG_ERROR, "ofxKinect: Rgb memcpy failed");
+		}
+		thisKinect->unlock();
+	}else{
+			ofLog(OF_LOG_WARNING, "ofxKinect: grabRgbFrame unable to lock mutex");
 	}
 }
 
