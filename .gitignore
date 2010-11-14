@@ -2,9 +2,12 @@
 *.layout
 *.mode1v3
 *.pbxuser
+*.app*
+*.DS_*
 
 .svn/
 obj/
 bin/
 build/
 !data/
+
