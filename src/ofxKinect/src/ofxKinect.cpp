@@ -7,7 +7,7 @@ ofxKinect* thisKinect = NULL;
 
 //--------------------------------------------------------------------
 ofxKinect::ofxKinect(){
-	
+
 	//TODO: reset the right ones of these on close
 	// common
 	bVerbose 				= false;
@@ -23,9 +23,9 @@ ofxKinect::ofxKinect(){
 
 	bNeedsUpdate			= false;
 	bUpdateTex				= false;
-	
+
 	kinectDev = NULL;
-	
+
 	thisKinect = this;
 
 	rgbDepthMatrix.getPtr()[0]=0.942040;
@@ -114,9 +114,9 @@ bool ofxKinect::open(){
 		ofLog(OF_LOG_WARNING, "ofxKinect: Cannot open, init not called");
 		return false;
 	}
-	
-	startThread(false, false);	// non blocking, not verbose
-	
+
+	startThread(true, false);	// blocking, not verbose
+
 	return true;
 }
 
@@ -133,15 +133,15 @@ void ofxKinect::close(){
 //--------------------------------------------------------------------
 bool ofxKinect::init(bool setUseTexture){
 	clear();
-    
+
 	bUseTexture = setUseTexture;
-    
+
 	int length = width*height;
 	depthPixels = new unsigned char[length];
 	depthPixelsRaw = new unsigned short[length];
 	depthPixelsBack = new unsigned short[length];
 	distancePixels = new float[length];
-	
+
 	rgbPixels = new unsigned char[length*3];
 	rgbPixelsBack = new unsigned char[length*3];
 	calibratedRGBPixels = new unsigned char[length*3];
@@ -150,19 +150,19 @@ bool ofxKinect::init(bool setUseTexture){
 	memset(depthPixelsRaw, 0, length*sizeof(unsigned short));
 	memset(depthPixelsBack, 0, length*sizeof(unsigned short));
 	memset(distancePixels, 0, length*sizeof(float));
-	
+
 	memset(rgbPixels, 0, length*3*sizeof(unsigned char));
 	memset(rgbPixelsBack, 0, length*3*sizeof(unsigned char));
-	
+
 	if(bUseTexture){
 		depthTex.allocate(width, height, GL_LUMINANCE);
 		rgbTex.allocate(width, height, GL_RGB);
 	}
 
 	bGrabberInited = true;
-	
+
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Inited");
-	
+
 	return bGrabberInited;
 }
 
@@ -172,14 +172,14 @@ void ofxKinect::clear(){
 		delete[] depthPixelsRaw; depthPixelsRaw = NULL;
 		delete[] depthPixelsBack; depthPixelsBack = NULL;
 		delete[] distancePixels; distancePixels = NULL;
-	
+
 		delete[] rgbPixels; rgbPixels = NULL;
 		delete[] rgbPixelsBack; rgbPixelsBack = NULL;
 	}
 
 	depthTex.clear();
 	rgbTex.clear();
-    
+
 	bGrabberInited = false;
 }
 
@@ -190,7 +190,7 @@ void ofxKinect::update(){
 	if(!kinectDev){
 		return;
 	}
-	
+
 	if(!bNeedsUpdate){
 		return;
 	}else{
@@ -198,17 +198,17 @@ void ofxKinect::update(){
 	}
 
 	if( this->lock() ){
-		
-		try{		
+
+		try{
 			for(int k = 0; k < width*height; k++){
 				if(depthPixelsBack[k] == 2047) {
 					distancePixels[k] = 0;
 					depthPixels[k] = 0;
 				} else {
 					// using equation from https://github.com/OpenKinect/openkinect/wiki/Imaging-Information
-					distancePixels[k] = 100.f / (-0.00307f * depthPixelsBack[k] + 3.33f);	
+					distancePixels[k] = 100.f / (-0.00307f * depthPixelsBack[k] + 3.33f);
 					depthPixels[k] = (float) (2048 * 256) / (2048 - depthPixelsBack[k]);
-					
+
 					// filter out some of the background noise
 					if(depthPixelsBack[k] < 1024) {
 						// invert and convert to 8 bit
@@ -224,7 +224,7 @@ void ofxKinect::update(){
 		catch(...){
 			ofLog(OF_LOG_ERROR, "ofxKinect: update memcpy failed");
 		}
-		
+
 		//we have done the update
 		bNeedsUpdate = false;
 
@@ -235,7 +235,7 @@ void ofxKinect::update(){
 		depthTex.loadData(depthPixels, width, height, GL_LUMINANCE);
 		rgbTex.loadData(rgbPixelsBack, width, height, GL_RGB);
 		bUpdateTex = false;
-	} 
+	}
 }
 
 
@@ -257,7 +257,7 @@ ofColor	ofxKinect::getColorAt(int x, int y) {
 	c.g = rgbPixels[index++];
 	c.b = rgbPixels[index];
 	c.a = 255;
-	
+
 	return c;
 }
 
@@ -329,7 +329,7 @@ float ofxKinect::getWidth(){
 /* ***** PRIVATE ***** */
 
 void ofxKinect::grabDepthFrame(uint16_t *buf, int width, int height){
-	if(thisKinect->lock()){		
+	if(thisKinect->lock()){
 		// raw data
 		try{
 			memcpy(thisKinect->depthPixelsBack, buf, width*height*sizeof(uint16_t));
@@ -341,7 +341,7 @@ void ofxKinect::grabDepthFrame(uint16_t *buf, int width, int height){
 		thisKinect->unlock();
 	}else{
 		ofLog(OF_LOG_WARNING, "ofxKinect: grabDepthFrame unable to lock mutex");
-	}	
+	}
 
 }
 
@@ -360,21 +360,21 @@ void ofxKinect::grabRgbFrame(uint8_t *buf, int width, int height){
 	}
 }
 
-void ofxKinect::threadedFunction(){   
+void ofxKinect::threadedFunction(){
 	libusb_init(NULL);
-	 		
+
 	kinectDev = libusb_open_device_with_vid_pid(NULL, 0x45e, 0x2ae);
 	if(!kinectDev){
 		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device");
 		return;
 	}
-	
+
 	libusb_claim_interface(kinectDev, 0);
-	
+
 	cams_init(kinectDev, &grabDepthFrame, &grabRgbFrame);
-	
+
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection opened");
-	
+
 	while(isThreadRunning()){
 		struct timeval tv = { 0, 0 };
 		int ret = libusb_handle_events_timeout(NULL, &tv); // non blocking
@@ -383,14 +383,14 @@ void ofxKinect::threadedFunction(){
 			break;
 		}
 	}
-    
+
 	libusb_release_interface(kinectDev, 0);
-	
+
 	if(kinectDev){
 		libusb_close(kinectDev);
 	}
-	
+
 	libusb_exit(NULL);
-	
+
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection closed");
 }
