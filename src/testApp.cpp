@@ -63,7 +63,7 @@ void testApp::draw()
 	ofSetColor(0xffffff);
 	char reportStr[1024];
 	sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i (press: +/-)\nnum blobs found %i, fps: %f", threshold, contourFinder.nBlobs, ofGetFrameRate());
-	ofDrawBitmapString(reportStr, 20, 600);
+	ofDrawBitmapString(reportStr, 20, 670);
 }
 
 //--------------------------------------------------------------
