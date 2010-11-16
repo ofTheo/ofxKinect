@@ -65,56 +65,143 @@ int rgb_pos = 0;
 
 extern const struct caminit inits[];
 extern const int num_inits;
+/********************************* COPYRIGHT NOTICE *******************************\
+  Original code for Bayer->BGR/RGB conversion is provided by Dirk Schaefer
+  from MD-Mathematische Dienste GmbH. Below is the copyright notice:
 
-static void depth_process(uint8_t *buf, size_t len)
+    IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
+    By downloading, copying, installing or using the software you agree
+    to this license. If you do not agree to this license, do not download,
+    install, copy or use the software.
+
+    Contributors License Agreement:
+
+      Copyright (c) 2002,
+      MD-Mathematische Dienste GmbH
+      Im Defdahl 5-10
+      44141 Dortmund
+      Germany
+      www.md-it.de
+
+    Redistribution and use in source and binary forms,
+    with or without modification, are permitted provided
+    that the following conditions are met:
+
+    Redistributions of source code must retain
+    the above copyright notice, this list of conditions and the following disclaimer.
+    Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+    The name of Contributor may not be used to endorse or promote products
+    derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+    THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+    OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+    HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+    STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+    THE POSSIBILITY OF SUCH DAMAGE.
+\**********************************************************************************/
+
+void Bayer2BGR( const uint8_t *bayer0, int bayer_step,
+                       uint8_t *dst0, int dst_step,
+                       unsigned int width, unsigned int height)
 {
-	int i;
-	if (len == 0)
-		return;
+    int blue = 1;
+    int start_with_green = 1;
 
-	struct frame_hdr *hdr = (void*)buf;
-	uint8_t *data = buf + sizeof(*hdr);
-	int datalen = len - sizeof(*hdr);
+    memset( dst0, 0, width*3*sizeof(dst0[0]) );
+    memset( dst0 + (height - 1)*dst_step, 0, width*3*sizeof(dst0[0]) );
+    dst0 += dst_step + 3 + 1;
+    height -= 2;
+    width -= 2;
 
-	//printf("%02x %x\n", hdr->flag, depth_pos);
-	switch (hdr->flag) {
-		case 0x71:
-			depth_pos = 0;
-		case 0x72:
-		case 0x75:
-			memcpy(&depth_buf[depth_pos], data, datalen);
-			depth_pos += datalen;
-			break;
-	}
+    for( ; height-- > 0; bayer0 += bayer_step, dst0 += dst_step )
+    {
+        int t0, t1;
+        const uint8_t* bayer = bayer0;
+        uint8_t* dst = dst0;
+        const uint8_t* bayer_end = bayer + width;
 
-	if (hdr->flag != 0x75)
-		return;
+        dst[-4] = dst[-3] = dst[-2] = dst[width*3-1] =
+            dst[width*3] = dst[width*3+1] = 0;
 
-#if defined(__APPLE__)
-	/* For some reason, we're getting two end (0x75/0x85) packets on OS
-	   X. This is causing the frame rendering function to fire twice,
-	   which makes things render glitchy. This needs to be debugged,
-	   but for the moment this patch fixes it.
-	*/
-	if (depth_pos != 422400)
-	{
-		printf("DROPPED DEPTH FRAME %d bytes\n", depth_pos);
-		return;
-	}
-#endif
-	
-	printf("GOT DEPTH FRAME, %d bytes\n", depth_pos);
+        if( width <= 0 )
+            continue;
 
-	int bitshift = 0;
-	for (i=0; i<(640*480); i++) {
-		int idx = (i*11)/8;
-		uint32_t word = (depth_buf[idx]<<16) | (depth_buf[idx+1]<<8) | depth_buf[idx+2];
-		depth_frame[i] = ((word >> (13-bitshift)) & 0x7ff);
-		bitshift = (bitshift + 11) % 8;
-	}
+        if( start_with_green )
+        {
+            t0 = (bayer[1] + bayer[bayer_step*2+1] + 1) >> 1;
+            t1 = (bayer[bayer_step] + bayer[bayer_step+2] + 1) >> 1;
+            dst[-blue] = (uint8_t)t0;
+            dst[0] = bayer[bayer_step+1];
+            dst[blue] = (uint8_t)t1;
+            bayer++;
+            dst += 3;
+        }
 
-	depth_cb(depth_frame, 640, 480);
+        if( blue > 0 )
+        {
+            for( ; bayer <= bayer_end - 2; bayer += 2, dst += 6 )
+            {
+                t0 = (bayer[0] + bayer[2] + bayer[bayer_step*2] +
+                      bayer[bayer_step*2+2] + 2) >> 2;
+                t1 = (bayer[1] + bayer[bayer_step] +
+                      bayer[bayer_step+2] + bayer[bayer_step*2+1]+2) >> 2;
+                dst[-1] = (uint8_t)t0;
+                dst[0] = (uint8_t)t1;
+                dst[1] = bayer[bayer_step+1];
+
+                t0 = (bayer[2] + bayer[bayer_step*2+2] + 1) >> 1;
+                t1 = (bayer[bayer_step+1] + bayer[bayer_step+3] + 1) >> 1;
+                dst[2] = (uint8_t)t0;
+                dst[3] = bayer[bayer_step+2];
+                dst[4] = (uint8_t)t1;
+            }
+        }
+        else
+        {
+            for( ; bayer <= bayer_end - 2; bayer += 2, dst += 6 )
+            {
+                t0 = (bayer[0] + bayer[2] + bayer[bayer_step*2] +
+                      bayer[bayer_step*2+2] + 2) >> 2;
+                t1 = (bayer[1] + bayer[bayer_step] +
+                      bayer[bayer_step+2] + bayer[bayer_step*2+1]+2) >> 2;
+                dst[1] = (uint8_t)t0;
+                dst[0] = (uint8_t)t1;
+                dst[-1] = bayer[bayer_step+1];
+
+                t0 = (bayer[2] + bayer[bayer_step*2+2] + 1) >> 1;
+                t1 = (bayer[bayer_step+1] + bayer[bayer_step+3] + 1) >> 1;
+                dst[4] = (uint8_t)t0;
+                dst[3] = bayer[bayer_step+2];
+                dst[2] = (uint8_t)t1;
+            }
+        }
+
+        if( bayer < bayer_end )
+        {
+            t0 = (bayer[0] + bayer[2] + bayer[bayer_step*2] +
+                  bayer[bayer_step*2+2] + 2) >> 2;
+            t1 = (bayer[1] + bayer[bayer_step] +
+                  bayer[bayer_step+2] + bayer[bayer_step*2+1]+2) >> 2;
+            dst[-blue] = (uint8_t)t0;
+            dst[0] = (uint8_t)t1;
+            dst[blue] = bayer[bayer_step+1];
+            bayer++;
+            dst += 3;
+        }
+
+        blue = -blue;
+        start_with_green = !start_with_green;
+    }
 }
+
 
 static void rgb_process(uint8_t *buf, size_t len)
 {
@@ -140,7 +227,7 @@ static void rgb_process(uint8_t *buf, size_t len)
 	if (hdr->flag != 0x85)
 		return;
 
-#if defined(__APPLE__)
+//#if defined(__APPLE__)
 	/* For some reason, we're getting two end (0x75/0x85) packets on OS
 	   X. This is causing the frame rendering function to fire twice,
 	   which makes things render glitchy. This needs to be debugged,
@@ -151,54 +238,52 @@ static void rgb_process(uint8_t *buf, size_t len)
 		printf("DROPPED RGB FRAME %d bytes\n", depth_pos);
 		return;
 	}
-#endif
-	
+//#endif
+
 	printf("GOT RGB FRAME, %d bytes\n", rgb_pos);
-
-	// horrible bayer to RGB conversion, but does the job for now
-	for (y=0; y<480; y++) {
-		for (x=0; x<640; x++) {
-			i = y*640+x;
-			if (x&1) {
-				if (y&1) {
-					rgb_frame[3*i+1] = rgb_buf[i];
-					rgb_frame[3*i+4] = rgb_buf[i];
-				} else {
-					rgb_frame[3*i] = rgb_buf[i];
-					rgb_frame[3*i+3] = rgb_buf[i];
-					rgb_frame[3*(i-640)] = rgb_buf[i];
-					rgb_frame[3*(i-640)+3] = rgb_buf[i];
-				}
-			} else {
-				if (y&1) {
-					rgb_frame[3*i+2] = rgb_buf[i];
-					rgb_frame[3*i-1] = rgb_buf[i];
-					rgb_frame[3*(i+640)+2] = rgb_buf[i];
-					rgb_frame[3*(i+640)-1] = rgb_buf[i];
-				} else {
-					rgb_frame[3*i+1] = rgb_buf[i];
-					rgb_frame[3*i-2] = rgb_buf[i];
-				}
-			}
-		}
-	}
-
+	Bayer2BGR( rgb_buf, 640, rgb_frame, 640*3, 640, 480);
 	rgb_cb(rgb_frame, 640, 480);
 }
 
-/*static void rgb_process(uint8_t *buf, size_t len)
+static void depth_process(uint8_t *buf, size_t len)
 {
 	int i;
 	if (len == 0)
 		return;
 
-	printf("RGB %ld %02x\n", len, buf[0]);
+	struct frame_hdr *hdr = (void*)buf;
+	uint8_t *data = buf + sizeof(*hdr);
+	int datalen = len - sizeof(*hdr);
 
-	for (i=0; i<32; i++) {
-		printf("%02x ", buf[i]);
+	//printf("%02x %x\n", hdr->flag, depth_pos);
+	switch (hdr->flag) {
+		case 0x71:
+			depth_pos = 0;
+		case 0x72:
+		case 0x75:
+			memcpy(&depth_buf[depth_pos], data, datalen);
+			depth_pos += datalen;
+			break;
 	}
-	printf("\n");
-}*/
+
+	if (hdr->flag != 0x75)
+		return;
+
+	if (depth_pos != 422400){
+		printf("DROPPED DEPTH FRAME %d bytes\n", depth_pos);
+		return;
+	}
+	int bitshift = 0;
+	for (i=0; i<(640*480); i++) {
+		int idx = (i*11)/8;
+		uint32_t word = (depth_buf[idx]<<16) | (depth_buf[idx+1]<<8) | depth_buf[idx+2];
+		depth_frame[i] = ((word >> (13-bitshift)) & 0x7ff);
+		bitshift = (bitshift + 11) % 8;
+	}
+
+	depth_cb(depth_frame, 640, 480);
+}
+
 
 static void depth_callback(struct libusb_transfer *xfer)
 {
