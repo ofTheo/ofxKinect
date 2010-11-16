@@ -6,6 +6,7 @@
 #include "ofTypes.h"
 
 #include "ofxThread.h"
+#include "ofxVectorMath.h"
 
 #include <libusb.h>
 #include "libfreenect.h"
@@ -32,12 +33,17 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		/// clear resources
 		void clear();
 	
-	float getDistanceAt(int x, int y);
-	float getDistanceAt(ofPoint p);
+		float getDistanceAt(int x, int y);
+		float getDistanceAt(const ofPoint & p);
 
-	ofColor	getColorAt(int x, int y);
-	ofColor getColorAt(ofPoint p);
-	
+		ofColor	getColorAt(int x, int y);
+		ofColor getColorAt(const ofPoint & p);
+
+		ofColor getCalibratedColorAt(int x, int y);
+		ofColor getCalibratedColorAt(const ofPoint & p);
+
+		ofxMatrix4x4 getRGBDepthMatrix();
+		void setRGBDepthMatrix(const ofxMatrix4x4 & matrix);
 		
 		/// get the pixels of the most recent rgb frame
 		unsigned char	* getPixels();
@@ -46,6 +52,9 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		unsigned char 	* getDepthPixels();		// grey scale values
 		unsigned short	* getRawDepthPixels();	// raw 11 bit values
 		
+		// get the rgb pixels corrected to match the depth frame
+		unsigned char * getCalibratedRGBPixels();
+
 		/// get the distance in centimeters to a given point
 		float* getDistancePixels();
 		
@@ -87,6 +96,7 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		
 		unsigned char *			depthPixels;
 		unsigned char *			rgbPixels;
+		unsigned char *			calibratedRGBPixels;
 		
 		unsigned short *		depthPixelsRaw;
 		float * 				distancePixels;
@@ -101,6 +111,8 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		bool bNeedsUpdate;
 		bool bUpdateTex;
 		
+		ofxMatrix4x4		rgbDepthMatrix;
+
 		// libfreenect callbacks
 		static void grabDepthFrame(uint16_t *buf, int width, int height);
 		static void grabRgbFrame(uint8_t *buf, int width, int height);

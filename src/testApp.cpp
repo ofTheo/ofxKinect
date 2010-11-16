@@ -13,6 +13,8 @@ void testApp::setup()
 	grayBg.allocate(kinect.width, kinect.height);
 	grayDiff.allocate(kinect.width, kinect.height);
 
+	calibratedTex.allocate(kinect.width, kinect.height,GL_RGB);
+
 	bLearnBakground = true;
 	threshold = 80;
 
@@ -38,6 +40,8 @@ void testApp::update()
     // find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
     // also, find holes is set to true so we will get interior contours as well....
     contourFinder.findContours(grayDiff, 10, (kinect.width*kinect.height)/2, 20, false);
+
+    calibratedTex.loadData(kinect.getCalibratedRGBPixels(),640,480,GL_RGB);
 }
 
 //--------------------------------------------------------------
@@ -53,6 +57,8 @@ void testApp::draw()
 
 	ofSetColor(0xffffff);
 	contourFinder.draw(450, 350, 400, 300);
+
+	calibratedTex.draw(10,350,400,300);
 
 	ofSetColor(0xffffff);
 	char reportStr[1024];

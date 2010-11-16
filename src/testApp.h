@@ -33,6 +33,8 @@ class testApp : public ofBaseApp
 
 		ofxCvContourFinder 	contourFinder;
 
+		ofTexture			calibratedTex;
+
 		int 				threshold;
 		bool				bLearnBakground;
 };

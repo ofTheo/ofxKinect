@@ -18,6 +18,7 @@ ofxKinect::ofxKinect(){
 	depthPixelsBack			= NULL;
 	rgbPixels		  		= NULL;
 	rgbPixelsBack			= NULL;
+	calibratedRGBPixels		= NULL;
 	distancePixels 			= NULL;
 
 	bNeedsUpdate			= false;
@@ -26,6 +27,23 @@ ofxKinect::ofxKinect(){
 	kinectDev = NULL;
 	
 	thisKinect = this;
+
+	rgbDepthMatrix.getPtr()[0]=0.942040;
+	rgbDepthMatrix.getPtr()[1]=-0.005672;
+	rgbDepthMatrix.getPtr()[2]=0.000000;
+	rgbDepthMatrix.getPtr()[3]=23.953022;
+	rgbDepthMatrix.getPtr()[4]=0.004628;
+	rgbDepthMatrix.getPtr()[5]=0.939875;
+	rgbDepthMatrix.getPtr()[6]=0.000000;
+	rgbDepthMatrix.getPtr()[7]=31.486654;
+	rgbDepthMatrix.getPtr()[8]=0.000000;
+	rgbDepthMatrix.getPtr()[9]=0.000000;
+	rgbDepthMatrix.getPtr()[10]=0.000000;
+	rgbDepthMatrix.getPtr()[11]=0.000000;
+	rgbDepthMatrix.getPtr()[12]=0.000005;
+	rgbDepthMatrix.getPtr()[13]=0.000003;
+	rgbDepthMatrix.getPtr()[14]=0.000000;
+	rgbDepthMatrix.getPtr()[15]=1.000000;
 }
 
 
@@ -55,6 +73,24 @@ unsigned short 	* ofxKinect::getRawDepthPixels(){
 
 float* ofxKinect::getDistancePixels() {
 	return distancePixels;
+}
+
+unsigned char * ofxKinect::getCalibratedRGBPixels(){
+	ofxVec3f texcoord3d;
+	unsigned char * calibratedPixels = calibratedRGBPixels;
+	for ( int y = 0; y < 480; y++) {
+		for ( int x = 0; x < 640; x++) {
+			texcoord3d.set(x,y,0);
+			texcoord3d = rgbDepthMatrix * texcoord3d ;
+			texcoord3d.x = ofClamp(texcoord3d.x,0,640);
+			texcoord3d.y = ofClamp(texcoord3d.y,0,480);
+			int pos = int(texcoord3d.y)*640*3+int(texcoord3d.x)*3;
+			*calibratedPixels++ = rgbPixels[pos];
+			*calibratedPixels++ = rgbPixels[pos+1];
+			*calibratedPixels++ = rgbPixels[pos+2];
+		}
+	}
+	return calibratedRGBPixels;
 }
 
 //------------------------------------
@@ -108,6 +144,7 @@ bool ofxKinect::init(bool setUseTexture){
 	
 	rgbPixels = new unsigned char[length*3];
 	rgbPixelsBack = new unsigned char[length*3];
+	calibratedRGBPixels = new unsigned char[length*3];
 	
 	memset(depthPixels, 0, length*sizeof(unsigned char));
 	memset(depthPixelsRaw, 0, length*sizeof(unsigned short));
@@ -208,7 +245,7 @@ float ofxKinect::getDistanceAt(int x, int y) {
 }
 
 //------------------------------------
-float ofxKinect::getDistanceAt(ofPoint p) {
+float ofxKinect::getDistanceAt(const ofPoint & p) {
 	return getDistanceAt(p.x, p.y);
 }
 
@@ -225,10 +262,32 @@ ofColor	ofxKinect::getColorAt(int x, int y) {
 }
 
 //------------------------------------
-ofColor ofxKinect::getColorAt(ofPoint p) {
+ofColor ofxKinect::getColorAt(const ofPoint & p) {
 	return getColorAt(p.x, p.y);
 }
 
+//------------------------------------
+ofColor ofxKinect::getCalibratedColorAt(int x, int y){
+	ofxVec3f texcoord3d;
+	texcoord3d.set(x,y,0);
+	texcoord3d = rgbDepthMatrix * texcoord3d;
+	return getColorAt(ofClamp(texcoord3d.x,0,640),ofClamp(texcoord3d.y,0,480));
+}
+
+//------------------------------------
+ofColor ofxKinect::getCalibratedColorAt(const ofPoint & p){
+	return getCalibratedColorAt(p.x,p.y);
+}
+
+//------------------------------------
+ofxMatrix4x4 ofxKinect::getRGBDepthMatrix(){
+	return rgbDepthMatrix;
+}
+
+//------------------------------------
+void ofxKinect::setRGBDepthMatrix(const ofxMatrix4x4 & matrix){
+	rgbDepthMatrix=matrix;
+}
 
 //------------------------------------
 void ofxKinect::setUseTexture(bool bUse){
@@ -242,6 +301,7 @@ void ofxKinect::draw(float _x, float _y, float _w, float _h){
 	}
 }
 
+//----------------------------------------------------------
 void ofxKinect::draw(float _x, float _y){
 	draw(_x, _y, (float)width, (float)height);
 }
