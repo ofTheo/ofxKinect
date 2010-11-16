@@ -7,7 +7,7 @@ void testApp::setup()
 	kinect.init();
 	kinect.setVerbose(true);
 	kinect.open();
-    
+
 	colorImg.allocate(kinect.width, kinect.height);
 	grayImage.allocate(kinect.width, kinect.height);
 	grayBg.allocate(kinect.width, kinect.height);
@@ -24,7 +24,7 @@ void testApp::update()
 {
 	ofBackground(100, 100, 100);
 	kinect.update();
-	
+
 	grayImage.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
     if (bLearnBakground == true){
         grayBg = grayImage;		// the = sign copys the pixels from grayImage into grayBg (operator overloading)
@@ -45,7 +45,7 @@ void testApp::draw()
 {
 	kinect.drawDepth(10, 10, 400, 300);
 	kinect.draw(450, 10, 400, 300);
-	
+
 	//grayImage.draw(360,20, 320, 180);
 	//grayBg.draw(20,280, 320, 180);
 	grayDiff.draw(450, 350, 400, 300);
