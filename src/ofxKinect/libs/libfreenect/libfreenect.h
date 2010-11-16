@@ -11,18 +11,14 @@ see:
 #ifndef LIBFREENECT_H
 #define LIBFREENECT_H
 
-#ifdef __cplusplus 
-extern "C"
-{
-#endif
-
 typedef void (*depthcb)(uint16_t *buf, int width, int height);
 typedef void (*rgbcb)(uint8_t *buf, int width, int height);
 
-
-void cams_init(libusb_device_handle *d, depthcb depth_cb, rgbcb rgb_cb);
-
-#ifdef __cplusplus 
+#ifdef __cplusplus
+extern "C" {
+#endif
+	void cams_init(libusb_device_handle *d, depthcb depth_cb, rgbcb rgb_cb);
+#ifdef __cplusplus
 }
 #endif
 

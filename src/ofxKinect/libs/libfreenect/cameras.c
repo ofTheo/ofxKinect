@@ -60,7 +60,12 @@ uint16_t depth_frame[640*480];
 int depth_pos = 0;
 
 uint8_t rgb_buf[2*307200];
+#if defined(__APPLE__)
 uint8_t rgb_frame[640*480*4];
+#else
+uint8_t rgb_frame[640*480*3];
+#endif
+
 int rgb_pos = 0;
 
 extern const struct caminit inits[];
@@ -327,5 +332,4 @@ void cams_init(libusb_device_handle *d, depthcb dcb, rgbcb rcb)
 	send_init();
 
 }
-
 
