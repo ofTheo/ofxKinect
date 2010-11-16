@@ -78,9 +78,9 @@ bool ofxKinect::open(){
 		ofLog(OF_LOG_WARNING, "ofxKinect: Cannot open, init not called");
 		return false;
 	}
-	
-	startThread(false, false);	// non blocking, not verbose
-	
+
+	startThread(true, false);	// blocking, not verbose
+
 	return true;
 }
 
