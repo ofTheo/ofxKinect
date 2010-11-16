@@ -34,7 +34,7 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 	
 	float getDistanceAt(int x, int y);
 	float getDistanceAt(ofPoint p);
-	
+
 	ofColor	getColorAt(int x, int y);
 	ofColor getColorAt(ofPoint p);
 	
