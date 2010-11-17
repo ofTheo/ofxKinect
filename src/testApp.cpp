@@ -57,7 +57,7 @@ void testApp::draw()
 
 	ofSetColor(0xffffff);
 	contourFinder.draw(450, 350, 400, 300);
-
+	ofSetColor(0xffffff);
 	calibratedTex.draw(10,350,400,300);
 
 	ofSetColor(0xffffff);
