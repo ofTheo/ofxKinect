@@ -5,7 +5,7 @@
 		<Option title="kinectExample" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="addons/;src/;addons/ofxOpenCv/src/;addons/ofxThread/;addons/ofxKinect/;addons/ofxKinect/libfreenect/;" />
+		<Option virtualFolders="addons/;src/;addons/ofxOpenCv/src/;addons/ofxThread/;addons/ofxKinect/;addons/ofxKinect/libfreenect/;addons/ofxVectorMath/;" />
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/kinectExample_debug" prefix_auto="1" extension_auto="1" />
@@ -85,7 +85,7 @@
 			<Add directory="../../../addons/ofxDirList/src" />
 			<Add directory="../../../addons/ofxXmlSettings/src" />
 			<Add directory="../../../addons/ofxXmlSettings/libs" />
-			<Add directory="src/ofxKinect" />
+			<Add directory="src/ofxKinect/src" />
 			<Add directory="src/ofxKinect/libs/libfreenect" />
 		</Compiler>
 		<Linker>
@@ -189,6 +189,45 @@
 		<Unit filename="../../../addons/ofxThread/src/ofxThread.h">
 			<Option virtualFolder="addons/ofxThread/" />
 		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxMatrix3x3.cpp">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxMatrix3x3.h">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxMatrix4x4.cpp">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxMatrix4x4.h">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxPoint2f.h">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxPoint3f.h">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxPoint4f.h">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxQuaternion.cpp">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxQuaternion.h">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxVec2f.h">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxVec3f.h">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxVec4f.h">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
+		<Unit filename="../../../addons/ofxVectorMath/src/ofxVectorMath.h">
+			<Option virtualFolder="addons/ofxVectorMath/" />
+		</Unit>
 		<Unit filename="src/main.cpp">
 			<Option virtualFolder="src/" />
 		</Unit>
@@ -206,10 +245,10 @@
 		<Unit filename="src/ofxKinect/libs/libfreenect/libfreenect.h">
 			<Option virtualFolder="addons/ofxKinect/libfreenect/" />
 		</Unit>
-		<Unit filename="src/ofxKinect/ofxKinect.cpp">
+		<Unit filename="src/ofxKinect/src/ofxKinect.cpp">
 			<Option virtualFolder="addons/ofxKinect/" />
 		</Unit>
-		<Unit filename="src/ofxKinect/ofxKinect.h">
+		<Unit filename="src/ofxKinect/src/ofxKinect.h">
 			<Option virtualFolder="addons/ofxKinect/" />
 		</Unit>
 		<Unit filename="src/testApp.cpp">
