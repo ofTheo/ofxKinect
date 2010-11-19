@@ -103,7 +103,8 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
         
     private:
 
-		libusb_device_handle* kinectDev;	// kinect device handle
+		freenect_context *kinectContext;	// kinect context handle
+		freenect_device *kinectDevice;	// kinect device handle
 		
 		unsigned short *	depthPixelsBack;	// depth back
 		unsigned char *		rgbPixelsBack;		// rgb back
@@ -114,8 +115,8 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		ofxMatrix4x4		rgbDepthMatrix;
 
 		// libfreenect callbacks
-		static void grabDepthFrame(uint16_t *buf, int width, int height);
-		static void grabRgbFrame(uint8_t *buf, int width, int height);
+		static void grabDepthFrame(freenect_device *dev, freenect_depth *depth, uint32_t timestamp);
+		static void grabRgbFrame(freenect_device *dev, freenect_pixel *rgb, uint32_t timestamp);
     
 		// thread function
 		void threadedFunction();

@@ -1,4 +1,4 @@
-#include "cameras.h"
+#include "freenect_internal.h"
 
 const struct caminit inits[] = {
 	{

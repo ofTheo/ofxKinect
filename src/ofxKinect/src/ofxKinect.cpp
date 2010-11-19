@@ -24,7 +24,8 @@ ofxKinect::ofxKinect(){
 	bNeedsUpdate			= false;
 	bUpdateTex				= false;
 
-	kinectDev = NULL;
+	kinectContext			= NULL;
+	kinectDevice			= NULL;
 
 	thisKinect = this;
 
@@ -187,20 +188,20 @@ void ofxKinect::clear(){
 void ofxKinect::update(){
 	// you need to call init() before running!
 	//assert(depthPixels);
-	if(!kinectDev){
+	if(!kinectContext){
 		return;
 	}
 
-	if(!bNeedsUpdate){
+	if (!bNeedsUpdate){
 		return;
-	}else{
+	} else {
 		bUpdateTex = true;
 	}
 
-	if( this->lock() ){
+	if ( this->lock() ) {
 
-		try{
-			for(int k = 0; k < width*height; k++){
+		try {
+			for (int k = 0; k < width*height; k++){
 				if(depthPixelsBack[k] == 2047) {
 					distancePixels[k] = 0;
 					depthPixels[k] = 0;
@@ -328,69 +329,71 @@ float ofxKinect::getWidth(){
 
 /* ***** PRIVATE ***** */
 
-void ofxKinect::grabDepthFrame(uint16_t *buf, int width, int height){
-	if(thisKinect->lock()){
-		// raw data
-		try{
-			memcpy(thisKinect->depthPixelsBack, buf, width*height*sizeof(uint16_t));
+void ofxKinect::grabDepthFrame(freenect_device *dev, freenect_depth *depth, uint32_t timestamp) {
+	if (thisKinect->lock()) {
+		try {
+			memcpy(thisKinect->depthPixelsBack, depth, width*height*sizeof(uint16_t));
 			thisKinect->bNeedsUpdate = true;
 		}
-		catch(...){
+		catch(...) {
 			ofLog(OF_LOG_ERROR, "ofxKinect: Depth memcpy failed");
 		}
 		thisKinect->unlock();
-	}else{
+	} else {
 		ofLog(OF_LOG_WARNING, "ofxKinect: grabDepthFrame unable to lock mutex");
 	}
-
 }
 
-void ofxKinect::grabRgbFrame(uint8_t *buf, int width, int height){
-	if(thisKinect->lock()){
-		try{
-			memcpy(thisKinect->rgbPixelsBack, buf, width*height*3);
+void ofxKinect::grabRgbFrame(freenect_device *dev, freenect_pixel *rgb, uint32_t timestamp) {
+	if (thisKinect->lock()) {
+		try {
+			memcpy(thisKinect->rgbPixelsBack, rgb, FREENECT_RGB_SIZE);
 			thisKinect->bNeedsUpdate = true;
 		}
-		catch(...){
+		catch (...) {
 			ofLog(OF_LOG_ERROR, "ofxKinect: Rgb memcpy failed");
 		}
 		thisKinect->unlock();
-	}else{
-		ofLog(OF_LOG_WARNING, "ofxKinect: grabRgbFrame unable to lock mutex");
+	} else {
+		ofLog(OF_LOG_ERROR, "ofxKinect: grabRgbFrame unable to lock mutex");
 	}
 }
 
-void ofxKinect::threadedFunction(){
-	libusb_init(NULL);
+void ofxKinect::threadedFunction(){	
+	if (freenect_init(&kinectContext, NULL) < 0) {
+		ofLog(OF_LOG_ERROR, "ofxKinect: freenet_init failed");
+	}
 
-	kinectDev = libusb_open_device_with_vid_pid(NULL, 0x45e, 0x2ae);
-	if(!kinectDev){
-		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device");
+	int number_devices = freenect_num_devices(kinectContext);
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of Devices found: " + ofToString(number_devices));
+
+	if (number_devices < 1) {
+		ofLog(OF_LOG_ERROR, "ofxKinect: didnt find a device");
 		return;
 	}
-
-	libusb_claim_interface(kinectDev, 0);
-
-	cams_init(kinectDev, &grabDepthFrame, &grabRgbFrame);
-
+	
+	if (freenect_open_device(kinectContext, &kinectDevice, 0) < 0) {
+		ofLog(OF_LOG_ERROR, "ofxKinect: could not open device");
+		return;
+	}
+	
+	freenect_set_tilt_in_degrees(kinectDevice, 0);
+	freenect_set_led(kinectDevice, LED_GREEN);
+	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
+	freenect_set_rgb_callback(kinectDevice, &grabRgbFrame);
+	freenect_set_rgb_format(kinectDevice, FREENECT_FORMAT_RGB);
+	freenect_set_depth_format(kinectDevice, FREENECT_FORMAT_11_BIT);
+	
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection opened");
-
-	while(isThreadRunning()){
-		struct timeval tv = { 0, 0 };
-		int ret = libusb_handle_events_timeout(NULL, &tv); // non blocking
-		if(ret != 0){
-			ofLog(OF_LOG_ERROR, "ofxKinect: libusb error: " + ofToString(ret));
-			break;
-		}
+	
+	freenect_start_depth(kinectDevice);
+	freenect_start_rgb(kinectDevice);
+	
+	while (isThreadRunning()) {
+		int16_t ax,ay,az;
+		freenect_get_raw_accelerometers(kinectDevice, &ax, &ay, &az);
+		double dx,dy,dz;
+		freenect_get_mks_accelerometers(kinectDevice, &dx, &dy, &dz);
+//		printf("\r raw acceleration: %4d %4d %4d  mks acceleration: %4f %4f %4f", ax, ay, az, dx, dy, dz);
 	}
-
-	libusb_release_interface(kinectDev, 0);
-
-	if(kinectDev){
-		libusb_close(kinectDev);
-	}
-
-	libusb_exit(NULL);
-
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection closed");
 }
