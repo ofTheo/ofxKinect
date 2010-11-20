@@ -28,15 +28,15 @@ class testApp : public ofBaseApp
 		ofxCvColorImage		colorImg;
 
 		ofxCvGrayscaleImage 	grayImage;
-		ofxCvGrayscaleImage 	grayBg;
-		ofxCvGrayscaleImage 	grayDiff;
+		ofxCvGrayscaleImage 	grayThresh;
+		ofxCvGrayscaleImage 	grayThreshFar;
 
 		ofxCvContourFinder 	contourFinder;
+		
+		bool				bThreshWithOpenCV;
 
-		ofTexture			calibratedTex;
-
-		int 				threshold;
-		bool				bLearnBakground;
+		int 				nearThreshold;
+		int					farThreshold;
 };
 
 #endif

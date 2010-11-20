@@ -26,6 +26,9 @@ ofxKinect::ofxKinect(){
 
 	kinectContext			= NULL;
 	kinectDevice			= NULL;
+	
+	targetTiltAngleDeg		= 0;
+	bTiltNeedsApplying		= false;
 
 	thisKinect = this;
 
@@ -64,18 +67,22 @@ unsigned char * ofxKinect::getPixels(){
 	return rgbPixels;
 }
 
+//---------------------------------------------------------------------------
 unsigned char	* ofxKinect::getDepthPixels(){
 	return depthPixels;
 }
 
+//---------------------------------------------------------------------------
 unsigned short 	* ofxKinect::getRawDepthPixels(){
 	return depthPixelsRaw;
 }
 
+//---------------------------------------------------------------------------
 float* ofxKinect::getDistancePixels() {
 	return distancePixels;
 }
 
+//---------------------------------------------------------------------------
 unsigned char * ofxKinect::getCalibratedRGBPixels(){
 	ofxVec3f texcoord3d;
 	unsigned char * calibratedPixels = calibratedRGBPixels;
@@ -102,6 +109,7 @@ ofTexture & ofxKinect::getTextureReference(){
 	return depthTex;
 }
 
+//---------------------------------------------------------------------------
 ofTexture & ofxKinect::getDepthTextureReference(){
 	if(!depthTex.bAllocated()){
 		ofLog(OF_LOG_WARNING, "ofxKinect: getDepthTextureReference - texture is not allocated");
@@ -121,6 +129,7 @@ bool ofxKinect::open(){
 	return true;
 }
 
+//---------------------------------------------------------------------------
 void ofxKinect::close(){
 	if(isThreadRunning()){
 		stopThread();
@@ -129,6 +138,31 @@ void ofxKinect::close(){
 	usleep(500000); // some time while thread is stopping ...
 
 	//libusb_exit(NULL);
+}
+
+//We update the value here - but apply it in update(). 
+//--------------------------------------------------------------------
+bool ofxKinect::setCameraTiltAngle(float angleInDegrees){
+
+	//TODO: fix this - it causes the call to libusb_control_transfer to hang. 
+	ofLog(OF_LOG_ERROR, "sorry setCameraTiltAngle is not currently working correctly in ofxKinect");
+	return false;
+
+	if(!kinectContext){
+		return false;
+	}
+
+	if ( this->lock() ) {		
+		targetTiltAngleDeg = angleInDegrees;
+		bTiltNeedsApplying = true;
+		printf("ANGLE SET!\n");
+		this->unlock();
+		printf("unlocked from setCameraTiltAngle!\n");
+		
+		return true;
+	}
+	
+	return false;
 }
 
 //--------------------------------------------------------------------
@@ -167,6 +201,7 @@ bool ofxKinect::init(bool setUseTexture){
 	return bGrabberInited;
 }
 
+//---------------------------------------------------------------------------
 void ofxKinect::clear(){
 	if(depthPixels != NULL){
 		delete[] depthPixels; depthPixels = NULL;
@@ -200,31 +235,36 @@ void ofxKinect::update(){
 
 	if ( this->lock() ) {
 
-		try {
-			for (int k = 0; k < width*height; k++){
-				if(depthPixelsBack[k] == 2047) {
-					distancePixels[k] = 0;
-					depthPixels[k] = 0;
-				} else {
-					// using equation from https://github.com/OpenKinect/openkinect/wiki/Imaging-Information
-					distancePixels[k] = 100.f / (-0.00307f * depthPixelsBack[k] + 3.33f);
-					depthPixels[k] = (float) (2048 * 256) / (2048 - depthPixelsBack[k]);
+		for (int k = 0; k < width*height; k++){
+			if(depthPixelsBack[k] == 2047) {
+				distancePixels[k] = 0;
+				depthPixels[k] = 0;
+			} else {
+				// using equation from https://github.com/OpenKinect/openkinect/wiki/Imaging-Information
+				distancePixels[k] = 100.f / (-0.00307f * depthPixelsBack[k] + 3.33f);
+				depthPixels[k]    = (float) (2048 * 256) / (2048 - depthPixelsBack[k]);
 
-					// filter out some of the background noise
-					if(depthPixelsBack[k] < 1024) {
-						// invert and convert to 8 bit
-						depthPixels[k] = (float) ((2048 * 256) / (depthPixelsBack[k] - 2048));
-					}
-					else {
-						depthPixels[k] = 0;
-					}
-				}
+//TODO: remove this - why are we doing background thresholding here? we should be providing the actual data. 
+//					// filter out some of the background noise
+//					if(depthPixelsBack[k] < 1024) {
+//						// invert and convert to 8 bit
+//						depthPixels[k] = (float) ((2048 * 256) / (depthPixelsBack[k] - 2048));
+//					}
+//					else {
+//						depthPixels[k] = 0;
+//					}
 			}
-			memcpy(rgbPixels, rgbPixelsBack, width*height*3);
 		}
-		catch(...){
-			ofLog(OF_LOG_ERROR, "ofxKinect: update memcpy failed");
-		}
+		memcpy(rgbPixels, rgbPixelsBack, width*height*3);
+			
+		if( bTiltNeedsApplying ){
+			//TODO: find out why this hangs. it is the libusb_control_transfer call that hangs.
+			//it seems to only hang when the camera is running
+			//maybe we need to pause the grabbing stream?
+			
+			//freenect_set_tilt_in_degrees(kinectDevice, targetTiltAngleDeg);
+			bTiltNeedsApplying = false;
+		}		
 
 		//we have done the update
 		bNeedsUpdate = false;
@@ -314,6 +354,7 @@ void ofxKinect::drawDepth(float _x, float _y, float _w, float _h){
 	}
 }
 
+//---------------------------------------------------------------------------
 void ofxKinect::drawDepth(float _x, float _y){
 	drawDepth(_x, _y, (float)width, (float)height);
 }
@@ -323,12 +364,23 @@ float ofxKinect::getHeight(){
 	return (float)height;
 }
 
+//---------------------------------------------------------------------------
 float ofxKinect::getWidth(){
 	return (float)width;
 }
 
-/* ***** PRIVATE ***** */
+//---------------------------------------------------------------------------
+ofPoint ofxKinect::getRawAccel(){
+	return rawAccel;
+}
 
+//---------------------------------------------------------------------------
+ofPoint ofxKinect::getMksAccel(){
+	return mksAccel;
+}
+
+/* ***** PRIVATE ***** */
+//---------------------------------------------------------------------------
 void ofxKinect::grabDepthFrame(freenect_device *dev, freenect_depth *depth, uint32_t timestamp) {
 	if (thisKinect->lock()) {
 		try {
@@ -344,6 +396,7 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, freenect_depth *depth, uint
 	}
 }
 
+//---------------------------------------------------------------------------
 void ofxKinect::grabRgbFrame(freenect_device *dev, freenect_pixel *rgb, uint32_t timestamp) {
 	if (thisKinect->lock()) {
 		try {
@@ -359,6 +412,7 @@ void ofxKinect::grabRgbFrame(freenect_device *dev, freenect_pixel *rgb, uint32_t
 	}
 }
 
+//---------------------------------------------------------------------------
 void ofxKinect::threadedFunction(){	
 	if (freenect_init(&kinectContext, NULL) < 0) {
 		ofLog(OF_LOG_ERROR, "ofxKinect: freenet_init failed");
@@ -377,7 +431,6 @@ void ofxKinect::threadedFunction(){
 		return;
 	}
 	
-	freenect_set_tilt_in_degrees(kinectDevice, 0);
 	freenect_set_led(kinectDevice, LED_GREEN);
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
 	freenect_set_rgb_callback(kinectDevice, &grabRgbFrame);
@@ -392,8 +445,12 @@ void ofxKinect::threadedFunction(){
 	while (isThreadRunning()) {
 		int16_t ax,ay,az;
 		freenect_get_raw_accelerometers(kinectDevice, &ax, &ay, &az);
+		rawAccel.set(ax, ay, az);
+		
 		double dx,dy,dz;
 		freenect_get_mks_accelerometers(kinectDevice, &dx, &dy, &dz);
+		mksAccel.set(dx, dy, dz);
+		
 //		printf("\r raw acceleration: %4d %4d %4d  mks acceleration: %4f %4f %4f", ax, ay, az, dx, dy, dz);
 	}
 }

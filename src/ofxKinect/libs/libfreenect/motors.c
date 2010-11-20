@@ -33,8 +33,8 @@
 #include "freenect_internal.h"
 // The kinect can tilt from +31 to -31 degrees in what looks like 1 degree increments
 // The control input looks like 2*desired_degrees
-const double MAX_TILT_ANGLE = 31;
-const double MIN_TILT_ANGLE = -31;
+const double MAX_TILT_ANGLE = 30;
+const double MIN_TILT_ANGLE = -30;
 
 
 int freenect_set_tilt_in_degrees(freenect_device *dev, double angle)

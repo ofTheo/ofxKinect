@@ -29,7 +29,12 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
         
 		/// initialize resources, must be called before open()
 		bool init(bool bTexture=true);
+		
+		bool setCameraTiltAngle(float angleInDegrees);
         
+		/// updates the pixel buffers and textures - make sure to call this to update to the latetst incoming frames
+		void update(); 
+		
 		/// clear resources
 		void clear();
 	
@@ -44,6 +49,12 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 
 		ofxMatrix4x4 getRGBDepthMatrix();
 		void setRGBDepthMatrix(const ofxMatrix4x4 & matrix);
+		
+		float 			getHeight();
+		float 			getWidth();
+
+		ofPoint			getRawAccel();
+		ofPoint			getMksAccel();		
 		
 		/// get the pixels of the most recent rgb frame
 		unsigned char	* getPixels();
@@ -73,15 +84,6 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		void 			drawDepth(float x, float y, float w, float h);
 		void 			drawDepth(float x, float y);
 		
-		/**
-			\brief	updates the pixel buffers and textures
-				
-				make sure to call this to update to the latetst incoming frames
-		*/
-		void update();
-
-		float 			getHeight();
-		float 			getWidth();
 
 		const static int	width = 640;
 		const static int	height = 480;
@@ -100,7 +102,13 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		
 		unsigned short *		depthPixelsRaw;
 		float * 				distancePixels;
+		
+		ofPoint rawAccel;
+		ofPoint mksAccel;
         
+		float targetTiltAngleDeg;
+		bool bTiltNeedsApplying;
+		
     private:
 
 		freenect_context *kinectContext;	// kinect context handle
