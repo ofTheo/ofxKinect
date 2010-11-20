@@ -23,6 +23,8 @@ ofxKinect::ofxKinect(){
 
 	bNeedsUpdate			= false;
 	bUpdateTex				= false;
+	
+	depthNearValue			= OFX_KINECT_NEAR_BLACK;
 
 	kinectContext			= NULL;
 	kinectDevice			= NULL;
@@ -242,7 +244,16 @@ void ofxKinect::update(){
 			} else {
 				// using equation from https://github.com/OpenKinect/openkinect/wiki/Imaging-Information
 				distancePixels[k] = 100.f / (-0.00307f * depthPixelsBack[k] + 3.33f);
-				depthPixels[k]    = (float) (2048 * 256) / (2048 - depthPixelsBack[k]);
+				switch(depthNearValue){
+					// convert to 8 bit
+					case OFX_KINECT_NEAR_BLACK:
+						depthPixels[k]    = (float) (2048 * 256) / (2048 - depthPixelsBack[k]);
+						break;
+					// invert and convert to 8 bit
+					case OFX_KINECT_NEAR_WHITE:
+						depthPixels[k]    = (float) (2048 * 256) / (depthPixelsBack[k] - 2048);
+						break;
+				}
 
 //TODO: remove this - why are we doing background thresholding here? we should be providing the actual data. 
 //					// filter out some of the background noise
@@ -377,6 +388,18 @@ ofPoint ofxKinect::getRawAccel(){
 //---------------------------------------------------------------------------
 ofPoint ofxKinect::getMksAccel(){
 	return mksAccel;
+}
+
+//---------------------------------------------------------------------------
+void ofxKinect::setDepthNearValue(DepthNearValue val)
+{
+	depthNearValue = val;
+}
+
+//---------------------------------------------------------------------------
+ofxKinect::DepthNearValue ofxKinect::getDepthNearValue()
+{
+	return depthNearValue;
 }
 
 /* ***** PRIVATE ***** */

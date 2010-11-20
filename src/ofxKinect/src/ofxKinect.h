@@ -75,6 +75,19 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		/// get the greyscale depth texture
 		ofTexture &		getDepthTextureReference();
 		
+		/**
+			set the near value of the pixels in the greyscale depth image
+			
+			the default is OFX_KINECT_NEAR_BLACK
+		**/
+		enum DepthNearValue
+		{
+			OFX_KINECT_NEAR_BLACK,	// pixels closer to the camera are darker
+			OFX_KINECT_NEAR_WHITE	// pixels close to the camera are brighter
+		};
+		void setDepthNearValue(DepthNearValue val);
+		DepthNearValue getDepthNearValue();
+		
 		void 			setVerbose(bool bTalkToMe);
         
 		void 			setUseTexture(bool bUse);
@@ -83,7 +96,6 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		
 		void 			drawDepth(float x, float y, float w, float h);
 		void 			drawDepth(float x, float y);
-		
 
 		const static int	width = 640;
 		const static int	height = 480;
@@ -111,14 +123,16 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		
     private:
 
-		freenect_context *kinectContext;	// kinect context handle
-		freenect_device *kinectDevice;	// kinect device handle
+		freenect_context *	kinectContext;	// kinect context handle
+		freenect_device * 	kinectDevice;	// kinect device handle
 		
 		unsigned short *	depthPixelsBack;	// depth back
 		unsigned char *		rgbPixelsBack;		// rgb back
 		
 		bool bNeedsUpdate;
 		bool bUpdateTex;
+		
+		DepthNearValue depthNearValue;
 		
 		ofxMatrix4x4		rgbDepthMatrix;
 
