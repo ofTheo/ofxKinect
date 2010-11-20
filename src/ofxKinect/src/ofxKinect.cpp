@@ -106,7 +106,7 @@ ofTexture & ofxKinect::getTextureReference(){
 	if(!rgbTex.bAllocated()){
 		ofLog(OF_LOG_WARNING, "ofxKinect: getTextureReference - texture is not allocated");
 	}
-	return depthTex;
+	return rgbTex;
 }
 
 //---------------------------------------------------------------------------
@@ -114,7 +114,7 @@ ofTexture & ofxKinect::getDepthTextureReference(){
 	if(!depthTex.bAllocated()){
 		ofLog(OF_LOG_WARNING, "ofxKinect: getDepthTextureReference - texture is not allocated");
 	}
-	return rgbTex;
+	return depthTex;
 }
 
 //--------------------------------------------------------------------
