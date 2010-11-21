@@ -119,6 +119,9 @@ void testApp::keyPressed (int key)
 			nearThreshold --;
 			if (nearThreshold < 0) nearThreshold = 0;
 			break;
+		case 'w':
+			kinect.enableDepthNearValueWhite(!kinect.isDepthNearValueWhite());
+			break;
 	}
 }
 

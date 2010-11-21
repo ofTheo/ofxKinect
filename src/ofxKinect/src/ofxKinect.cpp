@@ -24,7 +24,7 @@ ofxKinect::ofxKinect(){
 	bNeedsUpdate			= false;
 	bUpdateTex				= false;
 	
-	depthNearValue			= OFX_KINECT_NEAR_BLACK;
+	bDepthNearValueWhite	= false;
 
 	kinectContext			= NULL;
 	kinectDevice			= NULL;
@@ -238,32 +238,32 @@ void ofxKinect::update(){
 	if ( this->lock() ) {
 
 		for (int k = 0; k < width*height; k++){
+			// ignore null pixels
 			if(depthPixelsBack[k] == 2047) {
 				distancePixels[k] = 0;
 				depthPixels[k] = 0;
 			} else {
 				// using equation from https://github.com/OpenKinect/openkinect/wiki/Imaging-Information
 				distancePixels[k] = 100.f / (-0.00307f * depthPixelsBack[k] + 3.33f);
-				switch(depthNearValue){
-					// convert to 8 bit
-					case OFX_KINECT_NEAR_BLACK:
-						depthPixels[k]    = (float) (2048 * 256) / (2048 - depthPixelsBack[k]);
-						break;
-					// invert and convert to 8 bit
-					case OFX_KINECT_NEAR_WHITE:
-						depthPixels[k]    = (float) (2048 * 256) / (depthPixelsBack[k] - 2048);
-						break;
-				}
 
-//TODO: remove this - why are we doing background thresholding here? we should be providing the actual data. 
-//					// filter out some of the background noise
-//					if(depthPixelsBack[k] < 1024) {
-//						// invert and convert to 8 bit
-//						depthPixels[k] = (float) ((2048 * 256) / (depthPixelsBack[k] - 2048));
-//					}
-//					else {
-//						depthPixels[k] = 0;
-//					}
+			if(bDepthNearValueWhite){
+			
+//TODO: remove this - why are we doing background thresholding here? we should be providing the actual data.
+//ANSWER: because you can't catch these values after they've been interpolated ...
+
+				// filter out the noisey values above 1024
+				if(depthPixelsBack[k] < 1024) {
+						// invert and convert to 8 bit
+						depthPixels[k] = (float) (2048 * 256) / (depthPixelsBack[k] - 2048);
+					}
+					else {
+						depthPixels[k] = 0;
+					}
+				}
+				else {
+					// convert to 8 bit
+					depthPixels[k] = (float) (2048 * 256) / (2048 - depthPixelsBack[k]);
+				}
 			}
 		}
 		memcpy(rgbPixels, rgbPixelsBack, width*height*3);
@@ -391,18 +391,19 @@ ofPoint ofxKinect::getMksAccel(){
 }
 
 //---------------------------------------------------------------------------
-void ofxKinect::setDepthNearValue(DepthNearValue val)
+void ofxKinect::enableDepthNearValueWhite(bool bEnabled)
 {
-	depthNearValue = val;
+	bDepthNearValueWhite = bEnabled;
 }
 
 //---------------------------------------------------------------------------
-ofxKinect::DepthNearValue ofxKinect::getDepthNearValue()
+bool ofxKinect::isDepthNearValueWhite()
 {
-	return depthNearValue;
+	return bDepthNearValueWhite;
 }
 
 /* ***** PRIVATE ***** */
+
 //---------------------------------------------------------------------------
 void ofxKinect::grabDepthFrame(freenect_device *dev, freenect_depth *depth, uint32_t timestamp) {
 	if (thisKinect->lock()) {
