@@ -120,6 +120,14 @@ ofTexture & ofxKinect::getDepthTextureReference(){
 }
 
 //--------------------------------------------------------------------
+bool ofxKinect::isFrameNew(){
+	if(isThreadRunning()){
+		return !bNeedsUpdate;
+	}
+	return false;	
+}
+
+//--------------------------------------------------------------------
 bool ofxKinect::open(){
 	if(!bGrabberInited){
 		ofLog(OF_LOG_WARNING, "ofxKinect: Cannot open, init not called");
@@ -223,8 +231,6 @@ void ofxKinect::clear(){
 
 //----------------------------------------------------------
 void ofxKinect::update(){
-	// you need to call init() before running!
-	//assert(depthPixels);
 	if(!kinectContext){
 		return;
 	}
@@ -391,14 +397,12 @@ ofPoint ofxKinect::getMksAccel(){
 }
 
 //---------------------------------------------------------------------------
-void ofxKinect::enableDepthNearValueWhite(bool bEnabled)
-{
+void ofxKinect::enableDepthNearValueWhite(bool bEnabled){
 	bDepthNearValueWhite = bEnabled;
 }
 
 //---------------------------------------------------------------------------
-bool ofxKinect::isDepthNearValueWhite()
-{
+bool ofxKinect::isDepthNearValueWhite(){
 	return bDepthNearValueWhite;
 }
 
@@ -477,4 +481,11 @@ void ofxKinect::threadedFunction(){
 		
 //		printf("\r raw acceleration: %4d %4d %4d  mks acceleration: %4f %4f %4f", ax, ay, az, dx, dy, dz);
 	}
+	
+	freenect_stop_depth(kinectDevice);
+	freenect_stop_rgb(kinectDevice);
+	freenect_set_led(kinectDevice, LED_YELLOW);
+
+	freenect_close_device(kinectDevice);
+	freenect_shutdown(kinectContext);
 }

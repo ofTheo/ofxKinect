@@ -18,8 +18,8 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		ofxKinect();
 		virtual ~ofxKinect();
 
-		/// is the current frame new?
-		bool isFrameNew() {return true;}
+		/// are the current frames new?
+		bool isFrameNew();
         
 		/// open the connection and start grabbing images
 		bool open();
