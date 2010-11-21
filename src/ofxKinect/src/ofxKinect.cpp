@@ -155,7 +155,7 @@ void ofxKinect::close(){
 bool ofxKinect::setCameraTiltAngle(float angleInDegrees){
 
 	//TODO: fix this - it causes the call to libusb_control_transfer to hang. 
-	ofLog(OF_LOG_ERROR, "sorry setCameraTiltAngle is not currently working correctly in ofxKinect");
+	ofLog(OF_LOG_ERROR, "ofxKinect: Sorry setCameraTiltAngle is not currently working correctly");
 	return false;
 
 	if(!kinectContext){
@@ -259,8 +259,8 @@ void ofxKinect::update(){
 
 				// filter out the noisey values above 1024
 				if(depthPixelsBack[k] < 1024) {
-						// invert and convert to 8 bit
-						depthPixels[k] = (float) (2048 * 256) / (depthPixelsBack[k] - 2048);
+					//invert and convert to 8 bit
+					depthPixels[k] = (float) (2048 * 256) / (depthPixelsBack[k] - 2048);
 					}
 					else {
 						depthPixels[k] = 0;
@@ -450,12 +450,12 @@ void ofxKinect::threadedFunction(){
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of Devices found: " + ofToString(number_devices));
 
 	if (number_devices < 1) {
-		ofLog(OF_LOG_ERROR, "ofxKinect: didnt find a device");
+		ofLog(OF_LOG_ERROR, "ofxKinect: Did not find a device");
 		return;
 	}
 	
 	if (freenect_open_device(kinectContext, &kinectDevice, 0) < 0) {
-		ofLog(OF_LOG_ERROR, "ofxKinect: could not open device");
+		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device");
 		return;
 	}
 	
@@ -481,11 +481,14 @@ void ofxKinect::threadedFunction(){
 		
 //		printf("\r raw acceleration: %4d %4d %4d  mks acceleration: %4f %4f %4f", ax, ay, az, dx, dy, dz);
 	}
-	
-	freenect_stop_depth(kinectDevice);
-	freenect_stop_rgb(kinectDevice);
+
+//TODO: uncomment these when they are implemented in freenect	
+//	freenect_stop_depth(kinectDevice);
+//	freenect_stop_rgb(kinectDevice);
 	freenect_set_led(kinectDevice, LED_YELLOW);
 
-	freenect_close_device(kinectDevice);
-	freenect_shutdown(kinectContext);
+//	freenect_close_device(kinectDevice);
+//	freenect_shutdown(kinectContext);
+	
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection closed");
 }
