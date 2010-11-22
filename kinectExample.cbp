@@ -231,11 +231,19 @@
 		<Unit filename="src/main.cpp">
 			<Option virtualFolder="src/" />
 		</Unit>
+		<Unit filename="src/ofxKinect/libs/libfreenect/accelerometers.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="addons/ofxKinect/libfreenect/" />
+		</Unit>
 		<Unit filename="src/ofxKinect/libs/libfreenect/cameras.c">
 			<Option compilerVar="CC" />
 			<Option virtualFolder="addons/ofxKinect/libfreenect/" />
 		</Unit>
-		<Unit filename="src/ofxKinect/libs/libfreenect/cameras.h">
+		<Unit filename="src/ofxKinect/libs/libfreenect/core.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="addons/ofxKinect/libfreenect/" />
+		</Unit>
+		<Unit filename="src/ofxKinect/libs/libfreenect/freenect_internal.h">
 			<Option virtualFolder="addons/ofxKinect/libfreenect/" />
 		</Unit>
 		<Unit filename="src/ofxKinect/libs/libfreenect/inits.c">
@@ -243,6 +251,17 @@
 			<Option virtualFolder="addons/ofxKinect/libfreenect/" />
 		</Unit>
 		<Unit filename="src/ofxKinect/libs/libfreenect/libfreenect.h">
+			<Option virtualFolder="addons/ofxKinect/libfreenect/" />
+		</Unit>
+		<Unit filename="src/ofxKinect/libs/libfreenect/motors.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="addons/ofxKinect/libfreenect/" />
+		</Unit>
+		<Unit filename="src/ofxKinect/libs/libfreenect/usb_libusb10.c">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="addons/ofxKinect/libfreenect/" />
+		</Unit>
+		<Unit filename="src/ofxKinect/libs/libfreenect/usb_libusb10.h">
 			<Option virtualFolder="addons/ofxKinect/libfreenect/" />
 		</Unit>
 		<Unit filename="src/ofxKinect/src/ofxKinect.cpp">
