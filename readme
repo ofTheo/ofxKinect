@@ -13,5 +13,10 @@ To get a copy of the repository you can download the source from http://github.c
 If you're using OS X, open the XCode project and hit "Build and Run". You might want to chose "Release" instead of "Debug".
 
 If you're using Linux, you should open the Code::Blocks .cbp and hit F9 to build and run.
+You should create some udev rules in order to run the app without root privileges:
+As root write this to /etc/udev/rules.d/51-kinect.rules (this works on Ubuntu 10.10):
+SUBSYSTEM=="usb", SYSFS{idVendor}=="045e", SYSFS{idProduct}=="02ae", MODE="0660", GROUP="plugdev"
+SUBSYSTEM=="usb", SYSFS{idVendor}=="045e", SYSFS{idProduct}=="02ad", MODE="0660", GROUP="plugdev"
+SUBSYSTEM=="usb", SYSFS{idVendor}=="045e", SYSFS{idProduct}=="02b0", MODE="0660", GROUP="plugdev"
 
 To develop your own project based on ofxKinect, you will need to make a copy of the repository, at the same directory depth, and modify the example application. If you are comfortable setting up a new project and importing the libraries into it, you might also consider moving ofxKinect/src/ofxKinect into your addons folder so you can simply update that one folder to bring multiple projects up to date.
