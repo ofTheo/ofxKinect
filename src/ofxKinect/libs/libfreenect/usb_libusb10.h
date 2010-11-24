@@ -27,7 +27,7 @@
 #ifndef USB_LIBUSB10
 #define USB_LIBUSB10
 
-#include <libusb.h>
+#include <libusb-1.0/libusb.h>
 
 #if defined(__APPLE__)
 /*
@@ -55,7 +55,6 @@
 #define RGB_PKTBUF 1920
 #endif
 
-
 typedef struct {
 	libusb_context *ctx;
 	int should_free_ctx;
@@ -74,6 +73,8 @@ typedef struct {
 	int num_xfers;
 	int pkts;
 	int len;
+	int dead;
+	int dead_xfers;
 } fnusb_isoc_stream;
 
 int fnusb_init(fnusb_ctx *ctx, freenect_usb_context *usb_ctx);

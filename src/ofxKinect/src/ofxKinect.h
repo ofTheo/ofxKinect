@@ -133,7 +133,7 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		ofxMatrix4x4		rgbDepthMatrix;
 
 		// libfreenect callbacks
-		static void grabDepthFrame(freenect_device *dev, freenect_depth *depth, uint32_t timestamp);
+		static void grabDepthFrame(freenect_device *dev, void *depth, uint32_t timestamp);
 		static void grabRgbFrame(freenect_device *dev, freenect_pixel *rgb, uint32_t timestamp);
     
 		// thread function
