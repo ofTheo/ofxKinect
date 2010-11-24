@@ -27,7 +27,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <libusb.h>
+#include <string.h>
+#include <libusb-1.0/libusb.h>
 #include "freenect_internal.h"
 
 int fnusb_init(fnusb_ctx *ctx, freenect_usb_context *usb_ctx)
@@ -96,7 +97,7 @@ int fnusb_open_subdevices(freenect_device *dev, int index)
 				if (libusb_open (devs[i], &dev->usb_cam.dev) != 0)
 					return (-1);
 				// Claim the camera
-				if (!dev->usb_cam.dev) 
+				if (!dev->usb_cam.dev)
 					return (-1);
 				libusb_claim_interface (dev->usb_cam.dev, 0);
 				start_cam = true;
@@ -138,6 +139,13 @@ static void iso_callback(struct libusb_transfer *xfer)
 	int i;
 	fnusb_isoc_stream *strm = xfer->user_data;
 
+	if (strm->dead) {
+		freenect_context *ctx = strm->parent->parent->parent;
+		strm->dead_xfers++;
+		FN_SPEW("EP %02x transfer complete, %d left\n", xfer->endpoint, strm->num_xfers - strm->dead_xfers);
+		return;
+	}
+
 	if(xfer->status == LIBUSB_TRANSFER_COMPLETED) {
 		uint8_t *buf = (void*)xfer->buffer;
 		for (i=0; i<strm->pkts; i++) {
@@ -146,12 +154,15 @@ static void iso_callback(struct libusb_transfer *xfer)
 		}
 		libusb_submit_transfer(xfer);
 	} else {
-		printf("Xfer error: %d\n", xfer->status);
+		freenect_context *ctx = strm->parent->parent->parent;
+		FN_WARNING("Isochronous transfer error: %d\n", xfer->status);
+		strm->dead_xfers++;
 	}
 }
 
 int fnusb_start_iso(fnusb_dev *dev, fnusb_isoc_stream *strm, fnusb_iso_cb cb, int ep, int xfers, int pkts, int len)
 {
+	freenect_context *ctx = dev->parent->parent;
 	int ret, i;
 
 	strm->parent = dev;
@@ -161,11 +172,13 @@ int fnusb_start_iso(fnusb_dev *dev, fnusb_isoc_stream *strm, fnusb_iso_cb cb, in
 	strm->len = len;
 	strm->buffer = malloc(xfers * pkts * len);
 	strm->xfers = malloc(sizeof(struct libusb_transfer*) * xfers);
+	strm->dead = 0;
+	strm->dead_xfers = 0;
 
 	uint8_t *bufp = strm->buffer;
 
 	for (i=0; i<xfers; i++) {
-		//printf("Creating EP %02x transfer #%d\n", ep, i);
+		FN_SPEW("Creating EP %02x transfer #%d\n", ep, i);
 		strm->xfers[i] = libusb_alloc_transfer(pkts);
 
 		libusb_fill_iso_transfer(strm->xfers[i], dev->dev, ep, bufp, pkts * len, pkts, iso_callback, strm, 0);
@@ -174,13 +187,34 @@ int fnusb_start_iso(fnusb_dev *dev, fnusb_isoc_stream *strm, fnusb_iso_cb cb, in
 
 		ret = libusb_submit_transfer(strm->xfers[i]);
 		if (ret < 0)
-			printf("Failed to submit xfer %d: %d\n", i, ret);
+			FN_WARNING("Failed to submit isochronous transfer %d: %d\n", i, ret);
 
 		bufp += pkts*len;
 	}
 
 	return 0;
 
+}
+
+int fnusb_stop_iso(fnusb_dev *dev, fnusb_isoc_stream *strm)
+{
+	freenect_context *ctx = dev->parent->parent;
+	int i;
+
+	strm->dead = 1;
+
+	for (i=0; i<strm->num_xfers; i++)
+		libusb_cancel_transfer(strm->xfers[i]);
+
+	while (strm->dead_xfers < strm->num_xfers) {
+		libusb_handle_events(ctx->usb.ctx);
+	}
+
+	free(strm->buffer);
+	free(strm->xfers);
+
+	memset(strm, 0, sizeof(*strm));
+	return 0;
 }
 
 int fnusb_control(fnusb_dev *dev, uint8_t bmRequestType, uint8_t bRequest, uint16_t wValue, uint16_t wIndex, uint8_t *data, uint16_t wLength)

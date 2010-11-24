@@ -1,6 +1,6 @@
 *.depend
 *.layout
-*.mode1v3
+*.mode*v3
 *.pbxuser
 *.app*
 *.DS_*

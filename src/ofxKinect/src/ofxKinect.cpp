@@ -409,7 +409,7 @@ bool ofxKinect::isDepthNearValueWhite(){
 /* ***** PRIVATE ***** */
 
 //---------------------------------------------------------------------------
-void ofxKinect::grabDepthFrame(freenect_device *dev, freenect_depth *depth, uint32_t timestamp) {
+void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t timestamp) {
 	if (thisKinect->lock()) {
 		try {
 			memcpy(thisKinect->depthPixelsBack, depth, width*height*sizeof(uint16_t));
@@ -472,11 +472,11 @@ void ofxKinect::threadedFunction(){
 	
 	while (isThreadRunning()) {
 		int16_t ax,ay,az;
-		freenect_get_raw_accelerometers(kinectDevice, &ax, &ay, &az);
+		freenect_get_raw_accel(kinectDevice, &ax, &ay, &az);
 		rawAccel.set(ax, ay, az);
 		
 		double dx,dy,dz;
-		freenect_get_mks_accelerometers(kinectDevice, &dx, &dy, &dz);
+		freenect_get_mks_accel(kinectDevice, &dx, &dy, &dz);
 		mksAccel.set(dx, dy, dz);
 		
 //		printf("\r raw acceleration: %4d %4d %4d  mks acceleration: %4f %4f %4f", ax, ay, az, dx, dy, dz);
