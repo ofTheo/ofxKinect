@@ -66,13 +66,18 @@ void testApp::draw()
 	ofSetColor(255, 255, 255);
 
 	kinect.drawDepth(10, 10, 400, 300);
-	kinect.draw(450, 10, 400, 300);
+	kinect.draw(420, 10, 400, 300);
 	
 	grayImage.draw(10, 320, 400, 300);
 	contourFinder.draw(10, 320, 400, 300);
 	
-	//TODO: show something cool next to it? 
-	//eg point cloud ?? 
+	// point cloud is commented out because we need a proper camera class to explore it effectively
+	/*
+	ofPushMatrix();
+	ofTranslate(420, 320);
+	drawPointCloud();
+	ofPopMatrix();
+	 */
 
 
 	ofSetColor(255, 255, 255);
@@ -83,6 +88,31 @@ void testApp::draw()
 	char reportStr[1024];
 	sprintf(reportStr, "using opencv threshold = %i (press spacebar)\nset near threshold %i (press: + -)\nset far threshold %i (press: < >) num blobs found %i, fps: %f",bThreshWithOpenCV, nearThreshold, farThreshold, contourFinder.nBlobs, ofGetFrameRate());
 	ofDrawBitmapString(reportStr, 20, 690);
+}
+
+void testApp::drawPointCloud() {
+	int step = 2;
+	ofScale(1. / step, 1. / step, 1. / step);
+	// two magic numbers derived visually
+	float scaleFactor = .0021;
+	float minDistance = -10;
+	int w = 640;
+	int h = 480;
+	ofTranslate(w / 2, h / 2);
+	ofRotateY(mouseX);
+	ofTranslate(-w / 2, -h / 2);
+	float* distancePixels = kinect.getDistancePixels();
+	glBegin(GL_POINTS);
+	for(int y = 0; y < h; y += step) {
+		for(int x = 0; x < w; x += step) {
+			int i = y * w + x;
+			float z = distancePixels[i];
+			float scaledx = (x - w / 2) * (z + minDistance) * scaleFactor;
+			float scaledy = (y - h / 2) * (z + minDistance) * scaleFactor;
+			glVertex3f(scaledx, scaledy, z);
+		}
+	}
+	glEnd();
 }
 
 //--------------------------------------------------------------
