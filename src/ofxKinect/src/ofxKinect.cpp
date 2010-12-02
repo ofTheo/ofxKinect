@@ -1,6 +1,5 @@
 #include "ofxKinect.h"
-#include "ofUtils.h"
-#include "ofMath.h"
+#include "ofMain.h"
 
 // pointer to this class for static callback member functions
 ofxKinect* thisKinect = NULL;
@@ -134,6 +133,26 @@ bool ofxKinect::open(){
 		return false;
 	}
 
+	if (freenect_init(&kinectContext, NULL) < 0) {
+		ofLog(OF_LOG_ERROR, "ofxKinect: freenet_init failed");
+		return false;
+	}
+
+	int number_devices = freenect_num_devices(kinectContext);
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of Devices found: " + ofToString(number_devices));
+
+	if (number_devices < 1) {
+		ofLog(OF_LOG_ERROR, "ofxKinect: Did not find a device");
+		return false;
+	}
+
+	if (freenect_open_device(kinectContext, &kinectDevice, 0) < 0) {
+		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device");
+		return false;
+	}
+
+	freenect_set_user(kinectDevice, this);
+
 	startThread(true, false);	// blocking, not verbose
 
 	return true;
@@ -155,24 +174,24 @@ void ofxKinect::close(){
 bool ofxKinect::setCameraTiltAngle(float angleInDegrees){
 
 	//TODO: fix this - it causes the call to libusb_control_transfer to hang. 
-	ofLog(OF_LOG_ERROR, "ofxKinect: Sorry setCameraTiltAngle is not currently working correctly");
-	return false;
+	//ofLog(OF_LOG_ERROR, "ofxKinect: Sorry setCameraTiltAngle is not currently working correctly");
+	//return false;
 
 	if(!kinectContext){
 		return false;
 	}
 
-	if ( this->lock() ) {		
-		targetTiltAngleDeg = angleInDegrees;
-		bTiltNeedsApplying = true;
-		printf("ANGLE SET!\n");
-		this->unlock();
-		printf("unlocked from setCameraTiltAngle!\n");
-		
-		return true;
-	}
+	//if ( this->lock() ) {
+	targetTiltAngleDeg = angleInDegrees;
+	bTiltNeedsApplying = true;
+	printf("ANGLE SET!\n");
+	//this->unlock();
+	printf("unlocked from setCameraTiltAngle!\n");
+
+	return true;
+	//}
 	
-	return false;
+	//return false;
 }
 
 //--------------------------------------------------------------------
@@ -273,15 +292,6 @@ void ofxKinect::update(){
 			}
 		}
 		memcpy(rgbPixels, rgbPixelsBack, width*height*3);
-			
-		if( bTiltNeedsApplying ){
-			//TODO: find out why this hangs. it is the libusb_control_transfer call that hangs.
-			//it seems to only hang when the camera is running
-			//maybe we need to pause the grabbing stream?
-			
-			//freenect_set_tilt_in_degrees(kinectDevice, targetTiltAngleDeg);
-			bTiltNeedsApplying = false;
-		}		
 
 		//we have done the update
 		bNeedsUpdate = false;
@@ -412,7 +422,7 @@ bool ofxKinect::isDepthNearValueWhite(){
 void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t timestamp) {
 	if (thisKinect->lock()) {
 		try {
-			memcpy(thisKinect->depthPixelsBack, depth, width*height*sizeof(uint16_t));
+			memcpy(thisKinect->depthPixelsBack, depth, FREENECT_DEPTH_11BIT_SIZE);
 			thisKinect->bNeedsUpdate = true;
 		}
 		catch(...) {
@@ -425,10 +435,10 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 }
 
 //---------------------------------------------------------------------------
-void ofxKinect::grabRgbFrame(freenect_device *dev, freenect_pixel *rgb, uint32_t timestamp) {
+void ofxKinect::grabRgbFrame(freenect_device *dev, void *rgb, uint32_t timestamp) {
 	if (thisKinect->lock()) {
 		try {
-			memcpy(thisKinect->rgbPixelsBack, rgb, FREENECT_RGB_SIZE);
+			memcpy(thisKinect->rgbPixelsBack, rgb, FREENECT_VIDEO_RGB_SIZE);
 			thisKinect->bNeedsUpdate = true;
 		}
 		catch (...) {
@@ -442,53 +452,47 @@ void ofxKinect::grabRgbFrame(freenect_device *dev, freenect_pixel *rgb, uint32_t
 
 //---------------------------------------------------------------------------
 void ofxKinect::threadedFunction(){	
-	if (freenect_init(&kinectContext, NULL) < 0) {
-		ofLog(OF_LOG_ERROR, "ofxKinect: freenet_init failed");
-	}
 
-	int number_devices = freenect_num_devices(kinectContext);
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of Devices found: " + ofToString(number_devices));
-
-	if (number_devices < 1) {
-		ofLog(OF_LOG_ERROR, "ofxKinect: Did not find a device");
-		return;
-	}
-	
-	if (freenect_open_device(kinectContext, &kinectDevice, 0) < 0) {
-		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device");
-		return;
-	}
 	
 	freenect_set_led(kinectDevice, LED_GREEN);
+	freenect_set_video_format(kinectDevice, FREENECT_VIDEO_RGB);
+	freenect_set_depth_format(kinectDevice, FREENECT_DEPTH_11BIT);
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
-	freenect_set_rgb_callback(kinectDevice, &grabRgbFrame);
-	freenect_set_rgb_format(kinectDevice, FREENECT_FORMAT_RGB);
-	freenect_set_depth_format(kinectDevice, FREENECT_FORMAT_11_BIT);
+	freenect_set_video_callback(kinectDevice, &grabRgbFrame);
 	
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection opened");
-	
+
 	freenect_start_depth(kinectDevice);
-	freenect_start_rgb(kinectDevice);
+	freenect_start_video(kinectDevice);
 	
 	while (isThreadRunning()) {
-		int16_t ax,ay,az;
-		freenect_get_raw_accel(kinectDevice, &ax, &ay, &az);
-		rawAccel.set(ax, ay, az);
+		if( bTiltNeedsApplying ){
+
+			freenect_set_tilt_degs(kinectDevice, targetTiltAngleDeg);
+			bTiltNeedsApplying = false;
+		}
+
+		freenect_update_tilt_state(kinectDevice);
+		freenect_raw_tilt_state * tilt = freenect_get_tilt_state(kinectDevice);
+
+		rawAccel.set(tilt->accelerometer_x, tilt->accelerometer_y, tilt->accelerometer_z);
 		
 		double dx,dy,dz;
-		freenect_get_mks_accel(kinectDevice, &dx, &dy, &dz);
+		freenect_get_mks_accel(tilt, &dx, &dy, &dz);
 		mksAccel.set(dx, dy, dz);
 		
+		ofSleepMillis(20);
+
 //		printf("\r raw acceleration: %4d %4d %4d  mks acceleration: %4f %4f %4f", ax, ay, az, dx, dy, dz);
 	}
 
 //TODO: uncomment these when they are implemented in freenect	
-//	freenect_stop_depth(kinectDevice);
-//	freenect_stop_rgb(kinectDevice);
+	freenect_stop_depth(kinectDevice);
+	freenect_stop_video(kinectDevice);
 	freenect_set_led(kinectDevice, LED_YELLOW);
 
-//	freenect_close_device(kinectDevice);
-//	freenect_shutdown(kinectContext);
+	freenect_close_device(kinectDevice);
+	freenect_shutdown(kinectContext);
 	
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection closed");
 }
