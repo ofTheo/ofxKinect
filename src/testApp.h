@@ -39,6 +39,8 @@ class testApp : public ofBaseApp
 
 		int 				nearThreshold;
 		int					farThreshold;
+
+		int					angle;
 };
 
 #endif

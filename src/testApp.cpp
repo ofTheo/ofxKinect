@@ -18,6 +18,9 @@ void testApp::setup()
 	bThreshWithOpenCV = true;
 	
 	ofSetFrameRate(60);
+
+	angle = 0;
+	kinect.setCameraTiltAngle(angle);
 }
 
 //--------------------------------------------------------------
@@ -88,6 +91,7 @@ void testApp::draw()
 	char reportStr[1024];
 	sprintf(reportStr, "using opencv threshold = %i (press spacebar)\nset near threshold %i (press: + -)\nset far threshold %i (press: < >) num blobs found %i, fps: %f",bThreshWithOpenCV, nearThreshold, farThreshold, contourFinder.nBlobs, ofGetFrameRate());
 	ofDrawBitmapString(reportStr, 20, 690);
+	ofDrawBitmapString("tilt angle: " + ofToString(angle),20,670);
 }
 
 void testApp::drawPointCloud() {
@@ -151,6 +155,18 @@ void testApp::keyPressed (int key)
 			break;
 		case 'w':
 			kinect.enableDepthNearValueWhite(!kinect.isDepthNearValueWhite());
+			break;
+
+		case OF_KEY_UP:
+			angle++;
+			if(angle>30) angle=30;
+			kinect.setCameraTiltAngle(angle);
+			break;
+
+		case OF_KEY_DOWN:
+			angle--;
+			if(angle<-30) angle=-30;
+			kinect.setCameraTiltAngle(angle);
 			break;
 	}
 }
