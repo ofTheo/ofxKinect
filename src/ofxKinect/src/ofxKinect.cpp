@@ -182,11 +182,11 @@ bool ofxKinect::setCameraTiltAngle(float angleInDegrees){
 	}
 
 	//if ( this->lock() ) {
-	targetTiltAngleDeg = angleInDegrees;
+	targetTiltAngleDeg = ofClamp(angleInDegrees,-30,30);
 	bTiltNeedsApplying = true;
-	printf("ANGLE SET!\n");
+	//printf("ANGLE SET!\n");
 	//this->unlock();
-	printf("unlocked from setCameraTiltAngle!\n");
+	//printf("unlocked from setCameraTiltAngle!\n");
 
 	return true;
 	//}
