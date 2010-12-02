@@ -15,8 +15,8 @@ ofxKinect::ofxKinect(){
 	depthPixels				= NULL;
 	depthPixelsRaw			= NULL;
 	depthPixelsBack			= NULL;
-	rgbPixels		  		= NULL;
-	rgbPixelsBack			= NULL;
+	videoPixels		  		= NULL;
+	videoPixelsBack			= NULL;
 	calibratedRGBPixels		= NULL;
 	distancePixels 			= NULL;
 
@@ -65,7 +65,7 @@ void ofxKinect::setVerbose(bool bTalkToMe){
 
 //---------------------------------------------------------------------------
 unsigned char * ofxKinect::getPixels(){
-	return rgbPixels;
+	return videoPixels;
 }
 
 //---------------------------------------------------------------------------
@@ -94,9 +94,9 @@ unsigned char * ofxKinect::getCalibratedRGBPixels(){
 			texcoord3d.x = ofClamp(texcoord3d.x,0,640);
 			texcoord3d.y = ofClamp(texcoord3d.y,0,480);
 			int pos = int(texcoord3d.y)*640*3+int(texcoord3d.x)*3;
-			*calibratedPixels++ = rgbPixels[pos];
-			*calibratedPixels++ = rgbPixels[pos+1];
-			*calibratedPixels++ = rgbPixels[pos+2];
+			*calibratedPixels++ = videoPixels[pos];
+			*calibratedPixels++ = videoPixels[pos+1];
+			*calibratedPixels++ = videoPixels[pos+2];
 		}
 	}
 	return calibratedRGBPixels;
@@ -104,10 +104,10 @@ unsigned char * ofxKinect::getCalibratedRGBPixels(){
 
 //------------------------------------
 ofTexture & ofxKinect::getTextureReference(){
-	if(!rgbTex.bAllocated()){
+	if(!videoTex.bAllocated()){
 		ofLog(OF_LOG_WARNING, "ofxKinect: getTextureReference - texture is not allocated");
 	}
-	return rgbTex;
+	return videoTex;
 }
 
 //---------------------------------------------------------------------------
@@ -161,42 +161,35 @@ bool ofxKinect::open(){
 //---------------------------------------------------------------------------
 void ofxKinect::close(){
 	if(isThreadRunning()){
-		stopThread();
+		waitForThread(true);
 	}
 
-	usleep(500000); // some time while thread is stopping ...
+	//usleep(500000); // some time while thread is stopping ...
 
 	//libusb_exit(NULL);
 }
 
-//We update the value here - but apply it in update(). 
+//We update the value here - but apply it in kinect thread.
 //--------------------------------------------------------------------
 bool ofxKinect::setCameraTiltAngle(float angleInDegrees){
 
-	//TODO: fix this - it causes the call to libusb_control_transfer to hang. 
-	//ofLog(OF_LOG_ERROR, "ofxKinect: Sorry setCameraTiltAngle is not currently working correctly");
-	//return false;
 
 	if(!kinectContext){
 		return false;
 	}
 
-	//if ( this->lock() ) {
 	targetTiltAngleDeg = ofClamp(angleInDegrees,-30,30);
 	bTiltNeedsApplying = true;
-	//printf("ANGLE SET!\n");
-	//this->unlock();
-	//printf("unlocked from setCameraTiltAngle!\n");
 
 	return true;
-	//}
-	
-	//return false;
 }
 
 //--------------------------------------------------------------------
-bool ofxKinect::init(bool setUseTexture){
+bool ofxKinect::init(bool infrared, bool setUseTexture){
 	clear();
+
+	bInfrared = infrared;
+	bytespp = infrared?1:3;
 
 	bUseTexture = setUseTexture;
 
@@ -206,21 +199,21 @@ bool ofxKinect::init(bool setUseTexture){
 	depthPixelsBack = new unsigned short[length];
 	distancePixels = new float[length];
 
-	rgbPixels = new unsigned char[length*3];
-	rgbPixelsBack = new unsigned char[length*3];
-	calibratedRGBPixels = new unsigned char[length*3];
+	videoPixels = new unsigned char[length*bytespp];
+	videoPixelsBack = new unsigned char[length*bytespp];
+	calibratedRGBPixels = new unsigned char[length*bytespp];
 	
 	memset(depthPixels, 0, length*sizeof(unsigned char));
 	memset(depthPixelsRaw, 0, length*sizeof(unsigned short));
 	memset(depthPixelsBack, 0, length*sizeof(unsigned short));
 	memset(distancePixels, 0, length*sizeof(float));
 
-	memset(rgbPixels, 0, length*3*sizeof(unsigned char));
-	memset(rgbPixelsBack, 0, length*3*sizeof(unsigned char));
+	memset(videoPixels, 0, length*bytespp*sizeof(unsigned char));
+	memset(videoPixelsBack, 0, length*bytespp*sizeof(unsigned char));
 
 	if(bUseTexture){
 		depthTex.allocate(width, height, GL_LUMINANCE);
-		rgbTex.allocate(width, height, GL_RGB);
+		videoTex.allocate(width, height, infrared?GL_LUMINANCE:GL_RGB);
 	}
 
 	bGrabberInited = true;
@@ -238,12 +231,12 @@ void ofxKinect::clear(){
 		delete[] depthPixelsBack; depthPixelsBack = NULL;
 		delete[] distancePixels; distancePixels = NULL;
 
-		delete[] rgbPixels; rgbPixels = NULL;
-		delete[] rgbPixelsBack; rgbPixelsBack = NULL;
+		delete[] videoPixels; videoPixels = NULL;
+		delete[] videoPixelsBack; videoPixelsBack = NULL;
 	}
 
 	depthTex.clear();
-	rgbTex.clear();
+	videoTex.clear();
 
 	bGrabberInited = false;
 }
@@ -291,7 +284,7 @@ void ofxKinect::update(){
 				}
 			}
 		}
-		memcpy(rgbPixels, rgbPixelsBack, width*height*3);
+		memcpy(videoPixels, videoPixelsBack, width*height*bytespp);
 
 		//we have done the update
 		bNeedsUpdate = false;
@@ -301,7 +294,7 @@ void ofxKinect::update(){
 
 	if(bUseTexture){
 		depthTex.loadData(depthPixels, width, height, GL_LUMINANCE);
-		rgbTex.loadData(rgbPixelsBack, width, height, GL_RGB);
+		videoTex.loadData(videoPixelsBack, width, height, bInfrared?GL_LUMINANCE:GL_RGB);
 		bUpdateTex = false;
 	}
 }
@@ -321,9 +314,9 @@ float ofxKinect::getDistanceAt(const ofPoint & p) {
 ofColor	ofxKinect::getColorAt(int x, int y) {
 	int index = (y * width + x) * 3;
 	ofColor c;
-	c.r = rgbPixels[index++];
-	c.g = rgbPixels[index++];
-	c.b = rgbPixels[index];
+	c.r = videoPixels[index++];
+	c.g = videoPixels[index++];
+	c.b = videoPixels[index];
 	c.a = 255;
 
 	return c;
@@ -365,7 +358,7 @@ void ofxKinect::setUseTexture(bool bUse){
 //----------------------------------------------------------
 void ofxKinect::draw(float _x, float _y, float _w, float _h){
 	if(bUseTexture) {
-		rgbTex.draw(_x, _y, _w, _h);
+		videoTex.draw(_x, _y, _w, _h);
 	}
 }
 
@@ -438,7 +431,7 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 void ofxKinect::grabRgbFrame(freenect_device *dev, void *rgb, uint32_t timestamp) {
 	if (thisKinect->lock()) {
 		try {
-			memcpy(thisKinect->rgbPixelsBack, rgb, FREENECT_VIDEO_RGB_SIZE);
+			memcpy(thisKinect->videoPixelsBack, rgb, thisKinect->bInfrared?FREENECT_VIDEO_IR_8BIT_SIZE:FREENECT_VIDEO_RGB_SIZE);
 			thisKinect->bNeedsUpdate = true;
 		}
 		catch (...) {
@@ -455,7 +448,7 @@ void ofxKinect::threadedFunction(){
 
 	
 	freenect_set_led(kinectDevice, LED_GREEN);
-	freenect_set_video_format(kinectDevice, FREENECT_VIDEO_RGB);
+	freenect_set_video_format(kinectDevice, bInfrared?FREENECT_VIDEO_IR_8BIT:FREENECT_VIDEO_RGB);
 	freenect_set_depth_format(kinectDevice, FREENECT_DEPTH_11BIT);
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
 	freenect_set_video_callback(kinectDevice, &grabRgbFrame);
@@ -487,6 +480,8 @@ void ofxKinect::threadedFunction(){
 	}
 
 //TODO: uncomment these when they are implemented in freenect	
+	freenect_set_tilt_degs(kinectDevice, 0);
+	freenect_update_tilt_state(kinectDevice);
 	freenect_stop_depth(kinectDevice);
 	freenect_stop_video(kinectDevice);
 	freenect_set_led(kinectDevice, LED_YELLOW);
