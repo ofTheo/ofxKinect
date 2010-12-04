@@ -249,8 +249,14 @@ void ofxKinect::update(){
 				distancePixels[k] = 0;
 				depthPixels[k] = 0;
 			} else {
-				// using equation from https://github.com/OpenKinect/openkinect/wiki/Imaging-Information
-				distancePixels[k] = 100.f / (-0.00307f * depthPixelsBack[k] + 3.33f);
+				// using equation from http://openkinect.org/wiki/Imaging_Information
+				// this should be done with a LUT, this is an inefficient way to do it
+				const float k1 = 0.1236;
+				const float k2 = 2842.5;
+				const float k3 = 1.1863;
+				const float k4 = 0.0370;
+				distancePixels[k] = k1 * tanf(depthPixelsBack[k] / k2 + k3) - k4; // calculate in meters
+				distancePixels[k] *= 100; // convert to centimeters
 
 			if(bDepthNearValueWhite){
 			
