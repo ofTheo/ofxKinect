@@ -78,7 +78,7 @@ void testApp::draw()
 	ofPushMatrix();
 	ofTranslate(420, 320);
 	// point cloud is commented out because we need a proper camera class to explore it effectively
-	//drawPointCloud();
+	drawPointCloud();
 	ofPopMatrix();
 
 	ofSetColor(255, 255, 255);

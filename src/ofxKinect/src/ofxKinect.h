@@ -119,6 +119,12 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
         
 		float targetTiltAngleDeg;
 		bool bTiltNeedsApplying;
+	
+		static void calculateLookups();
+		static bool lookupsCalculated;
+		static float distancePixelsLookup[2048];
+		static unsigned char depthPixelsLookupNearWhite[2048];
+		static unsigned char depthPixelsLookupFarWhite[2048];
 		
     private:
 

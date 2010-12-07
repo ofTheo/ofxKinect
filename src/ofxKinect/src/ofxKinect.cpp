@@ -4,8 +4,14 @@
 // pointer to this class for static callback member functions
 ofxKinect* thisKinect = NULL;
 
+bool ofxKinect::lookupsCalculated = false;
+float ofxKinect::distancePixelsLookup[2048];
+unsigned char ofxKinect::depthPixelsLookupNearWhite[2048];
+unsigned char ofxKinect::depthPixelsLookupFarWhite[2048];
+
 //--------------------------------------------------------------------
 ofxKinect::ofxKinect(){
+	ofLog(OF_LOG_VERBOSE, "Creating ofxKinect.");
 
 	//TODO: reset the right ones of these on close
 	// common
@@ -49,6 +55,32 @@ ofxKinect::ofxKinect(){
 	rgbDepthMatrix.getPtr()[13]=0.000003;
 	rgbDepthMatrix.getPtr()[14]=0.000000;
 	rgbDepthMatrix.getPtr()[15]=1.000000;
+	
+	calculateLookups();
+}
+
+void ofxKinect::calculateLookups() {
+	if(!lookupsCalculated) {
+		ofLog(OF_LOG_VERBOSE, "Setting up LUT for distance and depth values.");
+		for(int i = 0; i < 2048; i++){
+			if(i == 2047) {
+				distancePixelsLookup[i] = 0;
+				depthPixelsLookupNearWhite[i] = 0;
+				depthPixelsLookupFarWhite[i] = 0;
+			} else {
+				// using equation from http://openkinect.org/wiki/Imaging_Information
+				const float k1 = 0.1236;
+				const float k2 = 2842.5;
+				const float k3 = 1.1863;
+				const float k4 = 0.0370;
+				distancePixelsLookup[i] = k1 * tanf(i / k2 + k3) - k4; // calculate in meters
+				distancePixelsLookup[i] *= 100; // convert to centimeters
+				depthPixelsLookupNearWhite[i] = (float) (2048 * 256) / (i - 2048);
+				depthPixelsLookupFarWhite[i] = 255 - depthPixelsLookupNearWhite[i];
+			}
+		}
+	}
+	lookupsCalculated = true;
 }
 
 
@@ -255,30 +287,20 @@ void ofxKinect::update(){
 
 	if ( this->lock() ) {
 
-		for (int k = 0; k < width*height; k++){
-			// ignore null pixels
-			if(depthPixelsBack[k] == 2047) {
-				distancePixels[k] = 0;
-				depthPixels[k] = 0;
-			} else {
-				// using equation from http://openkinect.org/wiki/Imaging_Information
-				// this should be done with a LUT, this is an inefficient way to do it
-				const float k1 = 0.1236;
-				const float k2 = 2842.5;
-				const float k3 = 1.1863;
-				const float k4 = 0.0370;
-				distancePixels[k] = k1 * tanf(depthPixelsBack[k] / k2 + k3) - k4; // calculate in meters
-				distancePixels[k] *= 100; // convert to centimeters
-
-				if(bDepthNearValueWhite){
-					//invert and convert to 8 bit
-					depthPixels[k] = (float) (2048 * 256) / (depthPixelsBack[k] - 2048);
-				} else {
-					depthPixels[k] = (float) (2048 * 256) / (2048 - depthPixelsBack[k]);
-				}
+		int n = width * height;
+		if(bDepthNearValueWhite) {
+			for(int i = 0; i < n; i++){
+				distancePixels[i] = distancePixelsLookup[depthPixelsBack[i]];
+				depthPixels[i] = depthPixelsLookupNearWhite[depthPixelsBack[i]];
+			}
+		} else {
+			for(int i = 0; i < n; i++){
+				distancePixels[i] = distancePixelsLookup[depthPixelsBack[i]];
+				depthPixels[i] = depthPixelsLookupFarWhite[depthPixelsBack[i]];
 			}
 		}
-		memcpy(videoPixels, videoPixelsBack, width*height*bytespp);
+		
+		memcpy(videoPixels, videoPixelsBack, n * bytespp);
 
 		//we have done the update
 		bNeedsUpdate = false;
