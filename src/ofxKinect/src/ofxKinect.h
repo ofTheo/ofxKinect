@@ -28,7 +28,7 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		void close();
         
 		/// initialize resources, must be called before open()
-		bool init(bool bTexture=true);
+		bool init(bool infrared=false, bool bTexture=true);
 		
 		bool setCameraTiltAngle(float angleInDegrees);
         
@@ -100,12 +100,12 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 
 		bool					bUseTexture;
 		ofTexture				depthTex;			// the depth texture
-		ofTexture 				rgbTex;				// the RGB texture
+		ofTexture 				videoTex;				// the RGB texture
 		bool 					bVerbose;
 		bool 					bGrabberInited;
 		
 		unsigned char *			depthPixels;
-		unsigned char *			rgbPixels;
+		unsigned char *			videoPixels;
 		unsigned char *			calibratedRGBPixels;
 		
 		unsigned short *		depthPixelsRaw;
@@ -123,7 +123,7 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		freenect_device * 	kinectDevice;	// kinect device handle
 		
 		unsigned short *	depthPixelsBack;	// depth back
-		unsigned char *		rgbPixelsBack;		// rgb back
+		unsigned char *		videoPixelsBack;		// rgb back
 		
 		bool bNeedsUpdate;
 		bool bUpdateTex;
@@ -132,9 +132,12 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		
 		ofxMatrix4x4		rgbDepthMatrix;
 
+		bool				bInfrared;
+		int					bytespp;
+
 		// libfreenect callbacks
 		static void grabDepthFrame(freenect_device *dev, void *depth, uint32_t timestamp);
-		static void grabRgbFrame(freenect_device *dev, freenect_pixel *rgb, uint32_t timestamp);
+		static void grabRgbFrame(freenect_device *dev, void *rgb, uint32_t timestamp);
     
 		// thread function
 		void threadedFunction();

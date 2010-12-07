@@ -47,12 +47,12 @@
 #define PKTS_PER_XFER 128
 #define NUM_XFERS 4
 #define DEPTH_PKTBUF 2048
-#define RGB_PKTBUF 2048
+#define VIDEO_PKTBUF 2048
 #else
 #define PKTS_PER_XFER 16
 #define NUM_XFERS 16
 #define DEPTH_PKTBUF 1920
-#define RGB_PKTBUF 1920
+#define VIDEO_PKTBUF 1920
 #endif
 
 typedef struct {
@@ -82,6 +82,7 @@ int fnusb_shutdown(fnusb_ctx *ctx);
 int fnusb_process_events(fnusb_ctx *ctx);
 
 int fnusb_open_subdevices(freenect_device *dev, int index);
+int fnusb_close_subdevices(freenect_device *dev);
 
 int fnusb_start_iso(fnusb_dev *dev, fnusb_isoc_stream *strm, fnusb_iso_cb cb, int ep, int xfers, int pkts, int len);
 int fnusb_stop_iso(fnusb_dev *dev, fnusb_isoc_stream *strm);
