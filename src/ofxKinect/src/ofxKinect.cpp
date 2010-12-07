@@ -270,22 +270,10 @@ void ofxKinect::update(){
 				distancePixels[k] = k1 * tanf(depthPixelsBack[k] / k2 + k3) - k4; // calculate in meters
 				distancePixels[k] *= 100; // convert to centimeters
 
-			if(bDepthNearValueWhite){
-			
-//TODO: remove this - why are we doing background thresholding here? we should be providing the actual data.
-//ANSWER: because you can't catch these values after they've been interpolated ...
-
-				// filter out the noisey values above 1024
-				if(depthPixelsBack[k] < 1024) {
+				if(bDepthNearValueWhite){
 					//invert and convert to 8 bit
 					depthPixels[k] = (float) (2048 * 256) / (depthPixelsBack[k] - 2048);
-					}
-					else {
-						depthPixels[k] = 0;
-					}
-				}
-				else {
-					// convert to 8 bit
+				} else {
 					depthPixels[k] = (float) (2048 * 256) / (2048 - depthPixelsBack[k]);
 				}
 			}

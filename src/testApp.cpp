@@ -75,14 +75,11 @@ void testApp::draw()
 	grayImage.draw(10, 320, 400, 300);
 	contourFinder.draw(10, 320, 400, 300);
 	
-	// point cloud is commented out because we need a proper camera class to explore it effectively
-	/*
 	ofPushMatrix();
 	ofTranslate(420, 320);
-	drawPointCloud();
+	// point cloud is commented out because we need a proper camera class to explore it effectively
+	//drawPointCloud();
 	ofPopMatrix();
-	 */
-
 
 	ofSetColor(255, 255, 255);
 	ofDrawBitmapString("accel is: " + ofToString(kinect.getMksAccel().x, 2) + " / " 
@@ -96,25 +93,17 @@ void testApp::draw()
 }
 
 void testApp::drawPointCloud() {
-	int step = 2;
-	ofScale(1. / step, 1. / step, 1. / step);
-	// two magic numbers derived visually
-	float scaleFactor = .0021;
-	float minDistance = -10;
+	ofScale(400, 400, 400);
 	int w = 640;
 	int h = 480;
-	ofTranslate(w / 2, h / 2);
 	ofRotateY(mouseX);
-	ofTranslate(-w / 2, -h / 2);
 	float* distancePixels = kinect.getDistancePixels();
 	glBegin(GL_POINTS);
+	int step = 2;
 	for(int y = 0; y < h; y += step) {
 		for(int x = 0; x < w; x += step) {
-			int i = y * w + x;
-			float z = distancePixels[i];
-			float scaledx = (x - w / 2) * (z + minDistance) * scaleFactor;
-			float scaledy = (y - h / 2) * (z + minDistance) * scaleFactor;
-			glVertex3f(scaledx, scaledy, z);
+			ofPoint cur = kinect.getWorldCoordinateFor(x, y);
+			glVertex3f(cur.x, cur.y, cur.z);
 		}
 	}
 	glEnd();
