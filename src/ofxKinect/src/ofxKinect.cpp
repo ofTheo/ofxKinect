@@ -317,6 +317,23 @@ float ofxKinect::getDistanceAt(const ofPoint & p) {
 }
 
 //------------------------------------
+ofxPoint3f ofxKinect::getWorldCoordinateFor(int x, int y) {
+	//Based on http://graphics.stanford.edu/~mdfisher/Kinect.html
+	static const double fx_d = 1.0 / 5.9421434211923247e+02;
+    static const double fy_d = 1.0 / 5.9104053696870778e+02;
+    static const double cx_d = 3.3930780975300314e+02;
+    static const double cy_d = 2.4273913761751615e+02;
+	
+    ofxVec3f result;
+	const double depth = getDistanceAt(x,y)/100.0;
+    result.x = float((x - cx_d) * depth * fx_d);
+    result.y = float((y - cy_d) * depth * fy_d);
+    result.z = depth;
+	
+    return result;	
+}
+
+//------------------------------------
 ofColor	ofxKinect::getColorAt(int x, int y) {
 	int index = (y * width + x) * 3;
 	ofColor c;
