@@ -4,7 +4,7 @@
 //--------------------------------------------------------------
 void testApp::setup()
 {
-	// kinect.init(true)  //shows infrared image
+	//kinect.init(true);  //shows infrared image
 	kinect.init();
 	kinect.setVerbose(true);
 	kinect.open();
