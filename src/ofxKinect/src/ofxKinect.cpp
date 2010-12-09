@@ -107,8 +107,7 @@ unsigned char	* ofxKinect::getDepthPixels(){
 
 //---------------------------------------------------------------------------
 unsigned short 	* ofxKinect::getRawDepthPixels(){
-	//return depthPixelsRaw;
-	return depthPixelsBack;
+	return depthPixelsRaw;
 }
 
 //---------------------------------------------------------------------------
