@@ -107,8 +107,7 @@ unsigned char	* ofxKinect::getDepthPixels(){
 
 //---------------------------------------------------------------------------
 unsigned short 	* ofxKinect::getRawDepthPixels(){
-	//return depthPixelsRaw;
-	return depthPixelsBack;
+	return depthPixelsRaw;
 }
 
 //---------------------------------------------------------------------------
@@ -293,11 +292,14 @@ void ofxKinect::update(){
 			for(int i = 0; i < n; i++){
 				distancePixels[i] = distancePixelsLookup[depthPixelsBack[i]];
 				depthPixels[i] = depthPixelsLookupNearWhite[depthPixelsBack[i]];
+				depthPixelsRaw[i] = depthPixelsBack[i];
+				
 			}
 		} else {
 			for(int i = 0; i < n; i++){
 				distancePixels[i] = distancePixelsLookup[depthPixelsBack[i]];
 				depthPixels[i] = depthPixelsLookupFarWhite[depthPixelsBack[i]];
+				depthPixelsRaw[i] = depthPixelsBack[i];
 			}
 		}
 		
