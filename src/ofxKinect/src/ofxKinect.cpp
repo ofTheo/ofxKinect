@@ -62,23 +62,22 @@ ofxKinect::ofxKinect(){
 void ofxKinect::calculateLookups() {
 	if(!lookupsCalculated) {
 		ofLog(OF_LOG_VERBOSE, "Setting up LUT for distance and depth values.");
-		for(int i = 0; i < 2048; i++){
-			if(i == 2047) {
-				distancePixelsLookup[i] = 0;
-				depthPixelsLookupNearWhite[i] = 0;
-				depthPixelsLookupFarWhite[i] = 0;
-			} else {
-				// using equation from http://openkinect.org/wiki/Imaging_Information
-				const float k1 = 0.1236;
-				const float k2 = 2842.5;
-				const float k3 = 1.1863;
-				const float k4 = 0.0370;
-				distancePixelsLookup[i] = k1 * tanf(i / k2 + k3) - k4; // calculate in meters
-				distancePixelsLookup[i] *= 100; // convert to centimeters
-				depthPixelsLookupNearWhite[i] = (float) (2048 * 256) / (i - 2048);
-				depthPixelsLookupFarWhite[i] = 255 - depthPixelsLookupNearWhite[i];
-			}
+				
+		for(int i = 0; i < 2047; i++){
+			// using equation from http://openkinect.org/wiki/Imaging_Information
+			const float k1 = 0.1236;
+			const float k2 = 2842.5;
+			const float k3 = 1.1863;
+			const float k4 = 0.0370;
+			distancePixelsLookup[i] = k1 * tanf(i / k2 + k3) - k4; // calculate in meters
+			distancePixelsLookup[i] *= 100; // convert to centimeters
+			depthPixelsLookupNearWhite[i] = (float) (2048 * 256) / (i - 2048);
+			depthPixelsLookupFarWhite[i] = 255 - depthPixelsLookupNearWhite[i];
 		}
+		
+		distancePixelsLookup[2047] = 0;
+		depthPixelsLookupNearWhite[2047] = 0;
+		depthPixelsLookupFarWhite[2047] = 0;		
 	}
 	lookupsCalculated = true;
 }
