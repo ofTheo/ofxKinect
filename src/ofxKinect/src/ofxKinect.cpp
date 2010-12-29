@@ -9,28 +9,25 @@ float ofxKinect::distancePixelsLookup[2048];
 unsigned char ofxKinect::depthPixelsLookupNearWhite[2048];
 unsigned char ofxKinect::depthPixelsLookupFarWhite[2048];
 
-ofxVec3f operator *(const ofxMatrix3x3 &m,const ofxVec3f &v)
-  {
-	ofxVec3f vv;
-
-    vv.x = v.x*m.a + v.y*m.b + v.z*m.c;
-    vv.y = v.x*m.d + v.y*m.e + v.z*m.f;
-    vv.z = v.x*m.g + v.y*m.h + v.z*m.i;
-
-    return vv;
-  }
-
 
 
 //--------------------------------------------------------------------
 ofxKinect::ofxKinect():
-		T_rgb( 1.9985242312092553e-02, -7.4423738761617583e-04,
-				-1.0916736334336222e-02 ),
-		R_rgb(9.9984628826577793e-01, 1.2635359098409581e-03,
+		T_rgb( 1.9985242312092553e-02f, -7.4423738761617583e-04f, -1.0916736334336222e-02f ),
+		//T_rgb(2.1354778990792557e-02, 2.5073334719943473e-03, -1.2922411623995907e-02),
+		/*R_rgb(9.9984628826577793e-01, 1.2635359098409581e-03,
 				-1.7487233004436643e-02, -1.4779096108364480e-03,
 				9.9992385683542895e-01, -1.2251380107679535e-02,
 				1.7470421412464927e-02, 1.2275341476520762e-02,
-				9.9977202419716948e-01)
+				9.9977202419716948e-01)*/
+		R_rgb(9.9984628826577793e-01f, 1.2635359098409581e-03f, -1.7487233004436643e-02f, 0,
+			 -1.4779096108364480e-03f, 9.9992385683542895e-01f, -1.2251380107679535e-02f, 0,
+			  1.7470421412464927e-02f, 1.2275341476520762e-02f, 9.9977202419716948e-01f, 0,
+			  0,0,0,1)
+		/*R_rgb(9.9977321644139494e-01, 1.7292658422779497e-03, -2.1225581878346968e-02, 0,
+			 -2.0032487074002391e-03, 9.9991486643051353e-01, -1.2893676196675344e-02, 0,
+			  2.1201478274968936e-02, 1.2933272242365573e-02,  9.9969156632836553e-01, 0,
+			  0.					, 0.					,  0.					 , 1)*/
 {
 	ofLog(OF_LOG_VERBOSE, "Creating ofxKinect.");
 
@@ -78,6 +75,8 @@ ofxKinect::ofxKinect():
 	rgbDepthMatrix.getPtr()[15]=1.000000;*/
 	
 	calculateLookups();
+	R_rgb.preMultTranslate(-T_rgb);
+	R_rgb = ofxMatrix4x4::getTransposedOf(R_rgb);
 }
 
 void ofxKinect::calculateLookups() {
@@ -159,17 +158,26 @@ unsigned char * ofxKinect::getCalibratedRGBPixels(){
 	static ofxVec2f texcoord2d;
 	unsigned char * calibratedPixels = calibratedRGBPixels;
 	float * _distancePixels = distancePixels;
+
 	for ( int y = 0; y < 480; y++) {
 		for ( int x = 0; x < 640; x++) {
 			texcoord3d = getWorldCoordinateFor(x,y,(*_distancePixels++)*.01);
-			texcoord3d = R_rgb * texcoord3d + T_rgb;
-			texcoord2d.x = ofClamp((texcoord3d.x * fx_rgb / texcoord3d.z) + cx_rgb,0,640);
-			texcoord2d.y = ofClamp((texcoord3d.y * fy_rgb / texcoord3d.z) + cy_rgb,0,480);
+			if(texcoord3d.z){
+				texcoord3d = R_rgb * texcoord3d;
+				const float invZ = 1.0f / texcoord3d.z;
+				//texcoord3d = rgbDepthMatrix * texcoord3d;
+				texcoord2d.x = ofClamp(round(texcoord3d.x * fx_rgb *invZ) + cx_rgb,0,639);
+				texcoord2d.y = ofClamp(round(texcoord3d.y * fy_rgb *invZ) + cy_rgb,0,479);
 
-			int pos = int(texcoord2d.y)*640*3+int(texcoord2d.x)*3;
-			*calibratedPixels++ = videoPixels[pos];
-			*calibratedPixels++ = videoPixels[pos+1];
-			*calibratedPixels++ = videoPixels[pos+2];
+				int pos = int(texcoord2d.y)*640*3+int(texcoord2d.x)*3;
+				*calibratedPixels++ = videoPixels[pos];
+				*calibratedPixels++ = videoPixels[pos+1];
+				*calibratedPixels++ = videoPixels[pos+2];
+			}else{
+				*calibratedPixels++ = 0;
+				*calibratedPixels++ = 0;
+				*calibratedPixels++ = 0;
+			}
 		}
 	}
 	return calibratedRGBPixels;
@@ -417,9 +425,10 @@ ofColor ofxKinect::getCalibratedColorAt(int x, int y){
 	ofxVec3f texcoord3d;
 	ofxVec2f texcoord2d;
 	texcoord3d = getWorldCoordinateFor(x,y);
-	texcoord3d = R_rgb * texcoord3d + T_rgb;
-	texcoord2d.x = ofClamp((texcoord3d.x * fx_rgb / texcoord3d.z) + cx_rgb,0,640);
-	texcoord2d.y = ofClamp((texcoord3d.y * fy_rgb / texcoord3d.z) + cy_rgb,0,480);
+	texcoord3d = R_rgb * texcoord3d;
+	const float invZ = 1/ texcoord3d.z;
+	texcoord2d.x = ofClamp((texcoord3d.x * fx_rgb *invZ) + cx_rgb,0,640);
+	texcoord2d.y = ofClamp((texcoord3d.y * fy_rgb *invZ) + cy_rgb,0,480);
 
 	/*int pos = int(texcoord2d.y)*640*3+int(texcoord2d.x)*3;
 	texcoord3d.set(x,y,0);
@@ -432,17 +441,15 @@ ofColor ofxKinect::getCalibratedColorAt(const ofPoint & p){
 	return getCalibratedColorAt(p.x,p.y);
 }
 
-/*
 //------------------------------------
-ofxMatrix4x4 ofxKinect::getRGBDepthMatrix(){
+/*ofxMatrix4x4 ofxKinect::getRGBDepthMatrix(){
 	return rgbDepthMatrix;
 }
 
 //------------------------------------
 void ofxKinect::setRGBDepthMatrix(const ofxMatrix4x4 & matrix){
 	rgbDepthMatrix=matrix;
-}
-*/
+}*/
 
 //------------------------------------
 void ofxKinect::setUseTexture(bool bUse){
@@ -460,6 +467,27 @@ void ofxKinect::draw(float _x, float _y, float _w, float _h){
 void ofxKinect::draw(float _x, float _y){
 	draw(_x, _y, (float)width, (float)height);
 }
+
+//----------------------------------------------------------
+void ofxKinect::draw(const ofPoint & point){
+	draw(point.x, point.y);
+}
+
+//----------------------------------------------------------
+void ofxKinect::drawDepth(const ofPoint & point){
+	drawDepth(point.x, point.y);
+}
+
+//----------------------------------------------------------
+void ofxKinect::draw(const ofRectangle & rect){
+	draw(rect.x, rect.y, rect.width, rect.height);
+}
+
+//----------------------------------------------------------
+void ofxKinect::drawDepth(const ofRectangle & rect){
+	drawDepth(rect.x, rect.y, rect.width, rect.height);
+}
+
 
 //----------------------------------------------------------
 void ofxKinect::drawDepth(float _x, float _y, float _w, float _h){

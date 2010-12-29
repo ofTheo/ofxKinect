@@ -162,6 +162,6 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		static const double cx_rgb = 3.2894272028759258e+02;
 		static const double cy_rgb = 2.6748068171871557e+02;
 		ofxVec3f T_rgb;
-		ofxMatrix3x3 R_rgb;
+		ofxMatrix4x4 R_rgb;
 };
 
