@@ -68,18 +68,20 @@ void testApp::update()
 void testApp::draw()
 {
 	ofSetColor(255, 255, 255);
+	if(drawPC){
+		ofPushMatrix();
+		ofTranslate(420, 320);
+		// point cloud is commented out because we need a proper camera class to explore it effectively
+		drawPointCloud();
+		ofPopMatrix();
+	}else{
+		kinect.drawDepth(10, 10, 400, 300);
+		kinect.draw(420, 10, 400, 300);
 
-	kinect.drawDepth(10, 10, 400, 300);
-	kinect.draw(420, 10, 400, 300);
+		grayImage.draw(10, 320, 400, 300);
+		contourFinder.draw(10, 320, 400, 300);
+	}
 	
-	grayImage.draw(10, 320, 400, 300);
-	contourFinder.draw(10, 320, 400, 300);
-	
-	ofPushMatrix();
-	ofTranslate(420, 320);
-	// point cloud is commented out because we need a proper camera class to explore it effectively
-	drawPointCloud();
-	ofPopMatrix();
 
 	ofSetColor(255, 255, 255);
 	ofDrawBitmapString("accel is: " + ofToString(kinect.getMksAccel().x, 2) + " / " 
@@ -90,6 +92,7 @@ void testApp::draw()
 	sprintf(reportStr, "using opencv threshold = %i (press spacebar)\nset near threshold %i (press: + -)\nset far threshold %i (press: < >) num blobs found %i, fps: %f",bThreshWithOpenCV, nearThreshold, farThreshold, contourFinder.nBlobs, ofGetFrameRate());
 	ofDrawBitmapString(reportStr, 20, 690);
 	ofDrawBitmapString("tilt angle: " + ofToString(angle),20,670);
+	ofDrawBitmapString("press p to switch between images and point cloud",20,680);
 }
 
 void testApp::drawPointCloud() {
@@ -103,6 +106,8 @@ void testApp::drawPointCloud() {
 	for(int y = 0; y < h; y += step) {
 		for(int x = 0; x < w; x += step) {
 			ofPoint cur = kinect.getWorldCoordinateFor(x, y);
+			ofColor color = kinect.getCalibratedColorAt(x,y);
+			glColor3ub((unsigned char)color.r,(unsigned char)color.g,(unsigned char)color.b);
 			glVertex3f(cur.x, cur.y, cur.z);
 		}
 	}
@@ -122,6 +127,9 @@ void testApp::keyPressed (int key)
 		case ' ':
 			bThreshWithOpenCV = !bThreshWithOpenCV;
 		break;
+		case'p':
+			drawPC = !drawPC;
+			break;
 	
 		case '>':
 		case '.':
