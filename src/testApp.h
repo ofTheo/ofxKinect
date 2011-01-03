@@ -36,6 +36,7 @@ class testApp : public ofBaseApp
 		ofxCvContourFinder 	contourFinder;
 		
 		bool				bThreshWithOpenCV;
+		bool				drawPC;
 
 		int 				nearThreshold;
 		int					farThreshold;

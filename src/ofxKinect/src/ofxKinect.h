@@ -5,13 +5,15 @@
 #include "ofGraphics.h"
 #include "ofTypes.h"
 
+#include "ofxBase3DVideo.h"
+
 #include "ofxThread.h"
-#include "ofxVectorMath.h"
 
 #include <libusb.h>
 #include "libfreenect.h"
+#include "ofxKinectCalibration.h"
 
-class ofxKinect : public ofBaseVideo, protected ofxThread{
+class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 
 	public :
 
@@ -50,8 +52,8 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		ofColor getCalibratedColorAt(int x, int y);
 		ofColor getCalibratedColorAt(const ofPoint & p);		
 
-		ofxMatrix4x4 getRGBDepthMatrix();
-		void setRGBDepthMatrix(const ofxMatrix4x4 & matrix);
+		//ofxMatrix4x4 getRGBDepthMatrix();
+		//void setRGBDepthMatrix(const ofxMatrix4x4 & matrix);
 		
 		float 			getHeight();
 		float 			getWidth();
@@ -92,9 +94,13 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		void 			setUseTexture(bool bUse);
 		void 			draw(float x, float y, float w, float h);
 		void 			draw(float x, float y);
+		void			draw(const ofPoint & point);
+		void			draw(const ofRectangle & rect);
 		
 		void 			drawDepth(float x, float y, float w, float h);
 		void 			drawDepth(float x, float y);
+		void			drawDepth(const ofPoint & point);
+		void			drawDepth(const ofRectangle & rect);
 
 		const static int	width = 640;
 		const static int	height = 480;
@@ -107,25 +113,16 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		bool 					bVerbose;
 		bool 					bGrabberInited;
 		
-		unsigned char *			depthPixels;
 		unsigned char *			videoPixels;
-		unsigned char *			calibratedRGBPixels;
-		
 		unsigned short *		depthPixelsRaw;
-		float * 				distancePixels;
 		
 		ofPoint rawAccel;
 		ofPoint mksAccel;
         
 		float targetTiltAngleDeg;
 		bool bTiltNeedsApplying;
-	
-		static void calculateLookups();
-		static bool lookupsCalculated;
-		static float distancePixelsLookup[2048];
-		static unsigned char depthPixelsLookupNearWhite[2048];
-		static unsigned char depthPixelsLookupFarWhite[2048];
 		
+
     private:
 
 		freenect_context *	kinectContext;	// kinect context handle
@@ -136,10 +133,6 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
 		
 		bool bNeedsUpdate;
 		bool bUpdateTex;
-		
-		bool bDepthNearValueWhite;
-		
-		ofxMatrix4x4		rgbDepthMatrix;
 
 		bool				bInfrared;
 		int					bytespp;
@@ -150,5 +143,7 @@ class ofxKinect : public ofBaseVideo, protected ofxThread{
     
 		// thread function
 		void threadedFunction();
+
+		ofxKinectCalibration calibration;
 };
 
