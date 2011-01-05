@@ -430,9 +430,6 @@ void ofxKinect::threadedFunction(){
 //		printf("\r raw acceleration: %4d %4d %4d  mks acceleration: %4f %4f %4f", ax, ay, az, dx, dy, dz);
 	}
 
-//TODO: uncomment these when they are implemented in freenect	
-	freenect_set_tilt_degs(kinectDevice, 0);
-	freenect_update_tilt_state(kinectDevice);
 	freenect_stop_depth(kinectDevice);
 	freenect_stop_video(kinectDevice);
 	freenect_set_led(kinectDevice, LED_YELLOW);
