@@ -22,6 +22,8 @@ void testApp::setup()
 
 	angle = 0;
 	kinect.setCameraTiltAngle(angle);
+	
+	drawPC = false;
 }
 
 //--------------------------------------------------------------

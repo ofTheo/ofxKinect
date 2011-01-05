@@ -37,23 +37,35 @@ ofxKinectCalibration::ofxKinectCalibration():
 	R_rgb = ofxMatrix4x4::getTransposedOf(R_rgb);
 }
 
+inline float ofxKinectCalibration::rawToCentimeters(unsigned short raw) {
+	return 100 * (k1 * tanf((raw / k2) + k3) - k4);
+}
+
+inline unsigned short ofxKinectCalibration::centimetersToRaw(float centimeters) {
+	return (unsigned short) (k2 * (atanf((k4 + (centimeters / 100)) / k1) - k3));
+}
+
 void ofxKinectCalibration::calculateLookups() {
 	if(!lookupsCalculated) {
 		ofLog(OF_LOG_VERBOSE, "Setting up LUT for distance and depth values.");
+		
+		/*
+		 these values constrain the maximum distance in the depthPixels image to:
+		 - as near as possible (raw value of 0)
+		 - 4 meters away, maximum
+		 both near and far clipping planes should be user-settable
+		 */
+		float nearClipping = rawToCentimeters(0);
+		float farClipping = 400;
+		
 		for(int i = 0; i < 2048; i++){
 			if(i == 2047) {
 				distancePixelsLookup[i] = 0;
 				depthPixelsLookupNearWhite[i] = 0;
 				depthPixelsLookupFarWhite[i] = 0;
 			} else {
-				// using equation from http://openkinect.org/wiki/Imaging_Information
-				const float k1 = 0.1236;
-				const float k2 = 2842.5;
-				const float k3 = 1.1863;
-				const float k4 = 0.0370;
-				distancePixelsLookup[i] = k1 * tanf(i / k2 + k3) - k4; // calculate in meters
-				distancePixelsLookup[i] *= 100; // convert to centimeters
-				depthPixelsLookupNearWhite[i] = (float) (2048 * 256) / (i - 2048);
+				distancePixelsLookup[i] = rawToCentimeters(i);
+				depthPixelsLookupNearWhite[i] = ofMap(distancePixelsLookup[i], nearClipping, farClipping, 0, 255, true);
 				depthPixelsLookupFarWhite[i] = 255 - depthPixelsLookupNearWhite[i];
 			}
 		}
