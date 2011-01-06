@@ -7,6 +7,14 @@
 
 #include "ofxKinectCalibration.h"
 
+/*
+ these values constrain the maximum distance in the depthPixels image to:
+ - as near as possible (raw value of 0)
+ - 4 meters away, maximum
+ both near and far clipping planes should be user-settable
+ */
+float ofxKinectCalibration::nearClipping = rawToCentimeters(0), ofxKinectCalibration::farClipping = 400;
+
 bool ofxKinectCalibration::lookupsCalculated = false;
 float ofxKinectCalibration::distancePixelsLookup[2048];
 unsigned char ofxKinectCalibration::depthPixelsLookupNearWhite[2048];
@@ -45,18 +53,24 @@ inline unsigned short ofxKinectCalibration::centimetersToRaw(float centimeters) 
 	return (unsigned short) (k2 * (atanf((k4 + (centimeters / 100)) / k1) - k3));
 }
 
+void ofxKinectCalibration::setClippingInCentimeters(float nearClipping, float farClipping) {
+	ofxKinectCalibration::nearClipping = nearClipping;
+	ofxKinectCalibration::farClipping = farClipping;
+	lookupsCalculated = false;
+	calculateLookups();
+}
+
+float ofxKinectCalibration::getNearClipping() {
+	return nearClipping;
+}
+
+float ofxKinectCalibration::getFarClipping() {
+	return farClipping;
+}
+
 void ofxKinectCalibration::calculateLookups() {
 	if(!lookupsCalculated) {
 		ofLog(OF_LOG_VERBOSE, "Setting up LUT for distance and depth values.");
-		
-		/*
-		 these values constrain the maximum distance in the depthPixels image to:
-		 - as near as possible (raw value of 0)
-		 - 4 meters away, maximum
-		 both near and far clipping planes should be user-settable
-		 */
-		float nearClipping = rawToCentimeters(0);
-		float farClipping = 400;
 		
 		for(int i = 0; i < 2048; i++){
 			if(i == 2047) {

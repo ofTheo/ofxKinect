@@ -40,7 +40,10 @@ public:
 
 	float getDistanceAt(int x, int y);
 	float getDistanceAt(const ofPoint & p);
-
+	
+	static void setClippingInCentimeters(float near, float far);
+	static float getNearClipping();
+	static float getFarClipping();
 
 	unsigned char 	* getDepthPixels();		// grey scale values
 	/// get the distance in centimeters to a given point
@@ -74,6 +77,9 @@ private:
 	k2 = 2842.5,
 	k3 = 1.1863,
 	k4 = 0.0370;
+	
+	static float nearClipping, farClipping;
+	
 	static float rawToCentimeters(unsigned short raw);
 	static unsigned short centimetersToRaw(float centimeters);
 	
