@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef OFX3DVIDEO_H_
-#define OFX3DVIDEO_H_
+#pragma once
 
 class ofxBase3DVideo: public ofBaseVideo{
 public:
@@ -17,5 +16,3 @@ public:
 
 	virtual ofTexture &		getDepthTextureReference()=0;
 };
-
-#endif /* OF3DVIDEO_H_ */

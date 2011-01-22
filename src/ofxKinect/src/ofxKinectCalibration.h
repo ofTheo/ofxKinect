@@ -5,11 +5,10 @@
  *      Author: arturo
  */
 
-#ifndef OFXKINECTCALIBRATION_H_
-#define OFXKINECTCALIBRATION_H_
+#pragma once
 
 #include "ofMain.h"
-#include "ofxVectorMath.h"
+#include "ofVectorMath.h"
 
 class ofxKinectCalibration {
 public:
@@ -30,12 +29,12 @@ public:
 	bool isDepthNearValueWhite();
 
 
-	ofxPoint2f getCalibratedColorCoordAt(int x, int y);
-	ofxPoint2f getCalibratedColorCoordAt(const ofPoint & p);
+	ofVec2f getCalibratedColorCoordAt(int x, int y);
+	ofVec2f getCalibratedColorCoordAt(const ofPoint & p);
 
 	/// calculates the coordinate in the world for the pixel (perspective calculation). Center  of image is (0.0)
-	ofxPoint3f getWorldCoordinateFor(int x, int y);
-	ofxPoint3f getWorldCoordinateFor(int x, int y, double z);
+	ofVec3f getWorldCoordinateFor(int x, int y);
+	ofVec3f getWorldCoordinateFor(int x, int y, double z);
 
 
 	float getDistanceAt(int x, int y);
@@ -59,8 +58,8 @@ private:
 	static float distancePixelsLookup[2048];
 	static unsigned char depthPixelsLookupNearWhite[2048];
 	static unsigned char depthPixelsLookupFarWhite[2048];
-	ofxVec3f T_rgb;
-	ofxMatrix4x4 R_rgb;
+	ofVec3f T_rgb;
+	ofMatrix4x4 R_rgb;
 	static double fx_d;
 	static double fy_d;
 	static float cx_d;
@@ -91,5 +90,3 @@ private:
 
 	int					bytespp;
 };
-
-#endif /* OFXKINECTCALIBRATION_H_ */

@@ -2,8 +2,7 @@
 
 
 //--------------------------------------------------------------
-void testApp::setup()
-{
+void testApp::setup() {
 	//kinect.init(true);  //shows infrared image
 	kinect.init();
 	kinect.setVerbose(true);
@@ -27,8 +26,7 @@ void testApp::setup()
 }
 
 //--------------------------------------------------------------
-void testApp::update()
-{
+void testApp::update() {
 	ofBackground(100, 100, 100);
 	kinect.update();
 
@@ -67,8 +65,7 @@ void testApp::update()
 }
 
 //--------------------------------------------------------------
-void testApp::draw()
-{
+void testApp::draw() {
 	ofSetColor(255, 255, 255);
 	if(drawPC){
 		ofPushMatrix();
@@ -122,10 +119,8 @@ void testApp::exit(){
 }
 
 //--------------------------------------------------------------
-void testApp::keyPressed (int key)
-{
-	switch (key)
-	{
+void testApp::keyPressed (int key) {
+	switch (key) {
 		case ' ':
 			bThreshWithOpenCV = !bThreshWithOpenCV;
 		break;

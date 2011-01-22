@@ -1,14 +1,10 @@
-#ifndef _TEST_APP
-#define _TEST_APP
+#pragma once
 
 #include "ofMain.h"
-
 #include "ofxOpenCv.h"
 #include "ofxKinect.h"
 
-class testApp : public ofBaseApp
-{
-
+class testApp : public ofBaseApp {
 	public:
 
 		void setup();
@@ -43,5 +39,3 @@ class testApp : public ofBaseApp
 
 		int					angle;
 };
-
-#endif

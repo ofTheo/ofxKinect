@@ -42,7 +42,7 @@ ofxKinectCalibration::ofxKinectCalibration():
 	bDepthNearValueWhite	= false;
 	calculateLookups();
 	R_rgb.preMultTranslate(-T_rgb);
-	R_rgb = ofxMatrix4x4::getTransposedOf(R_rgb);
+	R_rgb = ofMatrix4x4::getTransposedOf(R_rgb);
 }
 
 inline float ofxKinectCalibration::rawToCentimeters(unsigned short raw) {
@@ -136,8 +136,8 @@ bool ofxKinectCalibration::isDepthNearValueWhite(){
 
 unsigned char * ofxKinectCalibration::getCalibratedRGBPixels(unsigned char * rgb){
 	//calibration method from:  http://nicolas.burrus.name/index.php/Research/KinectCalibration
-	static ofxVec3f texcoord3d;
-	static ofxVec2f texcoord2d;
+	static ofVec3f texcoord3d;
+	static ofVec2f texcoord2d;
 	unsigned char * calibratedPixels = calibratedRGBPixels;
 	float * _distancePixels = distancePixels;
 
@@ -172,10 +172,10 @@ float * ofxKinectCalibration::getDistancePixels(){
 	return distancePixels;
 }
 
-ofxPoint2f ofxKinectCalibration::getCalibratedColorCoordAt(int x, int y){
+ofVec2f ofxKinectCalibration::getCalibratedColorCoordAt(int x, int y){
 	//calibration method from:  http://nicolas.burrus.name/index.php/Research/KinectCalibration
-	ofxVec3f texcoord3d;
-	ofxVec2f texcoord2d;
+	ofVec3f texcoord3d;
+	ofVec2f texcoord2d;
 	texcoord3d = getWorldCoordinateFor(x,y);
 	texcoord3d = R_rgb * texcoord3d;
 	const float invZ = 1/ texcoord3d.z;
@@ -194,19 +194,19 @@ float ofxKinectCalibration::getDistanceAt(const ofPoint & p){
 	return getDistanceAt(p.x, p.y);
 }
 
-ofxPoint2f ofxKinectCalibration::getCalibratedColorCoordAt(const ofPoint & p){
+ofVec2f ofxKinectCalibration::getCalibratedColorCoordAt(const ofPoint & p){
 	return getCalibratedColorCoordAt(p.x,p.y);
 }
 
-ofxPoint3f ofxKinectCalibration::getWorldCoordinateFor(int x, int y){
+ofVec3f ofxKinectCalibration::getWorldCoordinateFor(int x, int y){
 	const double depth = getDistanceAt(x,y)/100.0;
 	return getWorldCoordinateFor(x,y,depth);
 }
 
-ofxPoint3f ofxKinectCalibration::getWorldCoordinateFor(int x, int y, double z){
+ofVec3f ofxKinectCalibration::getWorldCoordinateFor(int x, int y, double z){
 	//Based on http://graphics.stanford.edu/~mdfisher/Kinect.html
 
-	ofxVec3f result;
+	ofVec3f result;
 	result.x = float((x - cx_d) * z * fx_d);
 	result.y = float((y - cy_d) * z * fy_d);
 	result.z = z;

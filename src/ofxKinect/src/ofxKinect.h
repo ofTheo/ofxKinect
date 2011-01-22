@@ -7,13 +7,13 @@
 
 #include "ofxBase3DVideo.h"
 
-#include "ofxThread.h"
+#include "ofThread.h"
 
 #include <libusb.h>
 #include "libfreenect.h"
 #include "ofxKinectCalibration.h"
 
-class ofxKinect : public ofxBase3DVideo, protected ofxThread{
+class ofxKinect : public ofxBase3DVideo, protected ofThread{
 
 	public :
 
@@ -44,7 +44,7 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		float getDistanceAt(const ofPoint & p);
 		
 		/// calculates the coordinate in the world for the pixel (perspective calculation). Center  of image is (0.0)
-		ofxPoint3f getWorldCoordinateFor(int x, int y);
+		ofVec3f getWorldCoordinateFor(int x, int y);
 
 		ofColor	getColorAt(int x, int y);
 		ofColor getColorAt(const ofPoint & p);

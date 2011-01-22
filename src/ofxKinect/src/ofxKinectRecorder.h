@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef OFXKINECTRECORDER_H_
-#define OFXKINECTRECORDER_H_
+#pragma once
 
 #include "ofMain.h"
 
@@ -24,5 +23,3 @@ public:
 private:
 	FILE * f;
 };
-
-#endif /* KINECTRECORDER_H_ */
