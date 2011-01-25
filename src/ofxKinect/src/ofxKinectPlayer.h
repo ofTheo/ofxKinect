@@ -9,7 +9,7 @@
 
 #include "ofMain.h"
 #include "ofxBase3DVideo.h"
-#include "ofVectorMath.h"
+#include "ofxVectorMath.h"
 #include "ofxKinectCalibration.h"
 
 class ofxKinectPlayer: public ofxBase3DVideo {
@@ -44,7 +44,7 @@ public:
 	unsigned char * getCalibratedRGBPixels();
 
 	float getDistanceAt(int x, int y) ;
-	ofVec3f getWorldCoordinateFor(int x, int y);
+	ofxVec3f getWorldCoordinateFor(int x, int y);
 
 	int fps;
 private:

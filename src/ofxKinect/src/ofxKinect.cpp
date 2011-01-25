@@ -248,7 +248,7 @@ float ofxKinect::getDistanceAt(const ofPoint & p) {
 }
 
 //------------------------------------
-ofVec3f ofxKinect::getWorldCoordinateFor(int x, int y) {
+ofxVec3f ofxKinect::getWorldCoordinateFor(int x, int y) {
 	return calibration.getWorldCoordinateFor(x,y);
 }
 

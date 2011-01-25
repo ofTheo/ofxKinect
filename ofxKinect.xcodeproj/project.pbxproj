@@ -134,6 +134,17 @@
 		274BFFC112EA913300F559B1 /* ofxKinectPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxKinectPlayer.h; path = src/ofxKinect/src/ofxKinectPlayer.h; sourceTree = SOURCE_ROOT; };
 		274BFFC212EA913300F559B1 /* ofxKinectRecorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxKinectRecorder.cpp; path = src/ofxKinect/src/ofxKinectRecorder.cpp; sourceTree = SOURCE_ROOT; };
 		274BFFC312EA913300F559B1 /* ofxKinectRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxKinectRecorder.h; path = src/ofxKinect/src/ofxKinectRecorder.h; sourceTree = SOURCE_ROOT; };
+		276A452F12EE849100F13E15 /* ofxThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxThread.h; path = ../../../addons/ofxThread/src/ofxThread.h; sourceTree = SOURCE_ROOT; };
+		276A453212EE849100F13E15 /* ofxMatrix3x3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMatrix3x3.h; path = ../../../addons/ofxVectorMath/src/ofxMatrix3x3.h; sourceTree = SOURCE_ROOT; };
+		276A453312EE849100F13E15 /* ofxMatrix4x4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMatrix4x4.h; path = ../../../addons/ofxVectorMath/src/ofxMatrix4x4.h; sourceTree = SOURCE_ROOT; };
+		276A453412EE849100F13E15 /* ofxPoint2f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxPoint2f.h; path = ../../../addons/ofxVectorMath/src/ofxPoint2f.h; sourceTree = SOURCE_ROOT; };
+		276A453512EE849100F13E15 /* ofxPoint3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxPoint3f.h; path = ../../../addons/ofxVectorMath/src/ofxPoint3f.h; sourceTree = SOURCE_ROOT; };
+		276A453612EE849100F13E15 /* ofxPoint4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxPoint4f.h; path = ../../../addons/ofxVectorMath/src/ofxPoint4f.h; sourceTree = SOURCE_ROOT; };
+		276A453712EE849100F13E15 /* ofxQuaternion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxQuaternion.h; path = ../../../addons/ofxVectorMath/src/ofxQuaternion.h; sourceTree = SOURCE_ROOT; };
+		276A453812EE849100F13E15 /* ofxVec2f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVec2f.h; path = ../../../addons/ofxVectorMath/src/ofxVec2f.h; sourceTree = SOURCE_ROOT; };
+		276A453912EE849100F13E15 /* ofxVec3f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVec3f.h; path = ../../../addons/ofxVectorMath/src/ofxVec3f.h; sourceTree = SOURCE_ROOT; };
+		276A453A12EE849100F13E15 /* ofxVec4f.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVec4f.h; path = ../../../addons/ofxVectorMath/src/ofxVec4f.h; sourceTree = SOURCE_ROOT; };
+		276A453B12EE849100F13E15 /* ofxVectorMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxVectorMath.h; path = ../../../addons/ofxVectorMath/src/ofxVectorMath.h; sourceTree = SOURCE_ROOT; };
 		E42E886412DFDECD000A7674 /* cv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cv.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cv.h; sourceTree = SOURCE_ROOT; };
 		E42E886512DFDECD000A7674 /* cv.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = cv.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cv.hpp; sourceTree = SOURCE_ROOT; };
 		E42E886612DFDECD000A7674 /* cvaux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cvaux.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cvaux.h; sourceTree = SOURCE_ROOT; };
@@ -392,9 +403,56 @@
 			path = src/ofxKinect/src;
 			sourceTree = SOURCE_ROOT;
 		};
+		276A452D12EE849100F13E15 /* ofxThread */ = {
+			isa = PBXGroup;
+			children = (
+				276A452E12EE849100F13E15 /* src */,
+			);
+			name = ofxThread;
+			path = ../../../addons/ofxThread;
+			sourceTree = SOURCE_ROOT;
+		};
+		276A452E12EE849100F13E15 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				276A452F12EE849100F13E15 /* ofxThread.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxThread/src;
+			sourceTree = SOURCE_ROOT;
+		};
+		276A453012EE849100F13E15 /* ofxVectorMath */ = {
+			isa = PBXGroup;
+			children = (
+				276A453112EE849100F13E15 /* src */,
+			);
+			name = ofxVectorMath;
+			path = ../../../addons/ofxVectorMath;
+			sourceTree = SOURCE_ROOT;
+		};
+		276A453112EE849100F13E15 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				276A453212EE849100F13E15 /* ofxMatrix3x3.h */,
+				276A453312EE849100F13E15 /* ofxMatrix4x4.h */,
+				276A453412EE849100F13E15 /* ofxPoint2f.h */,
+				276A453512EE849100F13E15 /* ofxPoint3f.h */,
+				276A453612EE849100F13E15 /* ofxPoint4f.h */,
+				276A453712EE849100F13E15 /* ofxQuaternion.h */,
+				276A453812EE849100F13E15 /* ofxVec2f.h */,
+				276A453912EE849100F13E15 /* ofxVec3f.h */,
+				276A453A12EE849100F13E15 /* ofxVec4f.h */,
+				276A453B12EE849100F13E15 /* ofxVectorMath.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxVectorMath/src;
+			sourceTree = SOURCE_ROOT;
+		};
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				276A452D12EE849100F13E15 /* ofxThread */,
+				276A453012EE849100F13E15 /* ofxVectorMath */,
 				274BFFA712EA913300F559B1 /* ofxKinect */,
 				E42E885E12DFDECD000A7674 /* ofxOpenCv */,
 			);
@@ -603,9 +661,9 @@
 			children = (
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4B69B5B0A3A1756003C02F2 /* ofxKinect.app */,
+				BB4B014C10F69532006C3DED /* addons */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4C2422310CC54B6004149E2 /* openFrameworks */,
-				BB4B014C10F69532006C3DED /* addons */,
 				E45BE5980E8CC70C009D7055 /* frameworks */,
 			);
 			sourceTree = "<group>";
