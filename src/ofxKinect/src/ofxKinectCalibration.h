@@ -59,7 +59,7 @@ private:
 	static unsigned char depthPixelsLookupNearWhite[2048];
 	static unsigned char depthPixelsLookupFarWhite[2048];
 	ofxVec3f T_rgb;
-	ofMatrix4x4 R_rgb;
+	ofxMatrix4x4 R_rgb;
 	static double fx_d;
 	static double fy_d;
 	static float cx_d;

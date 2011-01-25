@@ -42,7 +42,7 @@ ofxKinectCalibration::ofxKinectCalibration():
 	bDepthNearValueWhite	= false;
 	calculateLookups();
 	R_rgb.preMultTranslate(-T_rgb);
-	R_rgb = ofMatrix4x4::getTransposedOf(R_rgb);
+	R_rgb = ofxMatrix4x4::getTransposedOf(R_rgb);
 }
 
 inline float ofxKinectCalibration::rawToCentimeters(unsigned short raw) {
