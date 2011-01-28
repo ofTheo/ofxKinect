@@ -45,6 +45,14 @@ ofxKinectCalibration::ofxKinectCalibration():
 	R_rgb = ofxMatrix4x4::getTransposedOf(R_rgb);
 }
 
+// these are for converting centimeters to/from raw values
+// using equation from http://openkinect.org/wiki/Imaging_Information
+const float
+k1 = 0.1236,
+k2 = 2842.5,
+k3 = 1.1863,
+k4 = 0.0370;
+
 inline float ofxKinectCalibration::rawToCentimeters(unsigned short raw) {
 	return 100 * (k1 * tanf((raw / k2) + k3) - k4);
 }

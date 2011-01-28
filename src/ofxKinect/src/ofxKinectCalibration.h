@@ -69,14 +69,6 @@ private:
 	static float cx_rgb;
 	static float cy_rgb;
 	
-	// these are for converting centimeters to/from raw values
-	// using equation from http://openkinect.org/wiki/Imaging_Information
-	static const float
-	k1 = 0.1236,
-	k2 = 2842.5,
-	k3 = 1.1863,
-	k4 = 0.0370;
-	
 	static float nearClipping, farClipping;
 	
 	static float rawToCentimeters(unsigned short raw);
