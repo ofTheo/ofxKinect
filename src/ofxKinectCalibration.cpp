@@ -87,8 +87,8 @@ void ofxKinectCalibration::calculateLookups() {
 				depthPixelsLookupFarWhite[i] = 0;
 			} else {
 				distancePixelsLookup[i] = rawToCentimeters(i);
-				depthPixelsLookupNearWhite[i] = ofMap(distancePixelsLookup[i], nearClipping, farClipping, 0, 255, true);
-				depthPixelsLookupFarWhite[i] = 255 - depthPixelsLookupNearWhite[i];
+				depthPixelsLookupFarWhite[i] = ofMap(distancePixelsLookup[i], nearClipping, farClipping, 0, 255, true);
+				depthPixelsLookupNearWhite[i] = 255 - depthPixelsLookupFarWhite[i];
 			}
 		}
 	}
