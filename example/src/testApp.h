@@ -38,4 +38,6 @@ class testApp : public ofBaseApp {
 		int					farThreshold;
 
 		int					angle;
+		
+		int 				pointCloudRotationY;
 };

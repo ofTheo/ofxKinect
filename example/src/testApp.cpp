@@ -23,6 +23,9 @@ void testApp::setup() {
 	angle = 0;
 	kinect.setCameraTiltAngle(angle);
 	
+	// start from the front
+	pointCloudRotationY = 180;
+	
 	drawPC = false;
 }
 
@@ -92,13 +95,13 @@ void testApp::draw() {
 	reportStream << "accel is: " << ofToString(kinect.getMksAccel().x, 2) << " / "
 								 << ofToString(kinect.getMksAccel().y, 2) << " / " 
 								 << ofToString(kinect.getMksAccel().z, 2) << endl
-				 << "press p to switch between images and point cloud" << endl
+				 << "press p to switch between images and point cloud, rotate the point cloud with the mouse" << endl
 				 << "using opencv threshold = " << bThreshWithOpenCV <<" (press spacebar)" << endl
 				 << "set near threshold " << nearThreshold << " (press: + -)" << endl
 				 << "set far threshold " << farThreshold << " (press: < >) num blobs found " << contourFinder.nBlobs
 				 	<< ", fps: " << ofGetFrameRate() << endl
 				 << "press c to close the connection and o to open it again, connection is: " << kinect.isConnected() << endl
-				 << "tilt angle: " << angle;
+				 << "press UP and DOWN to change the tilt angle: " << angle << " degrees";
 	ofDrawBitmapString(reportStream.str(),20,666);
 }
 
@@ -106,7 +109,7 @@ void testApp::drawPointCloud() {
 	ofScale(400, 400, 400);
 	int w = 640;
 	int h = 480;
-	ofRotateY(mouseX);
+	ofRotateY(pointCloudRotationY);
 	float* distancePixels = kinect.getDistancePixels();
 	glBegin(GL_POINTS);
 	int step = 2;
@@ -122,7 +125,7 @@ void testApp::drawPointCloud() {
 }
 
 //--------------------------------------------------------------
-void testApp::exit(){
+void testApp::exit() {
 	kinect.setCameraTiltAngle(0); // zero the tilt on exit
 	kinect.close();
 }
@@ -184,8 +187,9 @@ void testApp::keyPressed (int key) {
 }
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y)
-{}
+void testApp::mouseMoved(int x, int y) {
+	pointCloudRotationY = x;
+}
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button)
