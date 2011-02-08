@@ -37,8 +37,11 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		/// updates the pixel buffers and textures - make sure to call this to update to the latetst incoming frames
 		void update(); 
 		
-		/// clear resources
+		/// clear resources, do not call this while ofxKinect is running!
 		void clear();
+		
+		/// is the connection currently open?
+		bool isConnected();
 	
 		float getDistanceAt(int x, int y);
 		float getDistanceAt(const ofPoint & p);
@@ -124,6 +127,9 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		
 
     private:
+
+		// reset default values
+		void resetValues();
 
 		freenect_context *	kinectContext;	// kinect context handle
 		freenect_device * 	kinectDevice;	// kinect device handle
