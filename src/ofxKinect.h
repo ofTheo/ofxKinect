@@ -128,9 +128,6 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 
     private:
 
-		// reset default values
-		void resetValues();
-
 		freenect_context *	kinectContext;	// kinect context handle
 		freenect_device * 	kinectDevice;	// kinect device handle
 		

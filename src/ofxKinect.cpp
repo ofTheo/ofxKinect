@@ -219,6 +219,8 @@ void ofxKinect::clear(){
 	depthTex.clear();
 	videoTex.clear();
 	calibration.clear();
+	
+	bGrabberInited = false;
 }
 
 //----------------------------------------------------------
@@ -378,11 +380,6 @@ bool ofxKinect::isDepthNearValueWhite(){
 }
 
 /* ***** PRIVATE ***** */
-
-//---------------------------------------------------------------------------
-void ofxKinect::resetValues() {
-
-}
 
 //---------------------------------------------------------------------------
 void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t timestamp) {
