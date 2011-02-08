@@ -39,7 +39,7 @@ ofxKinectCalibration::ofxKinectCalibration():
 	depthPixels				= NULL;
 	calibratedRGBPixels		= NULL;
 	distancePixels 			= NULL;
-	bDepthNearValueWhite	= false;
+	bDepthNearValueWhite	= true;
 	calculateLookups();
 	R_rgb.preMultTranslate(-T_rgb);
 	R_rgb = ofxMatrix4x4::getTransposedOf(R_rgb);
