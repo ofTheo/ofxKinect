@@ -86,8 +86,8 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		/**
 			set the near value of the pixels in the greyscale depth image to white?
 			
-			bEnabled = true : pixels close to the camera are brighter
-			bEnabled = false: pixels closer to the camera are darker (default)
+			bEnabled = true : pixels close to the camera are brighter (default)
+			bEnabled = false: pixels closer to the camera are darker
 		**/
 		void enableDepthNearValueWhite(bool bEnabled=true);
 		bool isDepthNearValueWhite();
@@ -112,7 +112,7 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 
 		bool					bUseTexture;
 		ofTexture				depthTex;			// the depth texture
-		ofTexture 				videoTex;				// the RGB texture
+		ofTexture 				videoTex;			// the RGB texture
 		bool 					bVerbose;
 		bool 					bGrabberInited;
 		
