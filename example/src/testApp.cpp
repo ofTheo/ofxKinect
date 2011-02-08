@@ -19,6 +19,7 @@ void testApp::setup() {
 	
 	ofSetFrameRate(60);
 
+	// zero the tilt on startup
 	angle = 0;
 	kinect.setCameraTiltAngle(angle);
 	
@@ -122,6 +123,7 @@ void testApp::drawPointCloud() {
 
 //--------------------------------------------------------------
 void testApp::exit(){
+	kinect.setCameraTiltAngle(0); // zero the tilt on exit
 	kinect.close();
 }
 
@@ -159,9 +161,11 @@ void testApp::keyPressed (int key) {
 			kinect.enableDepthNearValueWhite(!kinect.isDepthNearValueWhite());
 			break;
 		case 'o':
+			kinect.setCameraTiltAngle(angle);	// go back to prev tilt
 			kinect.open();
 			break;
 		case 'c':
+			kinect.setCameraTiltAngle(0);		// zero the tilt
 			kinect.close();
 			break;
 

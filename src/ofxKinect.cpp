@@ -9,7 +9,7 @@ ofxKinect* thisKinect = NULL;
 //--------------------------------------------------------------------
 ofxKinect::ofxKinect()
 {
-	ofLog(OF_LOG_VERBOSE, "Creating ofxKinect.");
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Creating ofxKinect");
 
 	bVerbose 				= false;
 	bUseTexture				= true;
@@ -114,11 +114,6 @@ bool ofxKinect::open(){
 	freenect_set_user(kinectDevice, this);
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
 	freenect_set_video_callback(kinectDevice, &grabRgbFrame);
-	
-	// apply any previous tilt
-	if(targetTiltAngleDeg != 0){
-		setCameraTiltAngle(targetTiltAngleDeg);
-	}
 
 	startThread(true, false);	// blocking, not verbose
 
@@ -434,9 +429,8 @@ void ofxKinect::threadedFunction(){
 	freenect_start_depth(kinectDevice);
 	freenect_start_video(kinectDevice);
 	
-	while (isThreadRunning()) {
-		if( bTiltNeedsApplying ){
-
+	while(isThreadRunning()){
+		if(bTiltNeedsApplying){
 			freenect_set_tilt_degs(kinectDevice, targetTiltAngleDeg);
 			bTiltNeedsApplying = false;
 		}
@@ -454,9 +448,13 @@ void ofxKinect::threadedFunction(){
 
 //		printf("\r raw acceleration: %4d %4d %4d  mks acceleration: %4f %4f %4f", ax, ay, az, dx, dy, dz);
 	}
+	
+	// finish up a tilt on exit
+	if(bTiltNeedsApplying){
+		freenect_set_tilt_degs(kinectDevice, targetTiltAngleDeg);
+		bTiltNeedsApplying = false;
+	}
 
-	freenect_set_tilt_degs(kinectDevice, 0);
-	freenect_update_tilt_state(kinectDevice);
 	freenect_stop_depth(kinectDevice);
 	freenect_stop_video(kinectDevice);
 	freenect_set_led(kinectDevice, LED_YELLOW);
