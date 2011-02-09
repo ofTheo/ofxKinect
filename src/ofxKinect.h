@@ -132,7 +132,7 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		freenect_device * 	kinectDevice;	// kinect device handle
 		
 		unsigned short *	depthPixelsBack;	// depth back
-		unsigned char *		videoPixelsBack;		// rgb back
+		unsigned char *		videoPixelsBack;	// rgb back
 		
 		bool bNeedsUpdate;
 		bool bUpdateTex;

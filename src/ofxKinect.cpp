@@ -250,7 +250,7 @@ void ofxKinect::update(){
 
 	if(bUseTexture){
 		depthTex.loadData(calibration.getDepthPixels(), width, height, GL_LUMINANCE);
-		videoTex.loadData(videoPixelsBack, width, height, bInfrared?GL_LUMINANCE:GL_RGB);
+		videoTex.loadData(videoPixels, width, height, bInfrared?GL_LUMINANCE:GL_RGB);
 		bUpdateTex = false;
 	}
 }
