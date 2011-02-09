@@ -274,11 +274,11 @@ ofxVec3f ofxKinect::getWorldCoordinateFor(int x, int y) {
 
 //------------------------------------
 ofColor	ofxKinect::getColorAt(int x, int y) {
-	int index = (y * width + x) * 3;
+	int index = (y * width + x) * bytespp;
 	ofColor c;
-	c.r = videoPixels[index++];
-	c.g = videoPixels[index++];
-	c.b = videoPixels[index];
+	c.r = videoPixels[index + 0];
+	c.g = videoPixels[index + (bytespp-1)/2];
+	c.b = videoPixels[index + (bytespp-1)];
 	c.a = 255;
 
 	return c;
