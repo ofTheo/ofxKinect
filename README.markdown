@@ -11,7 +11,9 @@ Installation
 
 To use ofxKinect, first you need to download and install Open Frameworks. ofxKinect-beta.xcodeproj is developed against the latest version of Open Frameworks on github, while ofxKinect.xcodeproj will work with the 0062 release.
 
-To get a copy of the repository you can download the source from [http://github.com/ofTheo/ofxKinect/zipball/master](http://github.com/ofTheo/ofxKinect/zipball/master)or, alternatively, you can use git clone. The addon should sit in openFrameworks/addons/ofxKinect/.
+To get a copy of the repository you can download the source from [http://github.com/ofTheo/ofxKinect/zipball/master](http://github.com/ofTheo/ofxKinect/zipball/master) or, alternatively, you can use git clone.
+
+The addon should sit in openFrameworks/addons/ofxKinect/.
 
 Running the Example Project
 -------------------------------
