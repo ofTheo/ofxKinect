@@ -42,7 +42,7 @@ Then after renaming:
 
 `openFrameworks/apps/myApps/myKinectProject/`
 
-On Mac, rename the project in XCode (do not just rename the .xcodeproj fiel in Finder): Project->Rename
+On Mac, rename the project in XCode (do not rename the .xcodeproj file in Finder!): XCode Menu->Project->Rename
 
 Adding ofxKinect to an Existing Project
 ---------------------------------------
@@ -58,5 +58,5 @@ For XCode:
 
 * create a new group "ofxKinect"
 * drag these directories from ofxKinect into this new group: ofxKinect/src & ofxKinect/libs
-* add a search path to: `../../../addons/ofxOpenNI/libs/libusb/osx/libs` under Targets->YourApp->Build->Library Search Paths (make sure All Configurations and All Settings are selected)
+* add a search path to: `../../../addons/ofxKinect/libs/libusb/osx/libs` under Targets->YourApp->Build->Library Search Paths (make sure All Configurations and All Settings are selected)
 
