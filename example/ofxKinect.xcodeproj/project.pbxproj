@@ -127,15 +127,15 @@
 		30781C281302E81700D8873A /* usb_libusb10.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_libusb10.h; path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/libs/libfreenect/usb_libusb10.h; sourceTree = SYSTEM_DEVELOPER_DIR; };
 		30781C2D1302E81700D8873A /* libusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libusb.h; path = "../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/libs/libusb/osx/include/libusb-1.0/libusb.h"; sourceTree = SYSTEM_DEVELOPER_DIR; };
 		30781C2F1302E81700D8873A /* usb-1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "usb-1.0.a"; path = "../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/libs/libusb/osx/libs/usb-1.0.a"; sourceTree = SYSTEM_DEVELOPER_DIR; };
-		30781C311302E81700D8873A /* ofxBase3DVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxBase3DVideo.h; path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/src/ofxBase3DVideo.h; sourceTree = SYSTEM_DEVELOPER_DIR; };
-		30781C321302E81700D8873A /* ofxKinect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxKinect.cpp; path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/src/ofxKinect.cpp; sourceTree = SYSTEM_DEVELOPER_DIR; };
-		30781C331302E81700D8873A /* ofxKinect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxKinect.h; path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/src/ofxKinect.h; sourceTree = SYSTEM_DEVELOPER_DIR; };
-		30781C341302E81700D8873A /* ofxKinectCalibration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxKinectCalibration.cpp; path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/src/ofxKinectCalibration.cpp; sourceTree = SYSTEM_DEVELOPER_DIR; };
-		30781C351302E81700D8873A /* ofxKinectCalibration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxKinectCalibration.h; path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/src/ofxKinectCalibration.h; sourceTree = SYSTEM_DEVELOPER_DIR; };
-		30781C361302E81700D8873A /* ofxKinectPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxKinectPlayer.cpp; path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/src/ofxKinectPlayer.cpp; sourceTree = SYSTEM_DEVELOPER_DIR; };
-		30781C371302E81700D8873A /* ofxKinectPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxKinectPlayer.h; path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/src/ofxKinectPlayer.h; sourceTree = SYSTEM_DEVELOPER_DIR; };
-		30781C381302E81700D8873A /* ofxKinectRecorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxKinectRecorder.cpp; path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/src/ofxKinectRecorder.cpp; sourceTree = SYSTEM_DEVELOPER_DIR; };
-		30781C391302E81700D8873A /* ofxKinectRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxKinectRecorder.h; path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/src/ofxKinectRecorder.h; sourceTree = SYSTEM_DEVELOPER_DIR; };
+		30781C311302E81700D8873A /* ofxBase3DVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxBase3DVideo.h; sourceTree = "<group>"; };
+		30781C321302E81700D8873A /* ofxKinect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxKinect.cpp; sourceTree = "<group>"; };
+		30781C331302E81700D8873A /* ofxKinect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxKinect.h; sourceTree = "<group>"; };
+		30781C341302E81700D8873A /* ofxKinectCalibration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxKinectCalibration.cpp; sourceTree = "<group>"; };
+		30781C351302E81700D8873A /* ofxKinectCalibration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxKinectCalibration.h; sourceTree = "<group>"; };
+		30781C361302E81700D8873A /* ofxKinectPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxKinectPlayer.cpp; sourceTree = "<group>"; };
+		30781C371302E81700D8873A /* ofxKinectPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxKinectPlayer.h; sourceTree = "<group>"; };
+		30781C381302E81700D8873A /* ofxKinectRecorder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxKinectRecorder.cpp; sourceTree = "<group>"; };
+		30781C391302E81700D8873A /* ofxKinectRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxKinectRecorder.h; sourceTree = "<group>"; };
 		E446664F0F5B3E03005D0BF0 /* cv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cv.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/cv.h; sourceTree = SOURCE_ROOT; };
 		E44666500F5B3E03005D0BF0 /* cv.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = cv.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/cv.hpp; sourceTree = SOURCE_ROOT; };
 		E44666510F5B3E03005D0BF0 /* cvaux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cvaux.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/cvaux.h; sourceTree = SOURCE_ROOT; };
@@ -313,7 +313,7 @@
 				30781C1E1302E81600D8873A /* libs */,
 				30781C301302E81700D8873A /* src */,
 			);
-			name = ofxKinect;
+			path = ofxKinect;
 			sourceTree = "<group>";
 		};
 		30781C1E1302E81600D8873A /* libs */ = {
@@ -322,9 +322,8 @@
 				30781C1F1302E81600D8873A /* libfreenect */,
 				30781C291302E81700D8873A /* libusb */,
 			);
-			name = libs;
-			path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/libs;
-			sourceTree = SYSTEM_DEVELOPER_DIR;
+			path = libs;
+			sourceTree = "<group>";
 		};
 		30781C1F1302E81600D8873A /* libfreenect */ = {
 			isa = PBXGroup;
@@ -339,18 +338,16 @@
 				30781C271302E81700D8873A /* usb_libusb10.c */,
 				30781C281302E81700D8873A /* usb_libusb10.h */,
 			);
-			name = libfreenect;
-			path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/libs/libfreenect;
-			sourceTree = SYSTEM_DEVELOPER_DIR;
+			path = libfreenect;
+			sourceTree = "<group>";
 		};
 		30781C291302E81700D8873A /* libusb */ = {
 			isa = PBXGroup;
 			children = (
 				30781C2A1302E81700D8873A /* osx */,
 			);
-			name = libusb;
-			path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/libs/libusb;
-			sourceTree = SYSTEM_DEVELOPER_DIR;
+			path = libusb;
+			sourceTree = "<group>";
 		};
 		30781C2A1302E81700D8873A /* osx */ = {
 			isa = PBXGroup;
@@ -358,36 +355,32 @@
 				30781C2B1302E81700D8873A /* include */,
 				30781C2E1302E81700D8873A /* libs */,
 			);
-			name = osx;
-			path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/libs/libusb/osx;
-			sourceTree = SYSTEM_DEVELOPER_DIR;
+			path = osx;
+			sourceTree = "<group>";
 		};
 		30781C2B1302E81700D8873A /* include */ = {
 			isa = PBXGroup;
 			children = (
 				30781C2C1302E81700D8873A /* libusb-1.0 */,
 			);
-			name = include;
-			path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/libs/libusb/osx/include;
-			sourceTree = SYSTEM_DEVELOPER_DIR;
+			path = include;
+			sourceTree = "<group>";
 		};
 		30781C2C1302E81700D8873A /* libusb-1.0 */ = {
 			isa = PBXGroup;
 			children = (
 				30781C2D1302E81700D8873A /* libusb.h */,
 			);
-			name = "libusb-1.0";
-			path = "../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/libs/libusb/osx/include/libusb-1.0";
-			sourceTree = SYSTEM_DEVELOPER_DIR;
+			path = "libusb-1.0";
+			sourceTree = "<group>";
 		};
 		30781C2E1302E81700D8873A /* libs */ = {
 			isa = PBXGroup;
 			children = (
 				30781C2F1302E81700D8873A /* usb-1.0.a */,
 			);
-			name = libs;
-			path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/libs/libusb/osx/libs;
-			sourceTree = SYSTEM_DEVELOPER_DIR;
+			path = libs;
+			sourceTree = "<group>";
 		};
 		30781C301302E81700D8873A /* src */ = {
 			isa = PBXGroup;
@@ -402,9 +395,8 @@
 				30781C381302E81700D8873A /* ofxKinectRecorder.cpp */,
 				30781C391302E81700D8873A /* ofxKinectRecorder.h */,
 			);
-			name = src;
-			path = ../Users/dano/src/of_preRelease_v0062_osxSL_FAT/addons/ofxKinect/src;
-			sourceTree = SYSTEM_DEVELOPER_DIR;
+			path = src;
+			sourceTree = "<group>";
 		};
 		E44665C70F5B3E03005D0BF0 /* addons */ = {
 			isa = PBXGroup;
