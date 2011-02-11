@@ -460,3 +460,8 @@ void ofxKinect::threadedFunction(){
 	
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection closed");
 }
+
+//---------------------------------------------------------------------------
+ofxKinectCalibration& ofxKinect::getCalibration() {
+	return calibration;
+}

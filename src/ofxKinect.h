@@ -104,6 +104,8 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		void 			drawDepth(float x, float y);
 		void			drawDepth(const ofPoint & point);
 		void			drawDepth(const ofRectangle & rect);
+		
+		ofxKinectCalibration& getCalibration();
 
 		const static int	width = 640;
 		const static int	height = 480;
