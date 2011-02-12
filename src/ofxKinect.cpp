@@ -86,11 +86,6 @@ ofTexture & ofxKinect::getDepthTextureReference(){
 	return depthTex;
 }
 
-//---------------------------------------------------------------------------
-ofPixels & ofxKinect::getPixelsRef() {
-	return pixels;
-}
-
 //--------------------------------------------------------------------
 bool ofxKinect::isFrameNew(){
 	if(isThreadRunning()){
@@ -179,7 +174,6 @@ bool ofxKinect::init(bool infrared, bool setUseTexture){
 	depthPixelsBack = new unsigned short[length];
 
 	videoPixels = new unsigned char[length*bytespp];
-	pixels.setFromExternalPixels(videoPixels, width, height, OF_IMAGE_COLOR);
 	videoPixelsBack = new unsigned char[length*bytespp];
 	
 	memset(depthPixelsRaw, 0, length*sizeof(unsigned short));
