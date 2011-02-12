@@ -83,6 +83,9 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		/// get the greyscale depth texture
 		ofTexture &		getDepthTextureReference();
 		
+		/// for 007 compatibility
+		ofPixels & getPixelsRef();
+		
 		/**
 			set the near value of the pixels in the greyscale depth image to white?
 			
@@ -118,6 +121,7 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		bool 					bVerbose;
 		bool 					bGrabberInited;
 		
+		ofPixels pixels;
 		unsigned char *			videoPixels;
 		unsigned short *		depthPixelsRaw;
 		
