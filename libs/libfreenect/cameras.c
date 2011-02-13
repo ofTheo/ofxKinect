@@ -755,8 +755,10 @@ int freenect_start_video(freenect_device *dev)
 			write_register(dev, 0x05, 0x03); // start video stream
 			break;
 	}
-	write_register(dev, 0x47, 0x00); // disable Hflip
-	write_register(dev, 0x17, 0x00); // disable Hflip
+//	write_register(dev, 0x47, 0x00); // disable Hflip
+//	write_register(dev, 0x17, 0x00); // disable Hflip
+	write_register(dev, 0x47, 0x01); // enable Hflip
+	write_register(dev, 0x17, 0x01); // enable Hflip
 
 	dev->video.running = 1;
 	return 0;
