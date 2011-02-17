@@ -37,6 +37,12 @@ public:
 
 	bool isFrameNew();
 	void close();
+	
+	void loop()				{bLoop = true;}
+	void noLoop()			{bLoop = false;}
+	void setLoop(bool loop)	{bLoop = loop;}
+	bool isLooping()		{return bLoop;}
+	
 
 	unsigned char * getPixels();
 	unsigned char * getDepthPixels();
@@ -49,12 +55,14 @@ public:
 	int fps;
 private:
 	FILE * f;
+	string filename;
 	unsigned short *buf;
 	ofTexture depthTex,videoTex;
 	bool bUseTexture;
 	unsigned char *rgb;
 
 	bool readColor;
+	bool bLoop;
 
 	int lastFrameTime;
 

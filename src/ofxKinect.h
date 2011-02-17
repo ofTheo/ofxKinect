@@ -12,6 +12,8 @@
 #include <libusb.h>
 #include "libfreenect.h"
 #include "ofxKinectCalibration.h"
+#include "ofxKinectPlayer.h"
+#include "ofxKinectRecorder.h"
 
 class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 

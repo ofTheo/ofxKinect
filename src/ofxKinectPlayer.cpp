@@ -12,6 +12,7 @@
 //--------------------------------------------------------------------
 ofxKinectPlayer::ofxKinectPlayer(){
 	f = 0;
+	filename = "";
 	buf = 0;
 	rgb = 0;
 	bUseTexture = true;
@@ -35,6 +36,7 @@ void ofxKinectPlayer::setUseTexture(bool _bUseTexture){
 
 void ofxKinectPlayer::setup(const string & file, bool color){
 	f = fopen(ofToDataPath(file).c_str(), "rb");
+	filename = file;
 	if(!buf) buf 		= new uint16_t[640*480];
 	if(!rgb) rgb = new unsigned char[640*480*3];
 	memset(rgb,255,640*480*3);
@@ -49,11 +51,16 @@ void ofxKinectPlayer::setup(const string & file, bool color){
 
 void ofxKinectPlayer::update(){
 	if(!f) return;
-	if((ofGetElapsedTimeMillis()-lastFrameTime)<(1000./float(fps))) return;
+	if((ofGetElapsedTimeMillis()-lastFrameTime)<(1000./float(fps)))	return;
 	lastFrameTime = ofGetElapsedTimeMillis();
 	if(readColor)
 		fread(rgb,640*480*3,1,f);
 	fread(buf,640*480*sizeof(uint16_t),1,f);
+
+	// loop?
+	if(bLoop && std::feof(f) > 0) {
+		f = fopen(ofToDataPath(filename).c_str(), "rb");
+	}
 
 	calibration.update(buf);
 	if(bUseTexture){
@@ -123,6 +130,7 @@ void ofxKinectPlayer::close(){
 	if(f)
 		fclose(f);
 	f = 0;
+	filename = "";
 }
 
 //------------------------------------

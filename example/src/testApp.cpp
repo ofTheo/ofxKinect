@@ -7,17 +7,26 @@ void testApp::setup() {
 	kinect.init();
 	kinect.setVerbose(true);
 	kinect.open();
+	
+	// start with the live kinect source
+	kinectSource = &kinect;
 
 	colorImg.allocate(kinect.width, kinect.height);
+	grayBackground.allocate(kinect.width, kinect.height);
+	grayBackgroundDiff.allocate(kinect.width, kinect.height);
 	grayImage.allocate(kinect.width, kinect.height);
-	grayThresh.allocate(kinect.width, kinect.height);
+	grayThreshNear.allocate(kinect.width, kinect.height);
 	grayThreshFar.allocate(kinect.width, kinect.height);
 
 	nearThreshold = 230;
 	farThreshold  = 70;
 	bThreshWithOpenCV = true;
+	bLearnBackground = true;
 	
 	ofSetFrameRate(60);
+
+	bRecord = false;
+	bPlayback = false;
 
 	// zero the tilt on startup
 	angle = 0;
@@ -33,37 +42,43 @@ void testApp::setup() {
 void testApp::update() {
 	ofBackground(100, 100, 100);
 	
-	kinect.update();
-	if(kinect.isFrameNew())	// there is a new frame and we are connected
-	{
-
-		grayImage.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
-			
-		//we do two thresholds - one for the far plane and one for the near plane
-		//we then do a cvAnd to get the pixels which are a union of the two thresholds.	
-		if( bThreshWithOpenCV ){
-			grayThreshFar = grayImage;
-			grayThresh = grayImage;
-			grayThresh.threshold(nearThreshold, true);
-			grayThreshFar.threshold(farThreshold);
-			cvAnd(grayThresh.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
-		}else{
-		
-			//or we do it ourselves - show people how they can work with the pixels
-		
-			unsigned char * pix = grayImage.getPixels();
-			int numPixels = grayImage.getWidth() * grayImage.getHeight();
-
-			for(int i = 0; i < numPixels; i++){
-				if( pix[i] < nearThreshold && pix[i] > farThreshold ){
-					pix[i] = 255;
-				}else{
-					pix[i] = 0;
-				}
-			}
+	kinectSource->update();
+	
+	// there is a new frame and we are connected
+	if(kinectSource->isFrameNew()) {
+	
+		// record ?
+		if(bRecord && kinectRecorder.isOpened()) {
+			kinectRecorder.newFrame(kinect.getPixels(), kinect.getRawDepthPixels());
 		}
 
-		//update the cv image
+		grayImage.setFromPixels(kinectSource->getDepthPixels(), kinect.width, kinect.height);
+		
+		// we do two thresholds - one for the far plane and one for the near plane
+		// we then do a cvAnd to get the pixels which are a union of the two thresholds.	
+		grayThreshNear = grayImage;
+		grayThreshFar = grayImage;
+		grayThreshNear.threshold(nearThreshold, true);
+		grayThreshFar.threshold(farThreshold);
+		cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
+
+		// capture the background
+		if(bLearnBackground)
+		{
+			grayBackground = grayImage;
+			for (int i=0; i<3; i++)
+			{
+				grayBackground.dilate_3x3();
+			}
+			bLearnBackground = false;
+		}
+
+		// do background subtraction
+		cvSub(grayImage.getCvImage(), grayBackground.getCvImage(),
+			  grayBackgroundDiff.getCvImage(), NULL);
+		grayBackgroundDiff = grayImage;
+
+		// update the cv image
 		grayImage.flagImageChanged();
 	
 		// find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
@@ -82,14 +97,35 @@ void testApp::draw() {
 		drawPointCloud();
 		ofPopMatrix();
 	}else{
-		kinect.drawDepth(10, 10, 400, 300);
-		kinect.draw(420, 10, 400, 300);
+		if(!bPlayback) {
+			kinect.drawDepth(10, 10, 400, 300);
+			kinect.draw(420, 10, 400, 300);
+		} else {
+			kinectPlayer.draw(10, 10, 400, 300);
+			kinect.draw(420, 10, 400, 300);
+		}
 
-		grayImage.draw(10, 320, 400, 300);
+		grayBackgroundDiff.draw(10, 320, 400, 300);
+		grayBackground.draw(420, 320, 400, 300);
 		contourFinder.draw(10, 320, 400, 300);
 	}
 	
+	// draw recording/playback indicators
+	ofPushMatrix();
+	ofTranslate(25, 25);
+	ofFill();
+	if(bRecord) {
+		ofSetColor(255, 0, 0);
+		ofCircle(0, 0, 10);
+	}
+	if(bPlayback) {
+		ofSetColor(0, 255, 0);
+		ofTriangle(-10, -10, -10, 10, 10, 0);
+	}
+	ofPopMatrix();
+	
 
+	// draw instructions
 	ofSetColor(255, 255, 255);
 	stringstream reportStream;
 	reportStream << "accel is: " << ofToString(kinect.getMksAccel().x, 2) << " / "
@@ -101,8 +137,9 @@ void testApp::draw() {
 				 << "set far threshold " << farThreshold << " (press: < >) num blobs found " << contourFinder.nBlobs
 				 	<< ", fps: " << ofGetFrameRate() << endl
 				 << "press c to close the connection and o to open it again, connection is: " << kinect.isConnected() << endl
-				 << "press UP and DOWN to change the tilt angle: " << angle << " degrees";
-	ofDrawBitmapString(reportStream.str(),20,666);
+				 << "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
+				 << "press r to record and q to playback, record is: " << bRecord << ", playback is: " << bPlayback;
+	ofDrawBitmapString(reportStream.str(),20,652);
 }
 
 void testApp::drawPointCloud() {
@@ -128,11 +165,18 @@ void testApp::drawPointCloud() {
 void testApp::exit() {
 	kinect.setCameraTiltAngle(0); // zero the tilt on exit
 	kinect.close();
+	kinectPlayer.close();
+	kinectRecorder.close();
 }
 
 //--------------------------------------------------------------
 void testApp::keyPressed (int key) {
 	switch (key) {
+		case 'b':
+			bLearnBackground = true;
+			break;
+	
+	
 		case ' ':
 			bThreshWithOpenCV = !bThreshWithOpenCV;
 		break;
@@ -171,6 +215,23 @@ void testApp::keyPressed (int key) {
 			kinect.setCameraTiltAngle(0);		// zero the tilt
 			kinect.close();
 			break;
+			
+		case 'r':
+			bRecord = !bRecord;
+			if(bRecord) {
+				startRecording();
+			} else {
+				stopRecording();
+			}
+			break;
+		case 'q':
+			bPlayback = !bPlayback;
+			if(bPlayback) {
+				startPlayback();
+			} else {
+				stopPlayback();
+			}
+			break;
 
 		case OF_KEY_UP:
 			angle++;
@@ -207,3 +268,39 @@ void testApp::mouseReleased(int x, int y, int button)
 void testApp::windowResized(int w, int h)
 {}
 
+//--------------------------------------------------------------
+void testApp::startRecording() {
+	
+	// stop playback if running
+	stopPlayback();
+	
+	kinectRecorder.init(ofToDataPath("recording.dat"));
+	bRecord = true;
+}
+
+//--------------------------------------------------------------
+void testApp::stopRecording() {
+	kinectRecorder.close();
+	bRecord = false;
+}
+
+//--------------------------------------------------------------
+void testApp::startPlayback() {
+	
+	stopRecording();
+	kinect.close();
+
+	// set record file and source
+	kinectPlayer.setup(ofToDataPath("recording.dat"), true);
+	kinectPlayer.loop();
+	kinectSource = &kinectPlayer;
+	bPlayback = true;
+}
+
+//--------------------------------------------------------------
+void testApp::stopPlayback() {
+	kinectPlayer.close();
+	kinect.open();
+	kinectSource = &kinect;
+	bPlayback = false;
+}
