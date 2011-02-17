@@ -4,8 +4,9 @@
 //--------------------------------------------------------------
 void testApp::setup() {
 
-	//kinect.init(true);  //shows infrared image
 	kinect.init();
+	//kinect.init(true);  // shows infrared instead of RGB video image
+	//kinect.init(false, false);  // disable infrared/rgb video iamge (faster fps)
 	kinect.setVerbose(true);
 	kinect.open();
 	

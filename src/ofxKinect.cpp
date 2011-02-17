@@ -13,6 +13,7 @@ ofxKinect::ofxKinect()
 
 	bVerbose 				= false;
 	bUseTexture				= true;
+	bGrabVideo				= true;
 	
 	// set defaults
 	bGrabberInited 			= false;
@@ -150,7 +151,7 @@ bool ofxKinect::setCameraTiltAngle(float angleInDegrees){
 }
 
 //--------------------------------------------------------------------
-bool ofxKinect::init(bool infrared, bool setUseTexture){
+bool ofxKinect::init(bool infrared, bool video, bool texture){
 	if(isConnected()){
 		ofLog(OF_LOG_WARNING, "ofxKinect: Do not call init while ofxKinect is running!");
 		return false;
@@ -159,11 +160,12 @@ bool ofxKinect::init(bool infrared, bool setUseTexture){
 	clear();
 
 	bInfrared = infrared;
+	bGrabVideo = video;
 	bytespp = infrared?1:3;
 
 	calibration.init(bytespp);
 
-	bUseTexture = setUseTexture;
+	bUseTexture = texture;
 
 	int length = width*height;
 	depthPixelsRaw = new unsigned short[length];
@@ -306,7 +308,7 @@ void ofxKinect::setUseTexture(bool bUse){
 
 //----------------------------------------------------------
 void ofxKinect::draw(float _x, float _y, float _w, float _h){
-	if(bUseTexture) {
+	if(bUseTexture && bGrabVideo) {
 		videoTex.draw(_x, _y, _w, _h);
 	}
 }
@@ -423,7 +425,9 @@ void ofxKinect::threadedFunction(){
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection opened");
 
 	freenect_start_depth(kinectDevice);
-	freenect_start_video(kinectDevice);
+	if(bGrabVideo) {
+		freenect_start_video(kinectDevice);
+	}
 	
 	while(isThreadRunning()){
 		if(bTiltNeedsApplying){
