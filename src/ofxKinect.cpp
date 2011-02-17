@@ -322,20 +322,9 @@ void ofxKinect::draw(const ofPoint & point){
 }
 
 //----------------------------------------------------------
-void ofxKinect::drawDepth(const ofPoint & point){
-	drawDepth(point.x, point.y);
-}
-
-//----------------------------------------------------------
 void ofxKinect::draw(const ofRectangle & rect){
 	draw(rect.x, rect.y, rect.width, rect.height);
 }
-
-//----------------------------------------------------------
-void ofxKinect::drawDepth(const ofRectangle & rect){
-	drawDepth(rect.x, rect.y, rect.width, rect.height);
-}
-
 
 //----------------------------------------------------------
 void ofxKinect::drawDepth(float _x, float _y, float _w, float _h){
@@ -350,13 +339,23 @@ void ofxKinect::drawDepth(float _x, float _y){
 }
 
 //----------------------------------------------------------
+void ofxKinect::drawDepth(const ofPoint & point){
+	drawDepth(point.x, point.y);
+}
+
+//----------------------------------------------------------
+void ofxKinect::drawDepth(const ofRectangle & rect){
+	drawDepth(rect.x, rect.y, rect.width, rect.height);
+}
+
+//----------------------------------------------------------
 float ofxKinect::getHeight(){
-	return (float)height;
+	return (float) height;
 }
 
 //---------------------------------------------------------------------------
 float ofxKinect::getWidth(){
-	return (float)width;
+	return (float) width;
 }
 
 //---------------------------------------------------------------------------

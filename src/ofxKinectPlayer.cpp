@@ -19,6 +19,7 @@ ofxKinectPlayer::ofxKinectPlayer(){
 	fps = 30;
 }
 
+//-----------------------------------------------------------
 ofxKinectPlayer::~ofxKinectPlayer() {
 	close();
 
@@ -30,10 +31,12 @@ ofxKinectPlayer::~ofxKinectPlayer() {
 	videoTex.clear();
 }
 
+//-----------------------------------------------------------
 void ofxKinectPlayer::setUseTexture(bool _bUseTexture){
 	bUseTexture = _bUseTexture;
 }
 
+//-----------------------------------------------------------
 void ofxKinectPlayer::setup(const string & file, bool color){
 	f = fopen(ofToDataPath(file).c_str(), "rb");
 	filename = file;
@@ -49,6 +52,7 @@ void ofxKinectPlayer::setup(const string & file, bool color){
 	lastFrameTime = ofGetElapsedTimeMillis();
 }
 
+//-----------------------------------------------------------
 void ofxKinectPlayer::update(){
 	if(!f) return;
 	if((ofGetElapsedTimeMillis()-lastFrameTime)<(1000./float(fps)))	return;
@@ -70,12 +74,18 @@ void ofxKinectPlayer::update(){
 
 }
 
+//-----------------------------------------------------------
 void ofxKinectPlayer::draw(float x, float y){
-	depthTex.draw(x,y);
+	if(bUseTexture) {
+		videoTex.draw(x,y);
+	}
 }
 
+//-----------------------------------------------------------
 void ofxKinectPlayer::draw(float x, float y, float w, float h){
-	depthTex.draw(x,y,w,h);
+	if(bUseTexture) {
+		videoTex.draw(x,y,w,h);
+	}
 }
 
 //----------------------------------------------------------
@@ -88,44 +98,76 @@ void ofxKinectPlayer::draw(const ofRectangle & rect){
 	draw(rect.x, rect.y, rect.width, rect.height);
 }
 
+//---------------------------------------------------------------------------
+void ofxKinectPlayer::drawDepth(float _x, float _y){
+	if(bUseTexture) {
+		depthTex.draw(_x, _y);
+	}
+}
 
+//----------------------------------------------------------
+void ofxKinectPlayer::drawDepth(float _x, float _y, float _w, float _h){
+	if(bUseTexture) {
+		depthTex.draw(_x, _y, _w, _h);
+	}
+}
+
+//----------------------------------------------------------
+void ofxKinectPlayer::drawDepth(const ofPoint & point){
+	drawDepth(point.x, point.y);
+}
+
+//----------------------------------------------------------
+void ofxKinectPlayer::drawDepth(const ofRectangle & rect){
+	drawDepth(rect.x, rect.y, rect.width, rect.height);
+}
+
+//-----------------------------------------------------------
 unsigned char * ofxKinectPlayer::getPixels(){
 	return rgb;
 }
 
+//-----------------------------------------------------------
 unsigned char * ofxKinectPlayer::getDepthPixels(){
 	return calibration.getDepthPixels();
 }
 
+//-----------------------------------------------------------
 float * ofxKinectPlayer::getDistancePixels(){
 	return calibration.getDistancePixels();
 }
 
+//-----------------------------------------------------------
 unsigned char * ofxKinectPlayer::getCalibratedRGBPixels(){
 	return calibration.getCalibratedRGBPixels(rgb);
 }
 
-
+//-----------------------------------------------------------
 ofTexture & ofxKinectPlayer::getTextureReference(){
 	return depthTex;
 }
 
+//-----------------------------------------------------------
 ofTexture & ofxKinectPlayer::getDepthTextureReference(){
 	return depthTex;
 }
 
-float ofxKinectPlayer::getHeight(){
-	return 480;
-}
-
+//-----------------------------------------------------------
 float ofxKinectPlayer::getWidth(){
-	return 640;
+	return (float) width;
 }
 
+//-----------------------------------------------------------
+float ofxKinectPlayer::getHeight(){
+	return (float) height;
+}
+
+//-----------------------------------------------------------
 bool ofxKinectPlayer::isFrameNew(){
 	return true;
 }
 
+//-----------------------------------------------------------
 void ofxKinectPlayer::close(){
 	if(f)
 		fclose(f);
@@ -137,7 +179,6 @@ void ofxKinectPlayer::close(){
 float ofxKinectPlayer::getDistanceAt(int x, int y) {
 	return calibration.getDistanceAt(x,y);
 }
-
 
 //------------------------------------
 ofxVec3f ofxKinectPlayer::getWorldCoordinateFor(int x, int y) {
