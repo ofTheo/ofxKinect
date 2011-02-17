@@ -17,7 +17,10 @@ public:
 	ofxKinectPlayer();
 	virtual ~ofxKinectPlayer();
 
-	void setup(const string & file, bool color=false);
+	/// setup the recording to read,
+	/// set video to true to enable the video (infrared/RGB) image
+	/// make sure you recorded the video frames or reading them will fail big time!
+	void setup(const string & file, bool video=false);
 	void update();
 	
 	void draw(float x, float y);
@@ -71,7 +74,7 @@ private:
 	bool bUseTexture;
 	unsigned char *rgb;
 
-	bool readColor;
+	bool bVideo;
 	bool bLoop;
 
 	int lastFrameTime;

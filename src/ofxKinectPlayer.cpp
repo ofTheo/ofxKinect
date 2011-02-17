@@ -37,7 +37,7 @@ void ofxKinectPlayer::setUseTexture(bool _bUseTexture){
 }
 
 //-----------------------------------------------------------
-void ofxKinectPlayer::setup(const string & file, bool color){
+void ofxKinectPlayer::setup(const string & file, bool video){
 	f = fopen(ofToDataPath(file).c_str(), "rb");
 	filename = file;
 	if(!buf) buf 		= new uint16_t[640*480];
@@ -47,7 +47,7 @@ void ofxKinectPlayer::setup(const string & file, bool color){
 		depthTex.allocate(640,480,GL_LUMINANCE);
 	if(!videoTex.bAllocated() && bUseTexture)
 		videoTex.allocate(640,480,GL_RGB);
-	readColor = color;
+	bVideo = video;
 	calibration.init(3);
 	lastFrameTime = ofGetElapsedTimeMillis();
 }
@@ -57,7 +57,7 @@ void ofxKinectPlayer::update(){
 	if(!f) return;
 	if((ofGetElapsedTimeMillis()-lastFrameTime)<(1000./float(fps)))	return;
 	lastFrameTime = ofGetElapsedTimeMillis();
-	if(readColor)
+	if(bVideo)
 		fread(rgb,640*480*3,1,f);
 	fread(buf,640*480*sizeof(uint16_t),1,f);
 

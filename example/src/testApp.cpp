@@ -48,7 +48,7 @@ void testApp::update() {
 	
 		// record ?
 		if(bRecord && kinectRecorder.isOpened()) {
-			kinectRecorder.newFrame(kinect.getPixels(), kinect.getRawDepthPixels());
+			kinectRecorder.newFrame(kinect.getRawDepthPixels(), kinect.getPixels());
 		}
 
 		// load grayscale depth image from the kinect source
