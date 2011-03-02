@@ -9,7 +9,10 @@
 
 #include "ofxThread.h"
 
-#include <libusb.h>
+#ifndef _MSC_VER
+	#include <libusb.h>
+#endif
+
 #include "libfreenect.h"
 #include "ofxKinectCalibration.h"
 #include "ofxKinectPlayer.h"

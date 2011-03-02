@@ -7,7 +7,9 @@
 
 #include "ofxKinectPlayer.h"
 
-
+#ifdef _MSC_VER
+	#define uint16_t unsigned short
+#endif
 
 //--------------------------------------------------------------------
 ofxKinectPlayer::ofxKinectPlayer(){
