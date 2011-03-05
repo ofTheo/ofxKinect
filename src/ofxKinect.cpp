@@ -301,7 +301,7 @@ ofColor ofxKinect::getCalibratedColorAt(int x, int y){
 
 //------------------------------------
 ofColor ofxKinect::getCalibratedColorAt(const ofPoint & p){
-	return getCalibratedColorAt(calibration.getCalibratedColorCoordAt(p));
+	return getColorAt(calibration.getCalibratedColorCoordAt(p));
 }
 
 //------------------------------------
