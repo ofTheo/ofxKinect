@@ -230,12 +230,6 @@ void ofxKinect::update(){
 	if(!bGrabberInited){
 		return;
 	}
-	
-	// call platform specific processors (needed for Win)
-	if(freenect_process_events(kinectContext) != 0){
-		ofLog(OF_LOG_ERROR, "ofxKinect: freenect_process_events failed!");
-		return;
-	}
 
 	if (!bNeedsUpdate){
 		return;
@@ -433,6 +427,12 @@ void ofxKinect::threadedFunction(){
 	freenect_start_depth(kinectDevice);
 	if(bGrabVideo) {
 		freenect_start_video(kinectDevice);
+	}
+
+	// call platform specific processors (needed for Win)
+	if(freenect_process_events(kinectContext) != 0){
+		ofLog(OF_LOG_ERROR, "ofxKinect: freenect_process_events failed!");
+		return;
 	}
 	
 	while(isThreadRunning()){
