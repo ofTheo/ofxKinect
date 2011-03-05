@@ -43,7 +43,14 @@ SUBSYSTEM=="usb", SYSFS{idVendor}=="045e", SYSFS{idProduct}=="02ad", MODE="0660"
 SUBSYSTEM=="usb", SYSFS{idVendor}=="045e", SYSFS{idProduct}=="02b0", MODE="0660", GROUP="plugdev"
 </pre>
 
-Sorry, there is currently no Windows version. :( Please pitch in and help us.
+Windows support is currently in testing in the *develop* branch. The libfreenect Kinect drivers and an example Visual Studio 2010 solution are included.
+
+Make sure to install or update the libfreenect Kinect camera, motor, and audio drivers through Windows Device Manager by pointing it to the driver folder:
+<pre>
+libs/libusb/win/inf
+</pre>
+
+You may need to manually update each driver individually if you've plugged it in before. ofxKinect will not work if the drivers are not installed.
 
 How to Create a New ofxKinect Project
 -----------------------------------------
