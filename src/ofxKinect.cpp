@@ -419,7 +419,7 @@ void ofxKinect::threadedFunction(){
 
 	
 	freenect_set_led(kinectDevice, LED_GREEN);
-	freenect_set_video_format(kinectDevice, bInfrared?FREENECT_VIDEO_IR_8BIT:FREENECT_VIDEO_RGB);
+	freenect_set_video_format(kinectDevice, bInfrared?FREENECT_VIDEO_IR_8BIT:FREENECT_VIDEO_YUV_RGB);
 	freenect_set_depth_format(kinectDevice, FREENECT_DEPTH_11BIT);
 	
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection opened");
