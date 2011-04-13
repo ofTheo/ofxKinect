@@ -136,6 +136,7 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		unsigned short *	depthPixelsBack;	// depth back
 		unsigned char *		videoPixelsBack;	// rgb back
 		
+		bool bIsFrameNew;
 		bool bNeedsUpdate;
 		bool bUpdateTex;
 
