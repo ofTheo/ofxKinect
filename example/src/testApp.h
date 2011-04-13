@@ -20,19 +20,32 @@ class testApp : public ofBaseApp {
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
 		void windowResized(int w, int h);
+		
+		/// start/stop recording and playback,
+		/// make sure you don't record and playback simultaneously 
+		/// using the same file!!!
+		void startRecording();
+		void stopRecording();
+		void startPlayback();
+		void stopPlayback();
 
-		ofxKinect kinect;
+		ofxKinect 			kinect;
+		ofxKinectRecorder 	kinectRecorder;
+		ofxKinectPlayer 	kinectPlayer;
+		
+		/// used to switch between the live kinect and the recording player
+		ofxBase3DVideo* 	kinectSource;
 
 		ofxCvColorImage		colorImg;
 
-		ofxCvGrayscaleImage 	grayImage;
-		ofxCvGrayscaleImage 	grayThresh;
-		ofxCvGrayscaleImage 	grayThreshFar;
+		ofxCvGrayscaleImage grayImage;			// grayscale depth image
+		ofxCvGrayscaleImage grayThreshNear;		// the near thresholded image
+		ofxCvGrayscaleImage grayThreshFar;		// the far thresholded image
 
 		ofxCvContourFinder 	contourFinder;
 		
 		bool				bThreshWithOpenCV;
-		bool				drawPC;
+		bool				bDrawPointCloud;
 
 		int 				nearThreshold;
 		int					farThreshold;
@@ -40,4 +53,7 @@ class testApp : public ofBaseApp {
 		int					angle;
 		
 		int 				pointCloudRotationY;
+		
+		bool 				bRecord;
+		bool 				bPlayback;
 };

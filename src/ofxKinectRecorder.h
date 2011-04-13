@@ -15,7 +15,7 @@ public:
 	virtual ~ofxKinectRecorder();
 
 	void init(const string & filename);
-	void newFrame(unsigned char* rgb, unsigned short * raw_depth);
+	void newFrame(unsigned short * raw_depth, unsigned char* rgb=NULL);
 	void close();
 
 	bool isOpened();
