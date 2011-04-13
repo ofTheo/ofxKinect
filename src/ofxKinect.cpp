@@ -24,6 +24,7 @@ ofxKinect::ofxKinect()
 
 	bNeedsUpdate			= false;
 	bUpdateTex				= false;
+	bIsFrameNew = false;
 
 	kinectContext			= NULL;
 	kinectDevice			= NULL;
@@ -89,7 +90,9 @@ ofTexture & ofxKinect::getDepthTextureReference(){
 //--------------------------------------------------------------------
 bool ofxKinect::isFrameNew(){
 	if(isThreadRunning()){
-		return !bNeedsUpdate;
+		bool curIsFrameNew = bIsFrameNew;
+		bIsFrameNew = false;
+		return curIsFrameNew;
 	}
 	return false;	
 }
@@ -127,6 +130,7 @@ void ofxKinect::close(){
 		waitForThread(true);
 	}
 	
+	bIsFrameNew = false;
 	bNeedsUpdate	= false;
 	bUpdateTex		= false;
 }
@@ -234,6 +238,7 @@ void ofxKinect::update(){
 	if (!bNeedsUpdate){
 		return;
 	} else {
+		bIsFrameNew = true;
 		bUpdateTex = true;
 	}
 
