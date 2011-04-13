@@ -20,9 +20,12 @@ void ofxKinectRecorder::init(const string & filename){
 	f = fopen(ofToDataPath(filename).c_str(),"wb");
 }
 
-void ofxKinectRecorder::newFrame(unsigned char* rgb, unsigned short * raw_depth){
-	if(!f) return;
-	fwrite(rgb,640*480*3,1,f);
+void ofxKinectRecorder::newFrame(unsigned short * raw_depth, unsigned char* rgb) {
+	if(!f ||!raw_depth) return;
+	
+	if(rgb != NULL) {
+		fwrite(rgb,640*480*3,1,f);
+	}
 	fwrite(raw_depth,640*480*sizeof(short),1,f);
 }
 
