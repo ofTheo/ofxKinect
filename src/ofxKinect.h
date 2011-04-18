@@ -56,7 +56,11 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		/// set tilt angle of the camera in degrees
 		/// 0 is flat, the range is -30 to 30
 		bool setCameraTiltAngle(float angleInDegrees);
-	
+    
+        // get camera angle
+        float getCurrentCameraTiltAngle();
+        float getTargetCameraTiltAngle();
+    
 		float getDistanceAt(int x, int y);
 		float getDistanceAt(const ofPoint & p);
 		
@@ -140,8 +144,8 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		ofPoint mksAccel;
         
 		float targetTiltAngleDeg;
+        float currentTiltAngleDeg;
 		bool bTiltNeedsApplying;
-		
 
     private:
 
