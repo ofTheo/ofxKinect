@@ -214,8 +214,10 @@ static void iso_callback(struct libusb_transfer *xfer)
 		libusb_submit_transfer(xfer);
 	} else {
 		freenect_context *ctx = strm->parent->parent->parent;
+		// using the suggestion at https://groups.google.com/group/openkinect/msg/9d78e24063033a6c
 		FN_WARNING("Isochronous transfer error: %d\n", xfer->status);
-		strm->dead_xfers++;
+		libusb_submit_transfer(xfer);
+		//strm->dead_xfers++;
 	}
 }
 
