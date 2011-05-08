@@ -30,6 +30,7 @@ ofxKinect::ofxKinect()
 	kinectDevice			= NULL;
 	
 	targetTiltAngleDeg		= 0;
+    currentTiltAngleDeg     = 0;
 	bTiltNeedsApplying		= false;
 
 	thisKinect = this;
@@ -158,6 +159,16 @@ bool ofxKinect::setCameraTiltAngle(float angleInDegrees){
 
 	return true;
 }
+
+//--------------------------------------------------------------------
+float ofxKinect::getTargetCameraTiltAngle(){
+    return targetTiltAngleDeg;
+}
+
+float ofxKinect::getCurrentCameraTiltAngle(){
+    return currentTiltAngleDeg;
+}
+
 
 //--------------------------------------------------------------------
 bool ofxKinect::init(bool infrared, bool video, bool texture){
@@ -454,6 +465,8 @@ void ofxKinect::threadedFunction(){
 
 		freenect_update_tilt_state(kinectDevice);
 		freenect_raw_tilt_state * tilt = freenect_get_tilt_state(kinectDevice);
+        
+        currentTiltAngleDeg = freenect_get_tilt_degs(tilt);
 
 		rawAccel.set(tilt->accelerometer_x, tilt->accelerometer_y, tilt->accelerometer_z);
 		
