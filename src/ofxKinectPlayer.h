@@ -57,6 +57,9 @@ public:
 	unsigned char * getDepthPixels();
 	float * getDistancePixels();
 	unsigned char * getCalibratedRGBPixels();
+	
+	/// for 007 compatibility
+	ofPixelsRef getPixelsRef();
 
 	float getDistanceAt(int x, int y) ;
 	ofxVec3f getWorldCoordinateFor(int x, int y);
@@ -73,6 +76,8 @@ private:
 	ofTexture depthTex,videoTex;
 	bool bUseTexture;
 	unsigned char *rgb;
+	
+	ofPixels pixels;
 
 	bool bVideo;
 	bool bLoop;
