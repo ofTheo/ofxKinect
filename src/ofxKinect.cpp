@@ -203,7 +203,7 @@ bool ofxKinect::init(bool infrared, bool video, bool texture){
 
 	if(bUseTexture){
 		depthTex.allocate(width, height, GL_LUMINANCE);
-		videoTex.allocate(width, height, infrared?GL_LUMINANCE:GL_RGB);
+		videoTex.allocate(width, height, infrared ? GL_LUMINANCE : GL_RGB);
 	}
 	
 	if (freenect_init(&kinectContext, NULL) < 0){
@@ -274,7 +274,7 @@ void ofxKinect::update(){
 
 	if(bUseTexture){
 		depthTex.loadData(calibration.getDepthPixels(), width, height, GL_LUMINANCE);
-		videoTex.loadData(videoPixels, width, height, bInfrared?GL_LUMINANCE:GL_RGB);
+		videoTex.loadData(videoPixels, width, height, bInfrared ? GL_LUMINANCE : GL_RGB);
 		bUpdateTex = false;
 	}
 }
@@ -408,7 +408,8 @@ bool ofxKinect::isDepthNearValueWhite(){
 void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t timestamp) {
 	if (thisKinect->lock()) {
 		try {
-			memcpy(thisKinect->depthPixelsBack, depth, FREENECT_DEPTH_11BIT_SIZE);
+			freenect_frame_mode curMode = freenect_get_current_depth_mode(dev);
+			memcpy(thisKinect->depthPixelsBack, depth, curMode.bytes);
 			thisKinect->bNeedsUpdate = true;
 		}
 		catch(...) {
@@ -424,7 +425,8 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 void ofxKinect::grabRgbFrame(freenect_device *dev, void *rgb, uint32_t timestamp) {
 	if (thisKinect->lock()) {
 		try {
-			memcpy(thisKinect->videoPixelsBack, rgb, thisKinect->bInfrared?FREENECT_VIDEO_IR_8BIT_SIZE:FREENECT_VIDEO_RGB_SIZE);
+			freenect_frame_mode curMode = freenect_get_current_video_mode(dev);
+			memcpy(thisKinect->videoPixelsBack, rgb, curMode.bytes);
 			thisKinect->bNeedsUpdate = true;
 		}
 		catch (...) {
@@ -439,10 +441,11 @@ void ofxKinect::grabRgbFrame(freenect_device *dev, void *rgb, uint32_t timestamp
 //---------------------------------------------------------------------------
 void ofxKinect::threadedFunction(){	
 
-	
 	freenect_set_led(kinectDevice, LED_GREEN);
-	freenect_set_video_format(kinectDevice, bInfrared?FREENECT_VIDEO_IR_8BIT:FREENECT_VIDEO_YUV_RGB);
-	freenect_set_depth_format(kinectDevice, FREENECT_DEPTH_11BIT);
+	freenect_frame_mode videoMode = freenect_find_video_mode(FREENECT_RESOLUTION_MEDIUM, bInfrared ? FREENECT_VIDEO_IR_8BIT : FREENECT_VIDEO_RGB);
+	freenect_set_video_mode(kinectDevice, videoMode);
+	freenect_frame_mode depthMode = freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, FREENECT_DEPTH_11BIT);
+	freenect_set_depth_mode(kinectDevice, depthMode);
 	
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection opened");
 
