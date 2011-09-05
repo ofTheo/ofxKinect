@@ -1,9 +1,22 @@
+
+build
+
+# mac Finder index files
+.DS_*
+
+# mac apps
+*.app*
+
+# xcode user project files
+*.pbxuser
+*.perspectivev3
+*.xcworkspacedata
+xcuserdata
+*.mode1*v3
+
+# codeblocks project files
 *.depend
 *.layout
-*.mode*v3
-*.pbxuser
-*.app*
-*.DS_*
 
 .svn/
 obj/
