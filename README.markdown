@@ -50,9 +50,16 @@ Open the XCode project and hit "Build and Run". You might want to chosose "Relea
 
 #### Linux
 
-Open the Code::Blocks .cbp and hit F9 to build and run. Makefiles are also included.
+Open the Code::Blocks .cbp and hit F9 to build. Optionally, you can build the example with the Makefile.
 
-You should create some udev rules in order to run the app without root privileges. As root write this to /etc/udev/rules.d/51-kinect.rules (this works on Ubuntu 10.10):
+To run it, use the terminal:
+<pre>
+make
+cd bin
+./example_debug
+</pre>
+
+Also, you should create some udev rules in order to run the app without root privileges. As the root user, write this to `/etc/udev/rules.d/51-kinect.rules` (this works on Ubuntu 10.10):
 <pre>
 SUBSYSTEM=="usb", SYSFS{idVendor}=="045e", SYSFS{idProduct}=="02ae", MODE="0660", GROUP="plugdev"
 SUBSYSTEM=="usb", SYSFS{idVendor}=="045e", SYSFS{idProduct}=="02ad", MODE="0660", GROUP="plugdev"
@@ -92,16 +99,33 @@ openFrameworks/addons/ofxKinect/src
 openFrameworks/addons/ofxKinect/libs
 </pre>
 
-You will also need the ofxOpenCV addon which is included with OpenFrameworks. Add the following path to your header search paths:
-`../../../addons/ofxOpenCV/libs/opencv/include`
-
 For Xcode:
 
 * create a new group "ofxKinect"
 * drag these directories from ofxKinect into this new group: ofxKinect/src & ofxKinect/libs
 * add a search path to: ../../../addons/ofxKinect/libs/libusb/osx/lib
+
+You will also need the ofxOpenCV addon which is included with OpenFrameworks. Add the following path to your header search paths:
+`../../../addons/ofxOpenCV/libs/opencv/include`
+
+For Xcode:
+
   * Xcode3: under Targets->YourApp->Build->Library Search Paths (make sure All Configurations and All Settings are selected) and add the path
   * Xcode4: add the lib path to your Project.xconfig, see the example
+
+Last, on Mac OSX and Linux you will need to link to the libusb-1.0 library. A precompiled versions is supplied for Mac OSX and found in `libs/libusbosx`. Make sure to include the search path for the headers:
+<pre>
+../../../ofxKinect/libs/libusb/include/libusb-1.0
+</pre>
+and link the lib:
+<pre>
+../../../ofxKinect/libs/libusb/osx/libs/usb-1.0.a
+</pre>
+
+For Linux, you simply install libusb-1.0 and add a link flag for it: `-lusb-1.0`. On Ubuntu, you can install it with:
+<pre>
+sub apt-get install libusb1.0-0-dev
+</pre>
 
 Developing ofxKinect
 --------------------
