@@ -189,7 +189,7 @@ float ofxKinectPlayer::getDistanceAt(int x, int y) {
 }
 
 //------------------------------------
-ofxVec3f ofxKinectPlayer::getWorldCoordinateFor(int x, int y) {
+ofVec3f ofxKinectPlayer::getWorldCoordinateFor(int x, int y) {
 	return calibration.getWorldCoordinateFor(x,y);
 }
 

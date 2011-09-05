@@ -154,7 +154,7 @@ void testApp::drawPointCloud() {
 	int step = 2;
 	for(int y = 0; y < h; y += step) {
 		for(int x = 0; x < w; x += step) {
-			ofPoint cur = kinect.getWorldCoordinateFor(x, y);
+			ofVec3f cur = kinect.getWorldCoordinateFor(x, y);
 			ofColor color = kinect.getCalibratedColorAt(x,y);
 			glColor3ub((unsigned char)color.r,(unsigned char)color.g,(unsigned char)color.b);
 			glVertex3f(cur.x, cur.y, cur.z);

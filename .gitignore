@@ -10,7 +10,6 @@ build
 # xcode user project files
 *.pbxuser
 *.perspectivev3
-*.xcworkspacedata
 xcuserdata
 *.mode1*v3
 
