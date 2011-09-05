@@ -30,14 +30,14 @@ git checkout 0062
 
 #### Using the latest ofxKinect
 
-THe master branch of ofxKinect will work with the current master of OpenFrameworks and can be considered unstable. The development branch is used for testing new features and bugfixes before they are applied to master.
+THe master branch of ofxKinect will work with the current master of OpenFrameworks and can be considered unstable. The develop branch is used for testing new features and bugfixes before they are applied to master.
 
-If you want to work with the latest unstable (still in development) ofxKinect, download the source from the development branch [https://github.com/ofTheo/ofxKinect/archives/experimental](https://github.com/ofTheo/ofxKinect/archives/development) or via git clone:
+If you want to work with the latest unstable (still in development) ofxKinect, download the source from the develop branch [https://github.com/ofTheo/ofxKinect/tree/develop](https://github.com/ofTheo/ofxKinect/tree/develop) or via git clone:
 <pre>
 git clone git://github.com/ofTheo/ofxKinect.git -b development
 </pre> 
 
-Warning: The development branch will be in flux, so don't be suprised if things do not always work as expected!
+Warning: The develop branch will be in flux, so don't be suprised if things do not always work as expected!
 
 Running the Example Project
 -------------------------------
