@@ -9,7 +9,7 @@ void testApp::setup() {
 	//kinect.init(false, false);  // disable infrared/rgb video iamge (faster fps)
 	kinect.setVerbose(true);
 	kinect.open();
-	
+
 	// start with the live kinect source
 	kinectSource = &kinect;
 
@@ -21,7 +21,7 @@ void testApp::setup() {
 	nearThreshold = 230;
 	farThreshold  = 70;
 	bThreshWithOpenCV = true;
-	
+
 	ofSetFrameRate(60);
 
 	bRecord = false;
@@ -30,7 +30,7 @@ void testApp::setup() {
 	// zero the tilt on startup
 	angle = 0;
 	kinect.setCameraTiltAngle(angle);
-	
+
 	// start from the front
 	pointCloudRotationY = 180;
 	bDrawPointCloud = false;
@@ -40,12 +40,12 @@ void testApp::setup() {
 void testApp::update() {
 
 	ofBackground(100, 100, 100);
-	
+
 	kinectSource->update();
-	
+
 	// there is a new frame and we are connected
 	if(kinectSource->isFrameNew()) {
-	
+
 		// record ?
 		if(bRecord && kinectRecorder.isOpened()) {
 			kinectRecorder.newFrame(kinect.getRawDepthPixels(), kinect.getPixels());
@@ -53,17 +53,17 @@ void testApp::update() {
 
 		// load grayscale depth image from the kinect source
 		grayImage.setFromPixels(kinectSource->getDepthPixels(), kinect.width, kinect.height);
- 	
+
 		// we do two thresholds - one for the far plane and one for the near plane
-		// we then do a cvAnd to get the pixels which are a union of the two thresholds 
+		// we then do a cvAnd to get the pixels which are a union of the two thresholds
 		if(bThreshWithOpenCV) {
 			grayThreshNear = grayImage;
-			grayThreshFar = grayImage;	
+			grayThreshFar = grayImage;
 			grayThreshNear.threshold(nearThreshold, true);
 			grayThreshFar.threshold(farThreshold);
 			cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
 		} else {
-		
+
 			// or we do it ourselves - show people how they can work with the pixels
 			unsigned char * pix = grayImage.getPixels();
 
@@ -79,7 +79,7 @@ void testApp::update() {
 
 		// update the cv images
 		grayImage.flagImageChanged();
-	
+
 		// find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
     	// also, find holes is set to true so we will get interior contours as well....
     	contourFinder.findContours(grayImage, 10, (kinect.width*kinect.height)/2, 20, false);
@@ -90,7 +90,7 @@ void testApp::update() {
 void testApp::draw() {
 
 	ofSetColor(255, 255, 255);
-	
+
 	if(bDrawPointCloud) {
 		ofPushMatrix();
 		ofTranslate(420, 320);
@@ -111,7 +111,7 @@ void testApp::draw() {
 		grayImage.draw(10, 320, 400, 300);
 		contourFinder.draw(10, 320, 400, 300);
 	}
-	
+
 	// draw recording/playback indicators
 	ofPushMatrix();
 	ofTranslate(25, 25);
@@ -125,13 +125,13 @@ void testApp::draw() {
 		ofTriangle(-10, -10, -10, 10, 10, 0);
 	}
 	ofPopMatrix();
-	
+
 
 	// draw instructions
 	ofSetColor(255, 255, 255);
 	stringstream reportStream;
 	reportStream << "accel is: " << ofToString(kinect.getMksAccel().x, 2) << " / "
-								 << ofToString(kinect.getMksAccel().y, 2) << " / " 
+								 << ofToString(kinect.getMksAccel().y, 2) << " / "
 								 << ofToString(kinect.getMksAccel().z, 2) << endl
 				 << "press p to switch between images and point cloud, rotate the point cloud with the mouse" << endl
 				 << "using opencv threshold = " << bThreshWithOpenCV <<" (press spacebar)" << endl
@@ -149,7 +149,6 @@ void testApp::drawPointCloud() {
 	int w = 640;
 	int h = 480;
 	ofRotateY(pointCloudRotationY);
-	float* distancePixels = kinect.getDistancePixels();
 	glBegin(GL_POINTS);
 	int step = 2;
 	for(int y = 0; y < h; y += step) {
@@ -177,48 +176,48 @@ void testApp::keyPressed (int key) {
 		case ' ':
 			bThreshWithOpenCV = !bThreshWithOpenCV;
 		break;
-		
+
 		case'p':
 			bDrawPointCloud = !bDrawPointCloud;
 			break;
-	
+
 		case '>':
 		case '.':
 			farThreshold ++;
 			if (farThreshold > 255) farThreshold = 255;
 			break;
-			
-		case '<':		
-		case ',':		
+
+		case '<':
+		case ',':
 			farThreshold --;
 			if (farThreshold < 0) farThreshold = 0;
 			break;
-			
+
 		case '+':
 		case '=':
 			nearThreshold ++;
 			if (nearThreshold > 255) nearThreshold = 255;
 			break;
-			
-		case '-':		
+
+		case '-':
 			nearThreshold --;
 			if (nearThreshold < 0) nearThreshold = 0;
 			break;
-			
+
 		case 'w':
 			kinect.enableDepthNearValueWhite(!kinect.isDepthNearValueWhite());
 			break;
-			
+
 		case 'o':
 			kinect.setCameraTiltAngle(angle);	// go back to prev tilt
 			kinect.open();
 			break;
-			
+
 		case 'c':
 			kinect.setCameraTiltAngle(0);		// zero the tilt
 			kinect.close();
 			break;
-			
+
 		case 'r':
 			bRecord = !bRecord;
 			if(bRecord) {
@@ -227,7 +226,7 @@ void testApp::keyPressed (int key) {
 				stopRecording();
 			}
 			break;
-			
+
 		case 'q':
 			bPlayback = !bPlayback;
 			if(bPlayback) {
@@ -274,10 +273,10 @@ void testApp::windowResized(int w, int h)
 
 //--------------------------------------------------------------
 void testApp::startRecording() {
-	
+
 	// stop playback if running
 	stopPlayback();
-	
+
 	kinectRecorder.init(ofToDataPath("recording.dat"));
 	bRecord = true;
 }
@@ -290,7 +289,7 @@ void testApp::stopRecording() {
 
 //--------------------------------------------------------------
 void testApp::startPlayback() {
-	
+
 	stopRecording();
 	kinect.close();
 
