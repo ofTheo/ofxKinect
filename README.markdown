@@ -92,12 +92,15 @@ openFrameworks/addons/ofxKinect/src
 openFrameworks/addons/ofxKinect/libs
 </pre>
 
-For XCode:
+You will also need the ofxOpenCV addon which is included with OpenFrameworks. Add the following path to your header search paths:
+`../../../addons/ofxOpenCV/libs/opencv/include`
+
+For Xcode:
 * create a new group "ofxKinect"
-* drag these directories from ofxKinect into this new group: ofxKinect/src & ofxKinect/libs
+* drag these directories from ofxKinect into this new group: `ofxKinect/src` & `ofxKinect/libs`
 * add a search path to: `../../../addons/ofxKinect/libs/libusb/osx/libs`
-** Xcode3: under Targets->YourApp->Build->Library Search Paths (make sure All Configurations and All Settings are selected)
-** Xcode4: add the lib paths to your Project.xconfig, see the example
+** Xcode3: under Targets->YourApp->Build->Library Search Paths (make sure All Configurations and All Settings are selected) and add the path
+** Xcode4: add the lib path to your Project.xconfig, see the example
 
 Developing ofxKinect
 --------------------
