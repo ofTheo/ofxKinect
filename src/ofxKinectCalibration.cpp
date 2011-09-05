@@ -7,6 +7,13 @@
 
 #include "ofxKinectCalibration.h"
 
+#ifdef _MSC_VER
+	// round() is C99. MSVC doesn't support C99.
+	float round(float n) {
+	   return n >= 0 ? int(n + 0.5) : int(n - 0.5);
+	}
+#endif
+
 /*
  these values constrain the maximum distance in the depthPixels image to:
  - as near as possible (raw value of 0)

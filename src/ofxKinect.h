@@ -9,9 +9,14 @@
 
 #include "ofxThread.h"
 
-#include <libusb.h>
+#ifndef _MSC_VER
+	#include <libusb.h>
+#endif
+
 #include "libfreenect.h"
 #include "ofxKinectCalibration.h"
+#include "ofxKinectPlayer.h"
+#include "ofxKinectRecorder.h"
 
 class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 
@@ -30,9 +35,14 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		void close();
         
 		/// initialize resources, must be called before open()
-		bool init(bool infrared=false, bool bTexture=true);
-		
-		bool setCameraTiltAngle(float angleInDegrees);
+		/// infrared controls whether the video image is rgb or IR
+		/// set vdeo to false to disabel vidoe image grabbing (saves bandwidth)
+		/// set texture to false if you don't need to use the internal textures
+		///
+		/// naturally, if you disable the video image the video pixels and
+		/// RGB color will be 0
+		///
+		bool init(bool infrared=false, bool video=true, bool texture=true);
         
 		/// updates the pixel buffers and textures - make sure to call this to update to the latetst incoming frames
 		void update(); 
@@ -42,7 +52,15 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		
 		/// is the connection currently open?
 		bool isConnected();
-	
+		
+		/// set tilt angle of the camera in degrees
+		/// 0 is flat, the range is -30 to 30
+		bool setCameraTiltAngle(float angleInDegrees);
+    
+        // get camera angle
+        float getCurrentCameraTiltAngle();
+        float getTargetCameraTiltAngle();
+    
 		float getDistanceAt(int x, int y);
 		float getDistanceAt(const ofPoint & p);
 		
@@ -53,10 +71,7 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		ofColor getColorAt(const ofPoint & p);
 
 		ofColor getCalibratedColorAt(int x, int y);
-		ofColor getCalibratedColorAt(const ofPoint & p);		
-
-		//ofxMatrix4x4 getRGBDepthMatrix();
-		//void setRGBDepthMatrix(const ofxMatrix4x4 & matrix);
+		ofColor getCalibratedColorAt(const ofPoint & p);
 		
 		float 			getHeight();
 		float 			getWidth();
@@ -82,6 +97,9 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		
 		/// get the greyscale depth texture
 		ofTexture &		getDepthTextureReference();
+		
+		/// for 007 compatibility
+		ofPixels & getPixelsRef();
 		
 		/**
 			set the near value of the pixels in the greyscale depth image to white?
@@ -118,6 +136,7 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		bool 					bVerbose;
 		bool 					bGrabberInited;
 		
+		ofPixels pixels;
 		unsigned char *			videoPixels;
 		unsigned short *		depthPixelsRaw;
 		
@@ -125,8 +144,8 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		ofPoint mksAccel;
         
 		float targetTiltAngleDeg;
+        float currentTiltAngleDeg;
 		bool bTiltNeedsApplying;
-		
 
     private:
 
@@ -139,6 +158,7 @@ class ofxKinect : public ofxBase3DVideo, protected ofxThread{
 		bool bIsFrameNew;
 		bool bNeedsUpdate;
 		bool bUpdateTex;
+		bool bGrabVideo;
 
 		bool				bInfrared;
 		int					bytespp;
