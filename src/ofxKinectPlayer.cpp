@@ -45,6 +45,7 @@ void ofxKinectPlayer::setup(const string & file, bool video){
 	if(!buf) buf 		= new uint16_t[640*480];
 	if(!rgb) rgb = new unsigned char[640*480*3];
 	memset(rgb,255,640*480*3);
+	pixels.setFromExternalPixels(rgb, 640, 480, OF_IMAGE_COLOR);
 	if(!depthTex.bAllocated() && bUseTexture)
 		depthTex.allocate(640,480,GL_LUMINANCE);
 	if(!videoTex.bAllocated() && bUseTexture)
@@ -152,6 +153,11 @@ ofTexture & ofxKinectPlayer::getTextureReference(){
 //-----------------------------------------------------------
 ofTexture & ofxKinectPlayer::getDepthTextureReference(){
 	return depthTex;
+}
+
+//---------------------------------------------------------------------------
+ofPixels & ofxKinectPlayer::getPixelsRef() {
+	return pixels;
 }
 
 //-----------------------------------------------------------
