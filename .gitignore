@@ -1,5 +1,10 @@
 
-build
+.svn/
+obj/
+bin/
+build/
+!data/
+ipch/
 
 # mac Finder index files
 .DS_*
@@ -17,10 +22,7 @@ xcuserdata
 *.depend
 *.layout
 
-.svn/
-obj/
-bin/
-build/
-!data/
-ipch/
-
+# visual studio project files
+*.vcxproj.user
+*.suo
+*.sdf

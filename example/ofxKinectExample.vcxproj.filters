@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.cpp">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvContourFinder.cpp">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvFloatImage.cpp">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvGrayscaleImage.cpp">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvImage.cpp">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.cpp">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\testApp.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinect.cpp">
+      <Filter>addons\ofxKinect\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinectCalibration.cpp">
+      <Filter>addons\ofxKinect\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinectPlayer.cpp">
+      <Filter>addons\ofxKinect\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinectRecorder.cpp">
+      <Filter>addons\ofxKinect\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvBlob.h">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.h">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.h">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvConstants.h">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvContourFinder.h">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvFloatImage.h">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvGrayscaleImage.h">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvImage.h">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvMain.h">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxOpenCv.h">
+      <Filter>addons\ofxOpenCV\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\testApp.h" />
+    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxBase3DVideo.h">
+      <Filter>addons\ofxKinect\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinectRecorder.h">
+      <Filter>addons\ofxKinect\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinect.h">
+      <Filter>addons\ofxKinect\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinectCalibration.h">
+      <Filter>addons\ofxKinect\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinectPlayer.h">
+      <Filter>addons\ofxKinect\src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="addons">
+      <UniqueIdentifier>{fb9e352c-c0b7-4a51-8394-a95887d8e1e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOpenCV">
+      <UniqueIdentifier>{d6eac2d3-90b8-45fa-ba9a-e2c34eea2695}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOpenCV\src">
+      <UniqueIdentifier>{6edcfb1c-6e19-4657-9a6a-ee5ff2cf563f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinect">
+      <UniqueIdentifier>{17dbc44a-7c2f-4ca0-87d4-63ba5d377287}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinect\src">
+      <UniqueIdentifier>{47c6e6ca-2b36-4fd0-996d-ccd2530b274a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

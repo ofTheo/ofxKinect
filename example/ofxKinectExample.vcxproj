@@ -11,9 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7FD42DF7-442E-479A-BA76-D0022F99702A}</ProjectGuid>
+    <ProjectGuid>{C0FDD955-4BC4-4D1B-A98D-A4EA0915D268}</ProjectGuid>
     <RootNamespace>allAddonsExample</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <ProjectName>ofxKinectExample</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -50,7 +51,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\videoInput\include;..\..\..\libs\glee\include;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxThread\src;..\..\..\addons\ofxVectorMath\src;..\..\..\addons\ofxKinect\src;..\..\..\addons\ofxKinect\libs\libfreenect;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\libs\cairo\include\cairo;..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\math;..\..\..\libs\openFrameworks\gl;..\..\..\libs\openFrameworks\3d;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\openframeworks\types;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\tess2\include;..\..\..\libs\videoInput\include;..\..\..\libs\glew\include;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxKinect\src;..\..\..\addons\ofxKinect\libs\libfreenect;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -61,9 +62,9 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>openframeworksLibDebug.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;glut32.lib;rtAudioD.lib;videoInput.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;GLee.lib;fmodex_vc.lib;glu32.lib;PocoFoundationmtd.lib;PocoNetmtd.lib;PocoUtilmtd.lib;PocoXMLmtd.lib;Ws2_32.lib;cv110d.lib;cvaux110d.lib;cxcore110d.lib;freenect.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>openframeworksLibDebug.lib;cairo-static.lib;pixman-1.lib;msimg32.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;Vfw32.lib;comctl32.lib;glut32.lib;rtAudioD.lib;videoInput.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;glew32s.lib;fmodex_vc.lib;glu32.lib;PocoFoundationmdd.lib;PocoNetmdd.lib;PocoUtilmdd.lib;PocoXMLmdd.lib;Ws2_32.lib;tess2.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_calib3d220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_contrib220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_core220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_features2d220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_flann220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_gpu220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_highgui220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_imgproc220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_legacy220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_ml220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_objdetect220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_ts220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_video220d.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_lapackd.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\zlibd.lib;..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs2010\freenect.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs2010;..\..\..\libs\rtAudio\lib\vs2010;..\..\..\libs\FreeImage\lib\vs2010;..\..\..\libs\freetype\lib\vs2010;..\..\..\libs\quicktime\lib\vs2010;..\..\..\libs\fmodex\lib\vs2010;..\..\..\libs\videoInput\lib\vs2010;..\..\..\libs\glee\lib\vs2010;..\..\..\libs\glu\lib\vs2010;..\..\..\libs\Poco\lib\vs2010;..\..\..\libs\openFrameworksCompiled\lib\vs2010;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010;..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs2010;..\..\..\libs\rtAudio\lib\vs2010;..\..\..\libs\FreeImage\lib\vs2010;..\..\..\libs\freetype\lib\vs2010;..\..\..\libs\quicktime\lib\vs2010;..\..\..\libs\fmodex\lib\vs2010;..\..\..\libs\videoInput\lib\vs2010;..\..\..\libs\glew\lib\vs2010;..\..\..\libs\cairo\lib\vs2010;..\..\..\libs\glu\lib\vs2010;..\..\..\libs\Poco\lib\vs2010;..\..\..\libs\tess2\lib\vs2010;..\..\..\libs\openFrameworksCompiled\lib\vs2010;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010;..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>atlthunk.lib; LIBC.lib; LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName)_debugInfo.pdb</ProgramDatabaseFile>
@@ -84,7 +85,7 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs20
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\videoInput\include;..\..\..\libs\glee\include;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxThread\src;..\..\..\addons\ofxVectorMath\src;..\..\..\addons\ofxKinect\src;..\..\..\addons\ofxKinect\libs\libfreenect;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\math;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\openFrameworks\3d;..\..\..\libs\openFrameworks\gl;..\..\..\libs\openFrameworks\types;..\..\..\libs\cairo\include\cairo;..\..\..\libs\tess2\include;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\videoInput\include;..\..\..\libs\glew\include;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxKinect\src;..\..\..\addons\ofxKinect\libs\libfreenect;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;POCO_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -94,8 +95,8 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs20
       </DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>openframeworksLib.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;glut32.lib;rtAudio.lib;videoInput.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;GLee.lib;fmodex_vc.lib;glu32.lib;PocoFoundationmt.lib;PocoNetmt.lib;PocoUtilmt.lib;PocoXMLmt.lib;Ws2_32.lib;cv110.lib;cvaux110.lib;cxcore110.lib;freenect.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs2010;..\..\..\libs\rtAudio\lib\vs2010;..\..\..\libs\FreeImage\lib\vs2010;..\..\..\libs\freetype\lib\vs2010;..\..\..\libs\quicktime\lib\vs2010;..\..\..\libs\fmodex\lib\vs2010;..\..\..\libs\videoInput\lib\vs2010;..\..\..\libs\glee\lib\vs2010;..\..\..\libs\glu\lib\vs2010;..\..\..\libs\Poco\lib\vs2010;..\..\..\libs\openFrameworksCompiled\lib\vs2010;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010;..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openframeworksLib.lib;cairo-static.lib;pixman-1.lib;msimg32.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;glut32.lib;rtAudio.lib;videoInput.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;glew32s.lib;fmodex_vc.lib;glu32.lib;Vfw32.lib;comctl32.lib;PocoFoundationmd.lib;PocoNetmd.lib;PocoUtilmd.lib;PocoXMLmd.lib;Ws2_32.lib;tess2.lib;..\..\..\addons\ofxOsc\libs\oscpack\lib\vs2010\oscpack.lib;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs2010\assimp.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_calib3d220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_contrib220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_core220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_features2d220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_flann220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_gpu220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_highgui220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_imgproc220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_legacy220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_ml220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_objdetect220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_ts220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_video220.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\opencv_lapack.lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010\zlib.lib;freenect.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\libs\cairo\lib\vs2010;..\..\..\libs\glut\lib\vs2010;..\..\..\libs\rtAudio\lib\vs2010;..\..\..\libs\FreeImage\lib\vs2010;..\..\..\libs\freetype\lib\vs2010;..\..\..\libs\quicktime\lib\vs2010;..\..\..\libs\fmodex\lib\vs2010;..\..\..\libs\videoInput\lib\vs2010;..\..\..\libs\glew\lib\vs2010;..\..\..\libs\glu\lib\vs2010;..\..\..\libs\Poco\lib\vs2010;..\..\..\libs\tess2\lib\vs2010;..\..\..\libs\openFrameworksCompiled\lib\vs2010;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010;..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>atlthunk.lib; LIBC.lib; LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -117,23 +118,25 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs20
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinect.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinectCalibration.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinectPlayer.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinectRecorder.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvContourFinder.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvFloatImage.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvGrayscaleImage.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvImage.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxVectorMath\src\ofxMatrix4x4.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxVectorMath\src\ofxQuaternion.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxThread\src\ofxThread.cpp" />
-    <ClCompile Include="..\src\ofxKinect.cpp" />
-    <ClCompile Include="..\src\ofxKinectCalibration.cpp" />
-    <ClCompile Include="..\src\ofxKinectPlayer.cpp" />
-    <ClCompile Include="..\src\ofxKinectRecorder.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\testApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxBase3DVideo.h" />
+    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinect.h" />
+    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinectCalibration.h" />
+    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinectPlayer.h" />
+    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinectRecorder.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvBlob.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvConstants.h" />
@@ -144,22 +147,6 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs20
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvMain.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxOpenCv.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxMatrix3x3.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxPoint2f.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxPoint3f.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxPoint4f.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxVec2f.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxVec3f.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxVec4f.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxMatrix4x4.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxQuaternion.h" />
-    <ClInclude Include="..\..\..\addons\ofxVectorMath\src\ofxVectorMath.h" />
-    <ClInclude Include="..\..\..\addons\ofxThread\src\ofxThread.h" />
-    <ClInclude Include="..\src\ofxBase3DVideo.h" />
-    <ClInclude Include="..\src\ofxKinect.h" />
-    <ClInclude Include="..\src\ofxKinectCalibration.h" />
-    <ClInclude Include="..\src\ofxKinectPlayer.h" />
-    <ClInclude Include="..\src\ofxKinectRecorder.h" />
     <ClInclude Include="src\testApp.h" />
   </ItemGroup>
   <ItemGroup>
