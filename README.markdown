@@ -31,7 +31,7 @@ git checkout 0062
 
 #### Using the latest ofxKinect
 
-THe master branch of ofxKinect will work with the current master of OpenFrameworks and can be considered unstable. The develop branch is used for testing new features and bugfixes before they are applied to master.
+The master branch of ofxKinect will work with the current master of OpenFrameworks and can be considered unstable. The develop branch is used for testing new features and bugfixes before they are applied to master.
 
 If you want to work with the latest unstable (still in development) ofxKinect, download the source from the develop branch [https://github.com/ofTheo/ofxKinect/tree/develop](https://github.com/ofTheo/ofxKinect/tree/develop) or via git clone:
 <pre>
@@ -125,7 +125,7 @@ and link the lib:
 
 For Linux, you simply install libusb-1.0 and add a link flag for it: `-lusb-1.0`. On Ubuntu, you can install it with:
 <pre>
-sub apt-get install libusb1.0-0-dev
+sudo apt-get install libusb1.0-0-dev
 </pre>
 
 Developing ofxKinect
