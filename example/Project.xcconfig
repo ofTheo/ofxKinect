@@ -15,7 +15,7 @@ ADDONS_PATH = $(OF_PATH)/addons
 OFX_OPENCV_HEADERS = "$(ADDONS_PATH)/ofxOpenCv/libs/opencv/include/"
 
 // ofxKinect
-OFX_KINECT_HEADERS = "$(ADDONS_PATH)/ofxKinect/libs/libusb/include/libusb-1.0"
+OFX_KINECT_HEADERS = "$(ADDONS_PATH)/ofxKinect/libs/libusb/include/"
 OFX_KINECT_LIBS = "$(ADDONS_PATH)/ofxKinect/libs/libusb/osx/libs/usb-1.0.a"
 
 // all addons
