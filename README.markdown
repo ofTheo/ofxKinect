@@ -25,6 +25,7 @@ If you are using a stable version (0062, 007, ...) of OpenFrameworks then you wa
 For example, the following commands will clone ofxKinect and switch to the OF 0062 tagged version:
 <pre>
 git clone git://github.com/ofTheo/ofxKinect.git
+cd ofxKinect
 git checkout 0062
 </pre>
 
