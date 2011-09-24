@@ -4,11 +4,18 @@
 //--------------------------------------------------------------
 void testApp::setup() {
 
+    ofSetLogLevel(OF_LOG_VERBOSE);
+
 	kinect.init();
 	//kinect.init(true);  // shows infrared instead of RGB video image
 	//kinect.init(false, false);  // disable infrared/rgb video iamge (faster fps)
 	kinect.setVerbose(true);
 	kinect.open();
+    
+    #ifdef USE_TWO_KINECTS
+    kinect2.init();
+    kinect2.open();
+    #endif
 
 	// start with the live kinect source
 	kinectSource = &kinect;
@@ -84,6 +91,10 @@ void testApp::update() {
     	// also, find holes is set to true so we will get interior contours as well....
     	contourFinder.findContours(grayImage, 10, (kinect.width*kinect.height)/2, 20, false);
 	}
+    
+    #ifdef USE_TWO_KINECTS
+    kinect2.update();
+    #endif
 }
 
 //--------------------------------------------------------------
@@ -97,12 +108,14 @@ void testApp::draw() {
 		// we need a proper camera class
 		drawPointCloud();
 		ofPopMatrix();
-	} else {
+	}
+    else {
 		if(!bPlayback) {
 			// draw from the live kinect
 			kinect.drawDepth(10, 10, 400, 300);
 			kinect.draw(420, 10, 400, 300);
-		} else {
+		}
+        else {
 			// draw from the player
 			kinectPlayer.drawDepth(10, 10, 400, 300);
 			kinectPlayer.draw(420, 10, 400, 300);
@@ -110,7 +123,11 @@ void testApp::draw() {
 
 		grayImage.draw(10, 320, 400, 300);
 		contourFinder.draw(10, 320, 400, 300);
-	}
+	
+        #ifdef USE_TWO_KINECTS
+        kinect2.draw(420, 320, 400, 300);
+        #endif
+    }
 
 	// draw recording/playback indicators
 	ofPushMatrix();
@@ -168,6 +185,10 @@ void testApp::exit() {
 	kinect.close();
 	kinectPlayer.close();
 	kinectRecorder.close();
+    
+     #ifdef USE_TWO_KINECTS
+    kinect2.close();
+    #endif
 }
 
 //--------------------------------------------------------------

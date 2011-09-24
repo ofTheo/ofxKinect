@@ -4,6 +4,9 @@
 #include "ofxOpenCv.h"
 #include "ofxKinect.h"
 
+// uncomment this to read from two kinects simultaneously
+//#define USE_TWO_KINECTS
+
 class testApp : public ofBaseApp {
 	public:
 
@@ -56,4 +59,7 @@ class testApp : public ofBaseApp {
 		
 		bool 				bRecord;
 		bool 				bPlayback;
+        
+        // second kinect for testing
+        ofxKinect 			kinect2;
 };

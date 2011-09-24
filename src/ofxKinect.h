@@ -16,6 +16,16 @@
 #include "ofxKinectPlayer.h"
 #include "ofxKinectRecorder.h"
 
+class ofxKinectContext;
+
+/// \class ofxKinect
+///
+/// wrapper for a freenect kinect device
+///
+/// references:
+///     - http://openkinect.org/wiki/Main_Page
+///     - https://github.com/OpenKinect/libfreenect/blob/master/include/libfreenect.h
+///
 class ofxKinect : public ofxBase3DVideo, protected ofThread {
 
 	public :
@@ -27,7 +37,8 @@ class ofxKinect : public ofxBase3DVideo, protected ofThread {
 		bool isFrameNew();
         
 		/// open the connection and start grabbing images
-		bool open();
+        /// choose the device id or set it to -1 to open the first available device
+		bool open(int id=-1);
         
 		/// close the connection and stop grabbing images
 		void close();
@@ -50,6 +61,10 @@ class ofxKinect : public ofxBase3DVideo, protected ofThread {
 		
 		/// is the connection currently open?
 		bool isConnected();
+        
+        /// get the device id
+        /// returns -1 if not connected
+        int getDeviceId();
 		
 		/// set tilt angle of the camera in degrees
 		/// 0 is flat, the range is -30 to 30
@@ -122,9 +137,27 @@ class ofxKinect : public ofxBase3DVideo, protected ofThread {
 		void			drawDepth(const ofRectangle & rect);
 		
 		ofxKinectCalibration& getCalibration();
-
-		const static int	width = 640;
+        
+        const static int	width = 640;
 		const static int	height = 480;
+        
+        /// \section Static global kinect context functions
+        
+        /// get the total number of devices
+        static int numTotalDevices();
+        
+        /// get the number of available devices (not connected)
+        static int numAvailableDevices();
+        
+        /// get the number of currently connected devices
+        static int numConnectedDevices();
+        
+        /// is the an id already connected?
+        static bool isDeviceConnected(int id);
+        
+        /// get the id of the next available device,
+        /// returns -1 if nothing found
+        static int nextAvailableId();
 
 	protected:
 
@@ -147,8 +180,12 @@ class ofxKinect : public ofxBase3DVideo, protected ofThread {
 
     private:
 
-		freenect_context *	kinectContext;	// kinect context handle
-		freenect_device * 	kinectDevice;	// kinect device handle
+        friend class ofxKinectContext;
+
+        // global statics shared between kinect instances
+		static ofxKinectContext kinectContext;
+        
+        freenect_device * 	kinectDevice;	// kinect device handle
 		
 		unsigned short *	depthPixelsBack;	// depth back
 		unsigned char *		videoPixelsBack;	// rgb back
@@ -171,3 +208,72 @@ class ofxKinect : public ofxBase3DVideo, protected ofThread {
 		ofxKinectCalibration calibration;
 };
 
+/// \class ofxKinect
+///
+/// wrapper for the freenect context
+///
+/// do not use this directly
+///
+class ofxKinectContext {
+
+    public:
+        
+        ofxKinectContext();
+        ~ofxKinectContext();
+        
+        /// \section Main
+        
+        /// init the freenect context
+        bool init();
+        
+        /// clear the freenect context
+        /// closes all currently connected devices
+        void clear();
+        
+        /// is the context inited?
+        bool isInited();
+        
+        /// open a kinect device
+        /// an id of -1 will open the first available
+        bool open(ofxKinect& kinect, int id=-1);
+        
+        /// close a kinect device
+        void close(ofxKinect& kinect);
+        
+        /// closes all currently connected kinects
+        void closeAll();
+        
+        /// \section Util
+        
+        /// get the total number of devices
+        int numTotal();
+        
+        /// get the number of available devices (not connected)
+        int numAvailable();
+        
+        /// get the number of currently connected devices
+        int numConnected();
+        
+        /// get the device id of a kinect object
+        /// returns index or -1 if not connected
+        int getId(ofxKinect& kinect);
+        
+        /// get the kinect object from a device pointer
+        /// returns NULL if not found
+        ofxKinect* getKinect(freenect_device* dev);
+        
+        /// is the an id already connected?
+        bool isConnected(int id);
+        
+        /// get the id of the next available device,
+        /// returns -1 if nothing found
+        int nextAvailableId();
+        
+        /// get the raw pointer
+        freenect_context* getContext() {return kinectContext;}
+        
+    private:
+    
+        freenect_context *	kinectContext;  // kinect context handle
+        std::map<int,ofxKinect*> kinects;   // the connected kinects
+};
