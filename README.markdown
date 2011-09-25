@@ -122,6 +122,7 @@ Don't forget to include the ofxOpenCv addon sources and oepncv libraries.
 ### Mac (Xcode):
 
 In the Xcode project browser:
+
 * add the ofxKinect sources to the project:
   * create a new group "ofxKinect"
   * drag these directories from ofxKinect into this new group: ofxKinect/src & ofxKinect/libs
@@ -134,7 +135,8 @@ In the Xcode project browser:
   
 ### Linux (Makefiles & Codeblocks):
 
- Edit the Makefile config files:
+Edit the Makefile config files:
+ 
 * edit addons.make in your project folder and add the following line to the end of the file: 
 	<pre>ofxKinect</pre>
 * edit config.make in your project folder and change the lines for USER_LIBS to:
