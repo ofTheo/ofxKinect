@@ -195,7 +195,7 @@ For libusb & freenect, link to the precompiled freenect library in:
 	* select the "Linker settings" tab, add the following to Other liker options:
 	<pre>
 	../../../addons/ofxKinect/libs/libfreenect/lib/vs2010/freenect.lib
-	</pre.
+	</pre>
 
 Notes
 -----
