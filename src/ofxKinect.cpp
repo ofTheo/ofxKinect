@@ -657,11 +657,6 @@ bool ofxKinectContext::isConnected(int index) {
 
 int ofxKinectContext::nextAvailableId() {
     
-    // not enough to search ...
-    if(kinects.size() < 2) {
-        return 0;
-    }
-    
     // a brute force free index finder :D
     std::map<int,ofxKinect*>::iterator iter;
     for(int i = 0; i < numTotal(); ++i) {
