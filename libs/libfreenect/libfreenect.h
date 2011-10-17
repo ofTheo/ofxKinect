@@ -35,6 +35,17 @@ extern "C" {
 
 #define FREENECT_COUNTS_PER_G 819 /**< Ticks per G for accelerometer as set per http://www.kionix.com/Product%20Sheets/KXSD9%20Product%20Brief.pdf */
 
+/// Flags representing devices to open when freenect_open_device() is called.
+/// In particular, this allows libfreenect to grab only a subset of the devices
+/// in the Kinect, so you could (for instance) use libfreenect to handle audio
+/// and motor support while letting OpenNI have access to the cameras.
+/// If a device is not supported on a particular platform, its flag will be ignored.
+typedef enum {
+	FREENECT_DEVICE_MOTOR  = 0x01,
+	FREENECT_DEVICE_CAMERA = 0x02,
+	FREENECT_DEVICE_AUDIO  = 0x04,
+} freenect_device_flags;
+
 /// Enumeration of available resolutions.
 /// Not all available resolutions are actually supported for all video formats.
 /// Frame modes may not perfectly match resolutions.  For instance,
@@ -66,6 +77,8 @@ typedef enum {
 	FREENECT_DEPTH_10BIT        = 1, /**< 10 bit depth information in one uint16_t/pixel */
 	FREENECT_DEPTH_11BIT_PACKED = 2, /**< 11 bit packed depth information */
 	FREENECT_DEPTH_10BIT_PACKED = 3, /**< 10 bit packed depth information */
+	FREENECT_DEPTH_REGISTERED   = 4, /**< processed depth data in mm, aligned to 640x480 RGB */
+	FREENECT_DEPTH_MM           = 5, /**< depth to each pixel in mm, but left unaligned to RGB image */
 	FREENECT_DEPTH_DUMMY        = 2147483647, /**< Dummy value to force enum to be 32 bits wide */
 } freenect_depth_format;
 
@@ -117,49 +130,6 @@ typedef struct {
 	int8_t                    tilt_angle;      /**< Raw tilt motor angle encoder information */
 	freenect_tilt_status_code tilt_status;     /**< State of the tilt motor (stopped, moving, etc...) */
 } freenect_raw_tilt_state;
-
-typedef struct {
-	int32_t nRGS_DX_CENTER;
-	int32_t nRGS_AX;
-	int32_t nRGS_BX;
-	int32_t nRGS_CX;
-	int32_t nRGS_DX;
-	int32_t nRGS_DX_START;
-	int32_t nRGS_AY;
-	int32_t nRGS_BY;
-	int32_t nRGS_CY;
-	int32_t nRGS_DY;
-	int32_t nRGS_DY_START;
-	int32_t nRGS_DX_BETA_START;
-	int32_t nRGS_DY_BETA_START;
-	int32_t nRGS_ROLLOUT_BLANK;
-	int32_t nRGS_ROLLOUT_SIZE;
-	int32_t nRGS_DX_BETA_INC;
-	int32_t nRGS_DY_BETA_INC;
-	int32_t nRGS_DXDX_START;
-	int32_t nRGS_DXDY_START;
-	int32_t nRGS_DYDX_START;
-	int32_t nRGS_DYDY_START;
-	int32_t nRGS_DXDXDX_START;
-	int32_t nRGS_DYDXDX_START;
-	int32_t nRGS_DXDXDY_START;
-	int32_t nRGS_DYDXDY_START;
-	int32_t nBACK_COMP1;
-	int32_t nRGS_DYDYDX_START;
-	int32_t nBACK_COMP2;
-	int32_t nRGS_DYDYDY_START;
-} RegistrationInfo;
-
-typedef struct {
-	uint16_t nStartLines;
-	uint16_t nEndLines;
-	uint16_t nCroppingLines;
-} RegistrationPadInfo;
-
-typedef struct {
-	float distance;
-	float pixel_size;
-} ZeroPlaneInfo;
 
 struct _freenect_context;
 typedef struct _freenect_context freenect_context; /**< Holds information about the usb context. */
@@ -261,6 +231,18 @@ FREENECTAPI int freenect_process_events(freenect_context *ctx);
  * @return Number of devices connected, < 0 on error
  */
 FREENECTAPI int freenect_num_devices(freenect_context *ctx);
+
+/**
+ * Set which subdevices any subsequent calls to freenect_open_device()
+ * should open.  This will not affect devices which have already been
+ * opened.  The default behavior, should you choose not to call this
+ * function at all, is to open all supported subdevices - motor, cameras,
+ * and audio, if supported on the platform.
+ *
+ * @param ctx Context to set future subdevice selection for
+ * @param subdevs Flags representing the subdevices to select
+ */
+FREENECTAPI void freenect_select_subdevices(freenect_context *ctx, freenect_device_flags subdevs);
 
 /**
  * Opens a kinect device via a context. Index specifies the index of
@@ -560,10 +542,6 @@ FREENECTAPI const freenect_frame_mode freenect_find_depth_mode(freenect_resoluti
  * @return 0 on success, < 0 if error
  */
 FREENECTAPI int freenect_set_depth_mode(freenect_device* dev, const freenect_frame_mode mode);
-
-FREENECTAPI RegistrationInfo freenect_get_reg_info(freenect_device* dev);
-FREENECTAPI RegistrationPadInfo freenect_get_reg_pad_info(freenect_device* dev);
-FREENECTAPI ZeroPlaneInfo freenect_get_zero_plane_info(freenect_device* dev);
 
 #ifdef __cplusplus
 }
