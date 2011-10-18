@@ -3,8 +3,8 @@
 
 #include "libfreenect-registration.h"
 
-// pointer to this class for static callback member functions
-ofxKinect* thisKinect = NULL;
+// context static
+ofxKinectContext ofxKinect::kinectContext;
 
 //--------------------------------------------------------------------
 ofxKinect::ofxKinect()
@@ -26,7 +26,6 @@ ofxKinect::ofxKinect()
 	bUpdateTex = false;
 	bIsFrameNew = false;
 	
-	kinectContext = NULL;
 	kinectDevice = NULL;
 	
 	targetTiltAngleDeg = 0;
@@ -37,8 +36,6 @@ ofxKinect::ofxKinect()
 	bNearWhite = true;
 	
 	setClippingInMillimeters();
-	
-	thisKinect = this;
 }
 
 //--------------------------------------------------------------------
@@ -100,27 +97,25 @@ bool ofxKinect::isFrameNew(){
 		bIsFrameNew = false;
 		return curIsFrameNew;
 	}
-	return false; 
+	return false;
 }
 
 //--------------------------------------------------------------------
-bool ofxKinect::open(){
+bool ofxKinect::open(int id){
 	if(!bGrabberInited){
 		ofLog(OF_LOG_WARNING, "ofxKinect: Cannot open, init not called");
 		return false;
 	}
-	
-	int number_devices = freenect_num_devices(kinectContext);
-	if (number_devices < 1) {
-		ofLog(OF_LOG_ERROR, "ofxKinect: Did not find a device");
+
+	if(kinectContext.numAvailable() < 1) {
+		ofLog(OF_LOG_ERROR, "ofxKinect: No available devices found");
 		return false;
 	}
-	
-	if (freenect_open_device(kinectContext, &kinectDevice, 0) < 0) {
-		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device");
-		return false;
-	}
-	
+    
+    if(!kinectContext.open(*this, id)) {
+        return false;
+    }
+
 	freenect_set_user(kinectDevice, this);
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
 	freenect_set_video_callback(kinectDevice, &grabRgbFrame);
@@ -135,7 +130,7 @@ void ofxKinect::close(){
 	if(isThreadRunning()){
 		waitForThread(true);
 	}
-	
+    
 	bIsFrameNew = false;
 	bNeedsUpdate = false;
 	bUpdateTex = false;
@@ -146,7 +141,12 @@ bool ofxKinect::isConnected(){
 	return isThreadRunning();
 }
 
-//We update the value here - but apply it in kinect thread.
+//---------------------------------------------------------------------------
+int ofxKinect::getDeviceId() {
+    return kinectContext.getId(*this);
+}
+
+// we update the value here - but apply it in kinect thread
 //--------------------------------------------------------------------
 bool ofxKinect::setCameraTiltAngle(float angleInDegrees){
 	
@@ -210,15 +210,15 @@ bool ofxKinect::init(bool infrared, bool video, bool texture){
 		videoTex.allocate(width, height, infrared ? GL_LUMINANCE : GL_RGB);
 	}
 	
-	if (freenect_init(&kinectContext, NULL) < 0){
-		ofLog(OF_LOG_ERROR, "ofxKinect: freenet_init failed");
-		return false;
-	}
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Inited");
-	
-	int number_devices = freenect_num_devices(kinectContext);
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of Devices found: " + ofToString(number_devices));
-	
+    if(!kinectContext.isInited()) {
+        if(!kinectContext.init()) {
+            return false;
+        }
+    }
+
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of devices found: %d", kinectContext.numTotal());
+    ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of available devices: %d", kinectContext.numAvailable());
+
 	bGrabberInited = true;
 	
 	return bGrabberInited;
@@ -231,9 +231,9 @@ void ofxKinect::clear(){
 		return;
 	}
 	
-	if(kinectContext != NULL){
-		freenect_shutdown(kinectContext);
-	}
+    if(kinectContext.numConnected() < 1) {
+        kinectContext.clear();
+    }
 	
 	if(depthPixelsRaw != NULL){
 		delete[] depthPixelsRaw; depthPixelsRaw = NULL;
@@ -440,34 +440,42 @@ void ofxKinect::updateDepthLookupTable() {
 
 //---------------------------------------------------------------------------
 void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t timestamp) {
-	if (thisKinect->lock()) {
+	
+    ofxKinect* kinect = kinectContext.getKinect(dev);
+    
+    if(kinect->kinectDevice == dev && kinect->lock()) {
 		try {
 			freenect_frame_mode curMode = freenect_get_current_depth_mode(dev);
-			memcpy(thisKinect->depthPixelsBack, depth, curMode.bytes);
-			thisKinect->bNeedsUpdate = true;
+			memcpy(kinect->depthPixelsBack, depth, curMode.bytes);
+			kinect->bNeedsUpdate = true;
 		}
 		catch(...) {
-			ofLog(OF_LOG_ERROR, "ofxKinect: Depth memcpy failed");
+			ofLog(OF_LOG_ERROR, "ofxKinect: Depth memcpy failed for device %d", kinect->getDeviceId());
 		}
-		thisKinect->unlock();
-	} else {
+		kinect->unlock();
+	}
+    else {
 		ofLog(OF_LOG_WARNING, "ofxKinect: grabDepthFrame unable to lock mutex");
 	}
 }
 
 //---------------------------------------------------------------------------
 void ofxKinect::grabRgbFrame(freenect_device *dev, void *rgb, uint32_t timestamp) {
-	if (thisKinect->lock()) {
+	
+    ofxKinect* kinect = kinectContext.getKinect(dev);
+    
+    if(kinect->kinectDevice == dev && kinect->lock()) {
 		try {
 			freenect_frame_mode curMode = freenect_get_current_video_mode(dev);
-			memcpy(thisKinect->videoPixelsBack, rgb, curMode.bytes);
-			thisKinect->bNeedsUpdate = true;
+			memcpy(kinect->videoPixelsBack, rgb, curMode.bytes);
+			kinect->bNeedsUpdate = true;
 		}
 		catch (...) {
-			ofLog(OF_LOG_ERROR, "ofxKinect: Rgb memcpy failed");
+			ofLog(OF_LOG_ERROR, "ofxKinect: Rgb memcpy failed for device %d", kinect->getDeviceId());
 		}
-		thisKinect->unlock();
-	} else {
+		kinect->unlock();
+	}
+    else {
 		ofLog(OF_LOG_ERROR, "ofxKinect: grabRgbFrame unable to lock mutex");
 	}
 }
@@ -481,18 +489,18 @@ void ofxKinect::threadedFunction(){
 	freenect_frame_mode depthMode = freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, bUseRegistration ? FREENECT_DEPTH_REGISTERED : FREENECT_DEPTH_MM);
 	freenect_set_depth_mode(kinectDevice, depthMode);
 	
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection opened");
-	
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d connection opened", kinectContext.getId(*this));
+
 	freenect_start_depth(kinectDevice);
 	if(bGrabVideo) {
 		freenect_start_video(kinectDevice);
 	}
-	
-	// call platform specific processors (needed for Win)
-	if(freenect_process_events(kinectContext) != 0){
-		ofLog(OF_LOG_ERROR, "ofxKinect: freenect_process_events failed!");
-		return;
-	}
+    
+    // call platform specific processors (needed for Win)
+    if(freenect_process_events(kinectContext.getContext()) != 0){
+        ofLog(OF_LOG_ERROR, "ofxKinect: freenect_process_events failed!");
+        return;
+    }
 	
 	while(isThreadRunning()){
 		if(bTiltNeedsApplying){
@@ -525,8 +533,168 @@ void ofxKinect::threadedFunction(){
 	freenect_stop_depth(kinectDevice);
 	freenect_stop_video(kinectDevice);
 	freenect_set_led(kinectDevice, LED_YELLOW);
-	
-	freenect_close_device(kinectDevice);
-	
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection closed");
+
+    int id = kinectContext.getId(*this);
+    kinectContext.close(*this);
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d connection closed", id);
 }
+
+//---------------------------------------------------------------------------
+int ofxKinect::numTotalDevices() {
+    return kinectContext.numTotal();
+}
+
+int ofxKinect::numAvailableDevices() {
+    return kinectContext.numAvailable();
+}
+
+int ofxKinect::numConnectedDevices() {
+    return kinectContext.numConnected();
+}
+
+bool ofxKinect::isDeviceConnected(int id) {
+    return kinectContext.isConnected(id);
+}
+
+int ofxKinect::nextAvailableId() {
+    return kinectContext.nextAvailableId();
+}
+
+//---------------------------------------------------------------------------
+// ofxKinectContext
+//---------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------
+ofxKinectContext::ofxKinectContext() {
+    kinectContext = NULL;
+}
+ofxKinectContext::~ofxKinectContext() {
+    closeAll();
+    clear();
+}
+        
+//---------------------------------------------------------------------------
+bool ofxKinectContext::init() {
+    if(freenect_init(&kinectContext, NULL) < 0) {
+        ofLog(OF_LOG_ERROR, "ofxKinect: freenect_init failed");
+        return false;
+    }
+    ofLog(OF_LOG_VERBOSE, "ofxKinect: Context inited");
+    return true;
+}
+
+void ofxKinectContext::clear() {
+    if(isInited() && numConnected() < 1) {
+        freenect_shutdown(kinectContext);
+        kinectContext = NULL;
+        ofLog(OF_LOG_VERBOSE, "ofxKinect: Context cleared");
+    }
+}
+
+bool ofxKinectContext::isInited() {
+    return kinectContext != NULL;
+}
+
+bool ofxKinectContext::open(ofxKinect& kinect, int id) {
+
+    if(numConnected() >= numTotal()) {
+        ofLog(OF_LOG_WARNING, "ofxKinect Cannot open any more devices");
+        return false;
+    }
+    
+    // is the id available?
+    if(id < 0) {
+        id = nextAvailableId();
+    }
+    else {
+        if(isConnected(id)) {
+            ofLog(OF_LOG_WARNING, "ofxKinect: Device %d already connected", id);
+            return false;
+        }
+    }
+    
+    // open and add to vector
+    if(freenect_open_device(kinectContext, &kinect.kinectDevice, id) < 0) {
+        ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device %d", id);
+        return false;
+    }
+    kinects.insert(pair<int,ofxKinect*>(id, &kinect));
+
+    return true;
+}
+
+void ofxKinectContext::close(ofxKinect& kinect) {
+    
+    // already closed?
+    int id = getId(kinect);
+    if(id == -1) {
+        return;
+    }
+    
+    // remove connected device and close
+    std::map<int,ofxKinect*>::iterator iter = kinects.find(id);
+    if(iter != kinects.end()) {
+        kinects.erase(iter);
+        freenect_close_device(kinect.kinectDevice);
+    }
+}
+
+void ofxKinectContext::closeAll() {
+    std::map<int,ofxKinect*>::iterator iter;
+    for(iter = kinects.begin(); iter != kinects.end(); ++iter) {
+        iter->second->close();
+    }
+}
+        
+//---------------------------------------------------------------------------
+int ofxKinectContext::numTotal() {
+    if(isInited())
+        return freenect_num_devices(kinectContext);
+    return 0;
+}
+
+int ofxKinectContext::numAvailable() {
+    if(isInited())
+        return freenect_num_devices(kinectContext) - kinects.size();
+    return 0;
+}
+
+int ofxKinectContext::numConnected() {
+    return kinects.size();
+}
+
+int ofxKinectContext::getId(ofxKinect& kinect) {
+    std::map<int,ofxKinect*>::iterator iter;
+    for(iter = kinects.begin(); iter != kinects.end(); ++iter) {
+        if(iter->second == &kinect)
+            return iter->first;
+    }
+    return -1;
+}
+
+ofxKinect* ofxKinectContext::getKinect(freenect_device* dev) {
+    std::map<int,ofxKinect*>::iterator iter;
+    for(iter = kinects.begin(); iter != kinects.end(); ++iter) {
+        if(iter->second->kinectDevice == dev)
+            return iter->second;
+    }
+    return NULL;
+}
+
+bool ofxKinectContext::isConnected(int index) {
+    std::map<int,ofxKinect*>::iterator iter = kinects.find(index);
+    return iter != kinects.end();
+}
+
+int ofxKinectContext::nextAvailableId() {
+    
+    // a brute force free index finder :D
+    std::map<int,ofxKinect*>::iterator iter;
+    for(int i = 0; i < numTotal(); ++i) {
+        iter = kinects.find(i);
+        if(iter == kinects.end())
+            return i;
+    }
+    return -1;
+}
+

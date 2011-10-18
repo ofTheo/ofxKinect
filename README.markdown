@@ -128,6 +128,16 @@ For Linux, you simply install libusb-1.0 and add a link flag for it: `-lusb-1.0`
 sudo apt-get install libusb1.0-0-dev
 </pre>
 
+Notes
+-----
+
+### Using multiple kinects
+
+ofxKinect supports multiple kinects, however stability is based on the bandwidth of your usb hardware. If you only require the depth image, it is recommended to disable the video grabbing of the rgb/ir images from your devices:
+<pre>
+kinect.init(false, false);  // disable video image (faster fps)
+</pre>
+
 Developing ofxKinect
 --------------------
 

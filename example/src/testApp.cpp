@@ -7,9 +7,14 @@ void testApp::setup() {
 	kinect.setUseRegistration(true);
 	kinect.init();
 	//kinect.init(true);  // shows infrared instead of RGB video image
-	//kinect.init(false, false);  // disable infrared/rgb video iamge (faster fps)
+	//kinect.init(false, false);  // disable video image (faster fps)
 	kinect.setVerbose(true);
 	kinect.open();
+
+    #ifdef USE_TWO_KINECTS
+    kinect2.init();
+    kinect2.open();
+    #endif
 
 	// start with the live kinect source
 	kinectSource = &kinect;
@@ -76,6 +81,10 @@ void testApp::update() {
     	// also, find holes is set to true so we will get interior contours as well....
     	contourFinder.findContours(grayImage, 10, (kinect.width*kinect.height)/2, 20, false);
 	}
+
+    #ifdef USE_TWO_KINECTS
+    kinect2.update();
+    #endif
 }
 
 //--------------------------------------------------------------
@@ -94,7 +103,11 @@ void testApp::draw() {
 
 		grayImage.draw(10, 320, 400, 300);
 		contourFinder.draw(10, 320, 400, 300);
-	}
+
+        #ifdef USE_TWO_KINECTS
+        kinect2.draw(420, 320, 400, 300);
+        #endif
+    }
 
 	// draw instructions
 	ofSetColor(255, 255, 255);
@@ -141,6 +154,10 @@ void testApp::drawPointCloud() {
 void testApp::exit() {
 	kinect.setCameraTiltAngle(0); // zero the tilt on exit
 	kinect.close();
+
+     #ifdef USE_TWO_KINECTS
+    kinect2.close();
+    #endif
 }
 
 //--------------------------------------------------------------
