@@ -120,8 +120,10 @@ void testApp::drawPointCloud() {
 	int step = 2;
 	for(int y = 0; y < h; y += step) {
 		for(int x = 0; x < w; x += step) {
-			mesh.addColor(kinect.getColorAt(x,y));
-			mesh.addVertex(kinect.getWorldCoordinateAt(x, y));
+			if(kinect.getDistanceAt(x, y) > 0) {
+				mesh.addColor(kinect.getColorAt(x,y));
+				mesh.addVertex(kinect.getWorldCoordinateAt(x, y));
+			}
 		}
 	}
 	glPointSize(3);
@@ -129,7 +131,9 @@ void testApp::drawPointCloud() {
 	// the projected points are 'upside down' and 'backwards' 
 	ofScale(1, -1, -1);
 	ofTranslate(0, 0, -1000); // center the points a bit
+	glEnable(GL_DEPTH_TEST);
 	mesh.drawVertices();
+	glDisable(GL_DEPTH_TEST);
 	ofPopMatrix();
 }
 

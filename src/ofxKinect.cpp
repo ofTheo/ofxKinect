@@ -314,21 +314,10 @@ ofVec3f ofxKinect::getWorldCoordinateAt(int x, int y) {
 }
 
 //------------------------------------
-ofVec3f ofxKinect::getWorldCoordinateAt(float x, float y, float z) {
-	/*
+ofVec3f ofxKinect::getWorldCoordinateAt(float cx, float cy, float wz) {
 	double wx, wy;
-	freenect_camera_to_world(kinectDevice, x, y, z, &wx, &wy);
-	return ofVec3f(wx, wy, z);
-	*/
-	static const float FovX = 1.0144686707507438;
-	static const float FovY = 0.78980943449644714;
-	static const float XtoZ = tanf(FovX / 2) * 2;
-	static const float YtoZ = tanf(FovY / 2) * 2;
-	static const unsigned int Xres = 640;
-	static const unsigned int Yres = 480;
-	return ofVec3f((x / Xres - .5f) * z * XtoZ,
-		(y / Yres - .5f) * z * YtoZ,
-		z);
+	freenect_camera_to_world(kinectDevice, cx, cy, wz, &wx, &wy);
+	return ofVec3f(wx, wy, wz);
 }
 
 //------------------------------------

@@ -58,8 +58,8 @@ public:
 	float getDistanceAt(const ofPoint & p);
 	
 	/// calculates the coordinate in the world for the pixel (perspective calculation). Center of image is (0.0)
-	ofVec3f getWorldCoordinateAt(int x, int y);
-	ofVec3f getWorldCoordinateAt(float x, float y, float z);
+	ofVec3f getWorldCoordinateAt(int cx, int cy);
+	ofVec3f getWorldCoordinateAt(float cx, float cy, float wz);
 		
 	ofColor getColorAt(int x, int y);
 	ofColor getColorAt(const ofPoint & p);
