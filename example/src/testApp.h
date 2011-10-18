@@ -5,7 +5,7 @@
 #include "ofxKinect.h"
 
 // uncomment this to read from two kinects simultaneously
-//#define USE_TWO_KINECTS
+#define USE_TWO_KINECTS
 
 class testApp : public ofBaseApp {
 public:
@@ -32,6 +32,10 @@ public:
 	void stopPlayback();
 	
 	ofxKinect kinect;
+	
+#ifdef USE_TWO_KINECTS
+	ofxKinect kinect2;
+#endif
 	
 	/// used to switch between the live kinect and the recording player
 	ofxBase3DVideo* kinectSource;
