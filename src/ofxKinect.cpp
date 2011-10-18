@@ -1,6 +1,8 @@
 #include "ofxKinect.h"
 #include "ofMain.h"
 
+#include "libfreenect-registration.h"
+
 // pointer to this class for static callback member functions
 ofxKinect* thisKinect = NULL;
 
@@ -32,6 +34,9 @@ ofxKinect::ofxKinect()
 	bTiltNeedsApplying = false;
 	
 	bUseRegistration = false;
+	bNearWhite = true;
+	
+	setClippingInMillimeters();
 	
 	thisKinect = this;
 }
@@ -54,7 +59,7 @@ unsigned char * ofxKinect::getPixels(){
 
 //---------------------------------------------------------------------------
 unsigned char * ofxKinect::getDepthPixels(){
-	return calibration.getDepthPixels();
+	return depthPixels;
 }
 
 //---------------------------------------------------------------------------
@@ -64,12 +69,7 @@ unsigned short * ofxKinect::getRawDepthPixels(){
 
 //---------------------------------------------------------------------------
 float* ofxKinect::getDistancePixels() {
-	return calibration.getDistancePixels();
-}
-
-//---------------------------------------------------------------------------
-unsigned char * ofxKinect::getCalibratedRGBPixels(){
-	return calibration.getCalibratedRGBPixels(videoPixels);
+	return distancePixels;
 }
 
 //------------------------------------
@@ -186,8 +186,6 @@ bool ofxKinect::init(bool infrared, bool video, bool texture){
 	bGrabVideo = video;
 	bytespp = infrared?1:3;
 	
-	calibration.init(bytespp);
-	
 	bUseTexture = texture;
 	
 	int length = width*height;
@@ -197,6 +195,9 @@ bool ofxKinect::init(bool infrared, bool video, bool texture){
 	videoPixels = new unsigned char[length*bytespp];
 	pixels.setFromExternalPixels(videoPixels, width, height, OF_IMAGE_COLOR);
 	videoPixelsBack = new unsigned char[length*bytespp];
+	
+	depthPixels = new unsigned char[length * bytespp];
+	distancePixels = new float[length];
 	
 	memset(depthPixelsRaw, 0, length*sizeof(unsigned short));
 	memset(depthPixelsBack, 0, length*sizeof(unsigned short));
@@ -240,13 +241,26 @@ void ofxKinect::clear(){
 		
 		delete[] videoPixels; videoPixels = NULL;
 		delete[] videoPixelsBack; videoPixelsBack = NULL;
+		
+		delete [] depthPixels; depthPixels = NULL;
+		delete [] distancePixels; distancePixels = NULL;
 	}
 	
 	depthTex.clear();
 	videoTex.clear();
-	calibration.clear();
 	
 	bGrabberInited = false;
+}
+
+//----------------------------------------------------------
+void ofxKinect::updateDepthPixels() {
+	int n = width * height;
+	for(int i = 0; i < n; i++) {
+		distancePixels[i] = depthPixelsRaw[i];
+	}
+	for(int i = 0; i < n; i++) {
+		depthPixels[i] = depthLookupTable[depthPixelsRaw[i]];
+	}
 }
 
 //----------------------------------------------------------
@@ -265,18 +279,19 @@ void ofxKinect::update(){
 	if ( this->lock() ) {
 		int n = width * height;
 		
-		calibration.update(depthPixelsBack);
-		memcpy(depthPixelsRaw,depthPixelsBack,n*sizeof(short));
+		memcpy(depthPixelsRaw, depthPixelsBack, n * sizeof(short));
 		memcpy(videoPixels, videoPixelsBack, n * bytespp);
 		
 		//we have done the update
 		bNeedsUpdate = false;
 		
 		this->unlock();
+		
+		updateDepthPixels();
 	}
 	
 	if(bUseTexture){
-		depthTex.loadData(calibration.getDepthPixels(), width, height, GL_LUMINANCE);
+		depthTex.loadData(depthPixels, width, height, GL_LUMINANCE);
 		videoTex.loadData(videoPixels, width, height, bInfrared ? GL_LUMINANCE : GL_RGB);
 		bUpdateTex = false;
 	}
@@ -285,19 +300,36 @@ void ofxKinect::update(){
 
 //------------------------------------
 float ofxKinect::getDistanceAt(int x, int y) {
-	return calibration.getDistanceAt(x,y);
+	return depthPixelsRaw[y * width + x];
 }
 
 //------------------------------------
 float ofxKinect::getDistanceAt(const ofPoint & p) {
-	return calibration.getDistanceAt(p);
+	return getDistanceAt(p.x, p.y);
 }
 
 //------------------------------------
-ofVec3f ofxKinect::getWorldCoordinateFor(int x, int y) {
-	return calibration.getWorldCoordinateFor(x,y);
+ofVec3f ofxKinect::getWorldCoordinateAt(int x, int y) {
+	return getWorldCoordinateAt(x, y, getDistanceAt(x, y));
 }
 
+//------------------------------------
+ofVec3f ofxKinect::getWorldCoordinateAt(float x, float y, float z) {
+	/*
+	double wx, wy;
+	freenect_camera_to_world(kinectDevice, x, y, z, &wx, &wy);
+	return ofVec3f(wx, wy, z);
+	*/
+	static const float FovX = 1.0144686707507438;
+	static const float FovY = 0.78980943449644714;
+	static const float XtoZ = tanf(FovX / 2) * 2;
+	static const float YtoZ = tanf(FovY / 2) * 2;
+	static const unsigned int Xres = 640;
+	static const unsigned int Yres = 480;
+	return ofVec3f((x / Xres - .5f) * z * XtoZ,
+		(y / Yres - .5f) * z * YtoZ,
+		z);
+}
 
 //------------------------------------
 ofColor ofxKinect::getColorAt(int x, int y) {
@@ -314,16 +346,6 @@ ofColor ofxKinect::getColorAt(int x, int y) {
 //------------------------------------
 ofColor ofxKinect::getColorAt(const ofPoint & p) {
 	return getColorAt(p.x, p.y);
-}
-
-//------------------------------------
-ofColor ofxKinect::getCalibratedColorAt(int x, int y){
-	return getColorAt(calibration.getCalibratedColorCoordAt(x,y));
-}
-
-//------------------------------------
-ofColor ofxKinect::getCalibratedColorAt(const ofPoint & p){
-	return getColorAt(calibration.getCalibratedColorCoordAt(p));
 }
 
 //------------------------------------
@@ -397,12 +419,32 @@ ofPoint ofxKinect::getMksAccel(){
 
 //---------------------------------------------------------------------------
 void ofxKinect::enableDepthNearValueWhite(bool bEnabled){
-	calibration.enableDepthNearValueWhite(bEnabled);
+	bNearWhite = bEnabled;
+	updateDepthLookupTable();
 }
 
 //---------------------------------------------------------------------------
 bool ofxKinect::isDepthNearValueWhite(){
-	return calibration.isDepthNearValueWhite();
+	return bNearWhite;
+}
+
+//---------------------------------------------------------------------------
+void ofxKinect::setClippingInMillimeters(float nearClipping, float farClipping) {
+	this->nearClipping = nearClipping;
+	this->farClipping = farClipping;
+	updateDepthLookupTable();
+}
+
+//---------------------------------------------------------------------------
+void ofxKinect::updateDepthLookupTable() {
+	unsigned char nearColor = bNearWhite ? 255 : 0;
+	unsigned char farColor = bNearWhite ? 0 : 255;
+	unsigned int maxDepthLevels = 10000;
+	depthLookupTable.resize(maxDepthLevels);
+	depthLookupTable[0] = 0;
+	for(int i = 1; i < maxDepthLevels; i++) {
+		depthLookupTable[i] = ofMap(i, nearClipping, farClipping, nearColor, farColor, true);
+	}
 }
 
 /* ***** PRIVATE ***** */
@@ -447,7 +489,7 @@ void ofxKinect::threadedFunction(){
 	freenect_set_led(kinectDevice, LED_GREEN);
 	freenect_frame_mode videoMode = freenect_find_video_mode(FREENECT_RESOLUTION_MEDIUM, bInfrared ? FREENECT_VIDEO_IR_8BIT : FREENECT_VIDEO_RGB);
 	freenect_set_video_mode(kinectDevice, videoMode);
-	freenect_frame_mode depthMode = freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, FREENECT_DEPTH_11BIT);
+	freenect_frame_mode depthMode = freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, bUseRegistration ? FREENECT_DEPTH_REGISTERED : FREENECT_DEPTH_MM);
 	freenect_set_depth_mode(kinectDevice, depthMode);
 	
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection opened");
@@ -498,9 +540,4 @@ void ofxKinect::threadedFunction(){
 	freenect_close_device(kinectDevice);
 	
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Connection closed");
-}
-
-//---------------------------------------------------------------------------
-ofxKinectCalibration& ofxKinect::getCalibration() {
-	return calibration;
 }

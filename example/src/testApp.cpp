@@ -4,6 +4,7 @@
 //--------------------------------------------------------------
 void testApp::setup() {
 
+	kinect.setUseRegistration(true);
 	kinect.init();
 	//kinect.init(true);  // shows infrared instead of RGB video image
 	//kinect.init(false, false);  // disable infrared/rgb video iamge (faster fps)
@@ -24,15 +25,11 @@ void testApp::setup() {
 
 	ofSetFrameRate(60);
 
-	bRecord = false;
-	bPlayback = false;
-
 	// zero the tilt on startup
 	angle = 0;
 	kinect.setCameraTiltAngle(angle);
 
 	// start from the front
-	pointCloudRotationY = 180;
 	bDrawPointCloud = false;
 }
 
@@ -45,11 +42,6 @@ void testApp::update() {
 
 	// there is a new frame and we are connected
 	if(kinectSource->isFrameNew()) {
-
-		// record ?
-		if(bRecord && kinectRecorder.isOpened()) {
-			kinectRecorder.newFrame(kinect.getRawDepthPixels(), kinect.getPixels());
-		}
 
 		// load grayscale depth image from the kinect source
 		grayImage.setFromPixels(kinectSource->getDepthPixels(), kinect.width, kinect.height);
@@ -92,40 +84,17 @@ void testApp::draw() {
 	ofSetColor(255, 255, 255);
 
 	if(bDrawPointCloud) {
-		ofPushMatrix();
-		ofTranslate(420, 320);
-		// we need a proper camera class
+		easyCam.begin();
 		drawPointCloud();
-		ofPopMatrix();
+		easyCam.end();
 	} else {
-		if(!bPlayback) {
-			// draw from the live kinect
-			kinect.drawDepth(10, 10, 400, 300);
-			kinect.draw(420, 10, 400, 300);
-		} else {
-			// draw from the player
-			kinectPlayer.drawDepth(10, 10, 400, 300);
-			kinectPlayer.draw(420, 10, 400, 300);
-		}
+		// draw from the live kinect
+		kinect.drawDepth(10, 10, 400, 300);
+		kinect.draw(420, 10, 400, 300);
 
 		grayImage.draw(10, 320, 400, 300);
 		contourFinder.draw(10, 320, 400, 300);
 	}
-
-	// draw recording/playback indicators
-	ofPushMatrix();
-	ofTranslate(25, 25);
-	ofFill();
-	if(bRecord) {
-		ofSetColor(255, 0, 0);
-		ofCircle(0, 0, 10);
-	}
-	if(bPlayback) {
-		ofSetColor(0, 255, 0);
-		ofTriangle(-10, -10, -10, 10, 10, 0);
-	}
-	ofPopMatrix();
-
 
 	// draw instructions
 	ofSetColor(255, 255, 255);
@@ -139,35 +108,35 @@ void testApp::draw() {
 				 << "set far threshold " << farThreshold << " (press: < >) num blobs found " << contourFinder.nBlobs
 				 	<< ", fps: " << ofGetFrameRate() << endl
 				 << "press c to close the connection and o to open it again, connection is: " << kinect.isConnected() << endl
-				 << "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
-				 << "press r to record and q to playback, record is: " << bRecord << ", playback is: " << bPlayback;
+				 << "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl;
 	ofDrawBitmapString(reportStream.str(),20,652);
 }
 
 void testApp::drawPointCloud() {
-	ofScale(400, 400, 400);
 	int w = 640;
 	int h = 480;
-	ofRotateY(pointCloudRotationY);
-	glBegin(GL_POINTS);
+	ofMesh mesh;
+	mesh.setMode(OF_PRIMITIVE_POINTS);
 	int step = 2;
 	for(int y = 0; y < h; y += step) {
 		for(int x = 0; x < w; x += step) {
-			ofVec3f cur = kinect.getWorldCoordinateFor(x, y);
-			ofColor color = kinect.getCalibratedColorAt(x,y);
-			glColor3ub((unsigned char)color.r,(unsigned char)color.g,(unsigned char)color.b);
-			glVertex3f(cur.x, cur.y, cur.z);
+			mesh.addColor(kinect.getColorAt(x,y));
+			mesh.addVertex(kinect.getWorldCoordinateAt(x, y));
 		}
 	}
-	glEnd();
+	glPointSize(3);
+	ofPushMatrix();
+	// the projected points are 'upside down' and 'backwards' 
+	ofScale(1, -1, -1);
+	ofTranslate(0, 0, -1000); // center the points a bit
+	mesh.drawVertices();
+	ofPopMatrix();
 }
 
 //--------------------------------------------------------------
 void testApp::exit() {
 	kinect.setCameraTiltAngle(0); // zero the tilt on exit
 	kinect.close();
-	kinectPlayer.close();
-	kinectRecorder.close();
 }
 
 //--------------------------------------------------------------
@@ -218,24 +187,6 @@ void testApp::keyPressed (int key) {
 			kinect.close();
 			break;
 
-		case 'r':
-			bRecord = !bRecord;
-			if(bRecord) {
-				startRecording();
-			} else {
-				stopRecording();
-			}
-			break;
-
-		case 'q':
-			bPlayback = !bPlayback;
-			if(bPlayback) {
-				startPlayback();
-			} else {
-				stopPlayback();
-			}
-			break;
-
 		case OF_KEY_UP:
 			angle++;
 			if(angle>30) angle=30;
@@ -248,11 +199,6 @@ void testApp::keyPressed (int key) {
 			kinect.setCameraTiltAngle(angle);
 			break;
 	}
-}
-
-//--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y) {
-	pointCloudRotationY = x;
 }
 
 //--------------------------------------------------------------
@@ -270,40 +216,3 @@ void testApp::mouseReleased(int x, int y, int button)
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h)
 {}
-
-//--------------------------------------------------------------
-void testApp::startRecording() {
-
-	// stop playback if running
-	stopPlayback();
-
-	kinectRecorder.init(ofToDataPath("recording.dat"));
-	bRecord = true;
-}
-
-//--------------------------------------------------------------
-void testApp::stopRecording() {
-	kinectRecorder.close();
-	bRecord = false;
-}
-
-//--------------------------------------------------------------
-void testApp::startPlayback() {
-
-	stopRecording();
-	kinect.close();
-
-	// set record file and source
-	kinectPlayer.setup(ofToDataPath("recording.dat"), true);
-	kinectPlayer.loop();
-	kinectSource = &kinectPlayer;
-	bPlayback = true;
-}
-
-//--------------------------------------------------------------
-void testApp::stopPlayback() {
-	kinectPlayer.close();
-	kinect.open();
-	kinectSource = &kinect;
-	bPlayback = false;
-}

@@ -1,20 +1,12 @@
 #pragma once
 
-#include "ofConstants.h"
-#include "ofTexture.h"
-#include "ofGraphics.h"
-#include "ofTypes.h"
-
+#include "ofMain.h"
+#include "libfreenect.h"
 #include "ofxBase3DVideo.h"
 
 #ifndef _MSC_VER
 #include <libusb.h>
 #endif
-
-#include "libfreenect.h"
-#include "ofxKinectCalibration.h"
-#include "ofxKinectPlayer.h"
-#include "ofxKinectRecorder.h"
 
 class ofxKinect : public ofxBase3DVideo, protected ofThread {
 	
@@ -66,13 +58,11 @@ public:
 	float getDistanceAt(const ofPoint & p);
 	
 	/// calculates the coordinate in the world for the pixel (perspective calculation). Center of image is (0.0)
-	ofVec3f getWorldCoordinateFor(int x, int y);
-	
+	ofVec3f getWorldCoordinateAt(int x, int y);
+	ofVec3f getWorldCoordinateAt(float x, float y, float z);
+		
 	ofColor getColorAt(int x, int y);
 	ofColor getColorAt(const ofPoint & p);
-	
-	ofColor getCalibratedColorAt(int x, int y);
-	ofColor getCalibratedColorAt(const ofPoint & p);
 	
 	float getHeight();
 	float getWidth();
@@ -87,10 +77,7 @@ public:
 	unsigned char * getDepthPixels(); // grey scale values
 	unsigned short * getRawDepthPixels(); // raw 11 bit values
 	
-	// get the rgb pixels corrected to match the depth frame
-	unsigned char * getCalibratedRGBPixels();
-	
-	/// get the distance in centimeters to a given point
+	/// get the distance in millimeters to a given point
 	float* getDistancePixels();
 	
 	/// get the rgb texture
@@ -110,6 +97,7 @@ public:
 	 **/
 	void enableDepthNearValueWhite(bool bEnabled=true);
 	bool isDepthNearValueWhite();
+	void setClippingInMillimeters(float nearClipping = 500, float farClipping = 4000);
 	
 	void setVerbose(bool bTalkToMe);
 	
@@ -123,8 +111,6 @@ public:
 	void drawDepth(float x, float y);
 	void drawDepth(const ofPoint & point);
 	void drawDepth(const ofRectangle & rect);
-	
-	ofxKinectCalibration& getCalibration();
 	
 	const static int width = 640;
 	const static int height = 480;
@@ -156,11 +142,21 @@ private:
 	unsigned short * depthPixelsBack; // depth back
 	unsigned char * videoPixelsBack; // rgb back
 	
+	unsigned char * depthPixels;
+	float * distancePixels;
+	vector<unsigned char> depthLookupTable;
+	void updateDepthLookupTable();
+	void updateDepthPixels();
+	
 	bool bIsFrameNew;
 	bool bNeedsUpdate;
 	bool bUpdateTex;
 	bool bGrabVideo;
 	bool bUseRegistration;
+	bool bNearWhite;
+	
+	float nearClipping, farClipping;
+	float depthMin, depthMax;
 	
 	bool bInfrared;
 	int bytespp;
@@ -171,7 +167,5 @@ private:
 	
 	// thread function
 	void threadedFunction();
-	
-	ofxKinectCalibration calibration;
 };
 
