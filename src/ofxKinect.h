@@ -26,14 +26,6 @@ public:
 	virtual ~ofxKinect();
 	
     /// \section Main
-    
-    /// distorts the depth image to be aligned to the rgb image,
-    /// disabled by default
-    ///
-    /// call this before init
-    ///
-    /// note: this calculation uses some cpu, leave off if not needed
-	void setRegistration(bool bUseRegistration=false);
 	
 	/// initialize resources, must be called before open()
 	/// infrared controls whether the video image is rgb or IR
@@ -46,6 +38,13 @@ public:
 	
     /// clear resources, do not call this while ofxKinect is running!
 	void clear();
+    
+    /// calibrates the depth image to align with the rgb image, disabled by default
+    ///
+    /// call this before open(), has no effect while the connection is running
+    ///
+    /// note: this calculation uses some cpu, leave off if not needed
+	void setRegistration(bool bUseRegistration=false);
     
 	/// open the connection and start grabbing images
     ///

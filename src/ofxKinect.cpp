@@ -43,11 +43,6 @@ ofxKinect::~ofxKinect() {
 }
 
 //--------------------------------------------------------------------
-void ofxKinect::setRegistration(bool bUseRegistration) {
-	this->bUseRegistration = bUseRegistration;
-}
-
-//--------------------------------------------------------------------
 bool ofxKinect::init(bool infrared, bool video, bool texture) {
 	if(isConnected()) {
 		ofLog(OF_LOG_WARNING, "ofxKinect: Do not call init while ofxKinect is running!");
@@ -124,6 +119,11 @@ void ofxKinect::clear() {
 	videoTex.clear();
 	
 	bGrabberInited = false;
+}
+
+//--------------------------------------------------------------------
+void ofxKinect::setRegistration(bool bUseRegistration) {
+	this->bUseRegistration = bUseRegistration;
 }
 
 //--------------------------------------------------------------------
