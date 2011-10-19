@@ -5,20 +5,18 @@
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	kinect.setUseRegistration(true);
+    // enable depth->rgb image calibration
+	kinect.setRegistration(true);
+    
 	kinect.init();
 	//kinect.init(true); // shows infrared instead of RGB video image
 	//kinect.init(false, false); // disable video image (faster fps)
-	kinect.setVerbose(true);
 	kinect.open();
 	
 #ifdef USE_TWO_KINECTS
 	kinect2.init();
 	kinect2.open();
 #endif
-	
-	// start with the live kinect source
-	kinectSource = &kinect;
 	
 	colorImg.allocate(kinect.width, kinect.height);
 	grayImage.allocate(kinect.width, kinect.height);
@@ -44,13 +42,13 @@ void testApp::update() {
 	
 	ofBackground(100, 100, 100);
 	
-	kinectSource->update();
+	kinect.update();
 	
 	// there is a new frame and we are connected
-	if(kinectSource->isFrameNew()) {
+	if(kinect.isFrameNew()) {
 		
 		// load grayscale depth image from the kinect source
-		grayImage.setFromPixels(kinectSource->getDepthPixels(), kinect.width, kinect.height);
+		grayImage.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
 		
 		// we do two thresholds - one for the far plane and one for the near plane
 		// we then do a cvAnd to get the pixels which are a union of the two thresholds

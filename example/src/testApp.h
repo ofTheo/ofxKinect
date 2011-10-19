@@ -23,22 +23,11 @@ public:
 	void mouseReleased(int x, int y, int button);
 	void windowResized(int w, int h);
 	
-	/// start/stop recording and playback,
-	/// make sure you don't record and playback simultaneously 
-	/// using the same file!!!
-	void startRecording();
-	void stopRecording();
-	void startPlayback();
-	void stopPlayback();
-	
 	ofxKinect kinect;
 	
 #ifdef USE_TWO_KINECTS
 	ofxKinect kinect2;
 #endif
-	
-	/// used to switch between the live kinect and the recording player
-	ofxBase3DVideo* kinectSource;
 	
 	ofxCvColorImage colorImg;
 	
@@ -56,5 +45,6 @@ public:
 	
 	int angle;
 	
+    // used for viewing the point cloud
 	ofEasyCam easyCam;
 };
