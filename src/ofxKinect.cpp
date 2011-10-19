@@ -9,8 +9,7 @@ ofxKinectContext ofxKinect::kinectContext;
 //--------------------------------------------------------------------
 ofxKinect::ofxKinect() {
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Creating ofxKinect");
-	
-	bVerbose = false;
+
 	bUseTexture = true;
 	bGrabVideo = true;
 	

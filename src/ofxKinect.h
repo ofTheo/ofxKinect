@@ -89,7 +89,9 @@ public:
 	
     /// \section Accelerometer Data
     
-    /// get kinect accelerometer values
+    /// get the accelerometer values
+    ///
+    /// ... yes, the kinect has an accelerometer
 	ofPoint getRawAccel();
 	ofPoint getMksAccel(); 
 	
@@ -142,8 +144,10 @@ public:
 	/// 0 is flat, the range is -30 to 30
 	bool setCameraTiltAngle(float angleInDegrees);
 	
-	// get camera angle
+	/// get the current angle
 	float getCurrentCameraTiltAngle();
+    
+    /// get the target angle (if the camera is currently moving)
 	float getTargetCameraTiltAngle();
     
     /// \section Draw
@@ -154,14 +158,14 @@ public:
     /// draw the RGB texture
 	void draw(float x, float y, float w, float h);
 	void draw(float x, float y);
-	void draw(const ofPoint & point);
-	void draw(const ofRectangle & rect);
+	void draw(const ofPoint& point);
+	void draw(const ofRectangle& rect);
 	
     /// draw the grayscale depth texture
 	void drawDepth(float x, float y, float w, float h);
 	void drawDepth(float x, float y);
-	void drawDepth(const ofPoint & point);
-	void drawDepth(const ofRectangle & rect);
+	void drawDepth(const ofPoint& point);
+	void drawDepth(const ofRectangle& rect);
 	
     /// \section Util
     
@@ -186,7 +190,7 @@ public:
 	/// get the number of currently connected devices
 	static int numConnectedDevices();
 	
-	/// is the an id already connected?
+	/// is a device already connected?
 	static bool isDeviceConnected(int id);
 	
 	/// get the id of the next available device,
@@ -198,7 +202,6 @@ protected:
 	bool bUseTexture;
 	ofTexture depthTex; ///< the depth texture
 	ofTexture videoTex; ///< the RGB texture
-	bool bVerbose;
 	bool bGrabberInited;
 	
 	ofPixels pixels;
