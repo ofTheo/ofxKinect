@@ -657,15 +657,15 @@ void ofxKinectContext::closeAll() {
 
 //---------------------------------------------------------------------------
 int ofxKinectContext::numTotal() {
-	if(isInited())
-		return freenect_num_devices(kinectContext);
-	return 0;
+    if(!isInited())
+		init();
+    return freenect_num_devices(kinectContext);
 }
 
 int ofxKinectContext::numAvailable() {
-	if(isInited())
-		return freenect_num_devices(kinectContext) - kinects.size();
-	return 0;
+	if(!isInited())
+		init();
+    return freenect_num_devices(kinectContext) - kinects.size();
 }
 
 int ofxKinectContext::numConnected() {
