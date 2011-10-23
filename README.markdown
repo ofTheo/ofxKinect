@@ -45,11 +45,18 @@ Running the Example Project
 
 The example projects are in the `example` folder.
 
-#### OSX
+### OSX
 
-Open the XCode project and hit "Build and Run". You might want to chosose "Release" instead of "Debug" for faster performance.
+Xcode3: Open the Xcode project and hit "Build and Run". You might want to choose "Release" instead of "Debug" for faster performance.
 
-#### Linux
+Xcode4: Open the Xcode project, select the "ofxKinectExample" scheme, and hit "Run".
+
+### Linux
+
+Install the libusb-1.0 library. On Ubuntu, you can do this with:
+<pre>
+sudo apt-get install libusb1.0-0-dev
+</pre>
 
 Open the Code::Blocks .cbp and hit F9 to build. Optionally, you can build the example with the Makefile.
 
@@ -67,9 +74,9 @@ SUBSYSTEM=="usb", SYSFS{idVendor}=="045e", SYSFS{idProduct}=="02ad", MODE="0660"
 SUBSYSTEM=="usb", SYSFS{idVendor}=="045e", SYSFS{idProduct}=="02b0", MODE="0660", GROUP="plugdev"
 </pre>
 
-#### Windows
+### Windows
 
-libfreenect Kinect drivers and an example Visual Studio 2010 solution are included.
+Precompiled libfreenect Kinect drivers and an example Visual Studio 2010 solution as well as a Codeblocks workspace are included.
 
 Make sure to install or update the libfreenect Kinect camera, motor, and audio drivers through Windows Device Manager by pointing it to the driver folder:
 <pre>
@@ -89,44 +96,106 @@ Then after renaming:
 
 `openFrameworks/apps/myApps/myKinectProject/`
 
-On Mac, rename the project in XCode (do not rename the .xcodeproj file in Finder!): XCode Menu->Project->Rename (Xcode3) / Slow double click the project name and rename (Xcode4)
+### Mac (Xcode):
+
+Rename the project in Xcode (do not rename the .xcodeproj file in Finder!): XCode Menu->Project->Rename (Xcode3) / Slow double click the project name and rename (Xcode4)
+
+### Codeblocks (Win & Linux):
+
+Close Codeblocks and rename the *.cbp and *.workspace files to the same name as the project folder. Open the workspace and readd the renamed project file.
+
+### Windows (Visual Studio):
+
+Close Visual Studio and rename the *.sln file. Open the solution, right click on the project in the project broswer and select "Rename ...".
 
 Adding ofxKinect to an Existing Project
 ---------------------------------------
 
-If you want to add ofxKinect to another project, you need to make sure you include the src and libs folders:
+If you want to add ofxKinect to another project, you need to make sure you include the src folder and the :
 <pre>
 openFrameworks/addons/ofxKinect/src
-openFrameworks/addons/ofxKinect/libs
 </pre>
+as well as search paths for the addons (ofxOpenCv) and libs (freenect, libusb) required by ofxKinect.
 
-For Xcode:
+Don't forget to include the ofxOpenCv addon sources and oepncv libraries.
 
-* create a new group "ofxKinect"
-* drag these directories from ofxKinect into this new group: ofxKinect/src & ofxKinect/libs
-* add a search path to: ../../../addons/ofxKinect/libs/libusb/osx/lib
+### Mac (Xcode):
 
-You will also need the ofxOpenCV addon which is included with OpenFrameworks. Add the following path to your header search paths:
-`../../../addons/ofxOpenCV/libs/opencv/include`
+In the Xcode project browser:
 
-For Xcode:
-
+* add the ofxKinect sources to the project:
+  * create a new group "ofxKinect"
+  * drag these directories from ofxKinect into this new group: ofxKinect/src & ofxKinect/libs
+* add a search path to the libusb headers: `../../../addons/ofxKinect/libs/libusb/include/libusb-1.0` to your project Target build settings
+  * Xcode3: under Targets->YourApp->Build->Header Search Paths (make sure All Configurations and All Settings are selected) and add the path
+  * Xcode4: add the lib path to your Project.xconfig, see the example
+* add the path to the libusb precompiled library: `../../../addons/ofxKinect/libs/libusb/osx/libs/usb-1.0.a`
   * Xcode3: under Targets->YourApp->Build->Library Search Paths (make sure All Configurations and All Settings are selected) and add the path
   * Xcode4: add the lib path to your Project.xconfig, see the example
+  
+### Linux (Makefiles & Codeblocks):
 
-Last, on Mac OSX and Linux you will need to link to the libusb-1.0 library. A precompiled versions is supplied for Mac OSX and found in `libs/libusbosx`. Make sure to include the search path for the headers:
+Edit the Makefile config files:
+ 
+* edit addons.make in your project folder and add the following line to the end of the file: 
+	<pre>ofxKinect</pre>
+* edit config.make in your project folder and change the lines for USER_LIBS to:
+	<pre>
+	USER_LIBS = -lusb-1.0
+	</pre>
+
+### Windows (VS & Codeblocks)
+
+Add the project search paths
+
+For libusb & freenect, link to the precompiled freenect library in:
 <pre>
-../../../ofxKinect/libs/libusb/include/libusb-1.0
-</pre>
-and link the lib:
-<pre>
-../../../ofxKinect/libs/libusb/osx/libs/usb-1.0.a
+../../../addons/ofxKinect/libs/libfreenect/lib/vs2010/freenect.lib
 </pre>
 
-For Linux, you simply install libusb-1.0 and add a link flag for it: `-lusb-1.0`. On Ubuntu, you can install it with:
-<pre>
-sudo apt-get install libusb1.0-0-dev
-</pre>
+#### Windows (Visual Studio):
+
+* add the ofxPd sources to the project:
+	* right click on the addons folder in your project tree and create a new filter named "ofxKinect"
+	* drag the src directory from the ofxKinect addon folder in Explorer into the ofxKinect folder in your project tree
+* add header and library search paths:
+	* right lick on your project and select "Properties"
+	* choose "Debug" from the "Configurations" drop down box
+	* under C/C++->General, add the following to the "Additional Include Directories":
+	<pre>
+	..\\..\\..\addons\ofxKinect\src
+	..\\..\\..\addons\ofxPd\libs\libsfreenect
+	</pre>
+	* under Linker->General, add the following to the "Additional Library Directories":
+	<pre>
+	..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs2010
+	</pre>
+	* repeat for the "Release" configuration
+	
+#### Windows (Codeblocks):
+
+* add the ofxPd sources to the project:
+	* right-click on your project in the project tree
+	* select "Add Files Recursively ..."
+	* navigate and choose the ofxKinect/src folder
+* add search paths and libraries to link:
+	* right-click on your project in the project tree
+	* select "Build options..."
+	* make sure the project name is selected in the tree (not release or debug)
+	* select the "Search diectories" tab, click add the search paths:
+	<pre>
+	..\\..\\..\addons\ofxKinect\src
+	..\\..\\..\addons\ofxPd\libs\libsfreenect
+	</pre>
+	* select the "Linker settings" tab, add the following to Link libraries:
+	<pre>
+	m
+	pthread
+	</pre>
+	* select the "Linker settings" tab, add the following to Other liker options:
+	<pre>
+	../../../addons/ofxKinect/libs/libfreenect/lib/vs2010/freenect.lib
+	</pre>
 
 Notes
 -----
