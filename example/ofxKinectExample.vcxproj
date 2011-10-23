@@ -119,9 +119,6 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs20
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinect.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinectCalibration.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinectPlayer.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinectRecorder.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvContourFinder.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvFloatImage.cpp" />
@@ -134,9 +131,6 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs20
   <ItemGroup>
     <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxBase3DVideo.h" />
     <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinect.h" />
-    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinectCalibration.h" />
-    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinectPlayer.h" />
-    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinectRecorder.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvBlob.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvConstants.h" />

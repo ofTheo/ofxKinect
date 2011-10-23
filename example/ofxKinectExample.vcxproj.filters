@@ -24,15 +24,6 @@
     <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinect.cpp">
       <Filter>addons\ofxKinect\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinectCalibration.cpp">
-      <Filter>addons\ofxKinect\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinectPlayer.cpp">
-      <Filter>addons\ofxKinect\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinectRecorder.cpp">
-      <Filter>addons\ofxKinect\src</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvBlob.h">
@@ -69,16 +60,7 @@
     <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxBase3DVideo.h">
       <Filter>addons\ofxKinect\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinectRecorder.h">
-      <Filter>addons\ofxKinect\src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinect.h">
-      <Filter>addons\ofxKinect\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinectCalibration.h">
-      <Filter>addons\ofxKinect\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxKinect\src\ofxKinectPlayer.h">
       <Filter>addons\ofxKinect\src</Filter>
     </ClInclude>
   </ItemGroup>

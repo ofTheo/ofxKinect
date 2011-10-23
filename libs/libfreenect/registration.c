@@ -319,7 +319,7 @@ void freenect_camera_to_world(freenect_device* dev, int cx, int cy, int wz, doub
 {
 	double ref_pix_size = dev->registration.zero_plane_info.reference_pixel_size;
 	double ref_distance = dev->registration.zero_plane_info.reference_distance;
-	double factor = 2 * ref_pix_size * wz / ref_distance;
+	double factor = ref_pix_size * wz / ref_distance;
 	*wx = (double)(cx - DEPTH_X_RES/2) * factor;
 	*wy = (double)(cy - DEPTH_Y_RES/2) * factor;
 }

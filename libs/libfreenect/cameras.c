@@ -918,7 +918,7 @@ static int freenect_fetch_zero_plane_info(freenect_device *dev)
 	dev->registration.zero_plane_info.dcmos_rcmos_dist     = *((float*)(&fn_le32(*((uint32_t*)(reply+98)))));
 	dev->registration.zero_plane_info.reference_distance   = *((float*)(&fn_le32(*((uint32_t*)(reply+102)))));
 	dev->registration.zero_plane_info.reference_pixel_size = *((float*)(&fn_le32(*((uint32_t*)(reply+106)))));
- 
+
 	// FIXME: OpenNI seems to use a hardcoded value of 2.4 instead of 2.3 as reported by Kinect
 	dev->registration.zero_plane_info.dcmos_rcmos_dist = 2.4;
 
@@ -1127,9 +1127,7 @@ int freenect_start_video(freenect_device *dev)
 			break;
 	}
 	write_register(dev, hflip_reg, 0x00); // disable Hflip
-	//write_register(dev, 0x47, 0x01); // enable rgb Hflip
-	//write_register(dev, 0x17, 0x01); // enable ir Hflip
-	
+
 	dev->video.running = 1;
 	return 0;
 }
