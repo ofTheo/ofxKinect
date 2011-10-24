@@ -35,7 +35,7 @@ The master branch of ofxKinect will work with the current master of OpenFramewor
 
 If you want to work with the latest unstable (still in development) ofxKinect, download the source from the develop branch [https://github.com/ofTheo/ofxKinect/tree/develop](https://github.com/ofTheo/ofxKinect/tree/develop) or via git clone:
 <pre>
-git clone git://github.com/ofTheo/ofxKinect.git -b development
+git clone git://github.com/ofTheo/ofxKinect.git -b develop
 </pre> 
 
 Warning: The develop branch will be in flux, so don't be suprised if things do not always work as expected!
