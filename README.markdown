@@ -10,6 +10,8 @@ WARRANTIES, see the file, "LICENSE.txt," in this distribution.
 
 See https://github.com/ofTheo/ofxKinect for documentation as well as the [OF forums](http://forum.openframeworks.cc/index.php).
 
+This project uses [libfreenect](https://github.com/OpenKinect/libfreenect), copyrighted by the Open Kinect Project using the Apache License v2. See the file "APACHE20" in libs/libfreenect.
+
 Description
 -----------
 
