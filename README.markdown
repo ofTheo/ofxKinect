@@ -1,6 +1,18 @@
 ofxKinect
 ==================
 
+Copyright (c) 2010, 2011 ofxKinect Team
+
+MIT License.
+
+For information on usage and redistribution, and for a DISCLAIMER OF ALL
+WARRANTIES, see the file, "LICENSE.txt," in this distribution.
+
+See https://github.com/ofTheo/ofxKinect for documentation as well as the [OF forums](http://forum.openframeworks.cc/index.php).
+
+Description
+-----------
+
 ofxKinect is an Open Frameworks addon for the Xbox Kinect that runs on Linux and OS X.
 OpenFrameworks is a cross platform open source toolkit for creative coding in C++.
 
@@ -41,7 +53,7 @@ git clone git://github.com/ofTheo/ofxKinect.git -b develop
 Warning: The develop branch will be in flux, so don't be suprised if things do not always work as expected!
 
 Running the Example Project
--------------------------------
+---------------------------
 
 The example projects are in the `example` folder.
 
