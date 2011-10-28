@@ -19,15 +19,15 @@
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
-    
+
     ----------------------------------------------------------------------------
-    
+
     This project uses libfreenect, copyrighted by the Open Kinect Project using
     the Apache License v2. See the file "APACHE20" in libs/libfreenect.
-    
-    See http://www.openkinect.org & https://github.com/OpenKinect/libfreenect 
+
+    See http://www.openkinect.org & https://github.com/OpenKinect/libfreenect
     for documentation
-    
+
 ==============================================================================*/
 #pragma once
 

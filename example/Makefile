@@ -142,14 +142,14 @@ ifeq ($(findstring addons.make,$(wildcard *.make)),addons.make)
 	else
 		ADDONS = $(shell cat addons.make)
 	endif
-	
+
 	ifneq ($(strip $(ADDONS)),)
 	    ADDONS_REL_DIRS = $(addsuffix /src, $(ADDONS))
 	    ADDONS_LIBS_REL_DIRS = $(addsuffix /libs, $(ADDONS))
 	    ADDONS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_REL_DIRS) )
 	    ADDONS_LIBS_DIRS = $(addprefix $(OF_ROOT)/addons/, $(ADDONS_LIBS_REL_DIRS) )
 	    ADDONS_BIN_LIBS_DIRS = $(addsuffix /*/lib/$(LIBSPATH), $(ADDONS_LIBS_DIRS) )
-	
+
 	    ADDONS_INCLUDES = $(ADDONS_DIRS)
 	    ADDONS_INCLUDES = $(ADDONS_LIBS_DIRS)
 	    ADDONS_INCLUDES += $(shell find $(ADDONS_DIRS) -type d 2> /dev/null)
@@ -220,7 +220,7 @@ ifeq ($(ARCH),android)
 		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworks_neon.a
 		USER_LIBS = $(USER_LIBS_NEON)
 	endif
-	
+
 	ifeq ($(findstring TestLink,$(MAKECMDGOALS)),TestLink)
 		TARGET_NAME = Debug
 		TARGET_LIBS = $(OF_ROOT)/libs/openFrameworksCompiled/lib/$(ARCH)/libopenFrameworksDebug.a
@@ -323,7 +323,7 @@ $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.c
 	@echo "compiling addon object for" $<
 	mkdir -p $(@D)
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o $@ -c $<
-	
+
 $(OBJ_OUTPUT)%.o: $(OF_ROOT)/%.cc
 	@echo "compiling addon object for" $<
 	mkdir -p $(@D)
@@ -333,7 +333,7 @@ $(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.c
 	@echo "compiling object for: " $<
 	mkdir -p $(@D)
 	$(CC) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
-	
+
 $(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cc
 	@echo "compiling object for: " $<
 	mkdir -p $(@D)
@@ -343,7 +343,7 @@ $(OBJ_OUTPUT)%.o: $(USER_SOURCE_DIR)/%.cpp
 	@echo "compiling object for: " $<
 	mkdir -p $(@D)
 	$(CXX) $(TARGET_CFLAGS) $(CFLAGS) $(ADDONSCFLAGS) $(USER_CFLAGS) -MMD -MP -MF$(OBJ_OUTPUT)$*.d -MT$(OBJ_OUTPUT)$*.d -o$@ -c $<
-	
+
 $(TARGET): $(OBJS) $(ADDONS_OBJS) $(USER_OBJS) $(TARGET_LIBS) $(LIB_STATIC)
 	@echo 'linking $(TARGET)'
 	mkdir -p $(@D)
@@ -356,7 +356,7 @@ clean:
 	rm -rf $(OBJ_OUTPUT)
 	rm -f $(TARGET)
 	rm -r bin/libs
-	
+
 $(CLEANTARGET):
 	rm -rf $(OBJ_OUTPUT)
 	rm -f $(TARGET)
@@ -371,49 +371,49 @@ CleanAndroid:
 
 afterDebugAndroid:$(TARGET)
 	@if [ -d libs/armeabi-v7a ]; then rm -r libs/armeabi-v7a; fi
-	
+
 	@cp $(NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/gdbserver libs/armeabi
-	
+
 	#create gdb.setup for armeabi
 	@echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup
 	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi/gdb.setup
 	@echo "directory $(PWD)/src" >> libs/armeabi/gdb.setup
 	@echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi/gdb.setup
-	@echo "directory $(PWD)/libs/armeabi" >> libs/armeabi/gdb.setup 
-	@echo "" >> libs/armeabi/gdb.setup 
-	
+	@echo "directory $(PWD)/libs/armeabi" >> libs/armeabi/gdb.setup
+	@echo "" >> libs/armeabi/gdb.setup
+
 	@if [ ! -d jni ]; then mkdir jni; fi
 	@echo "APP_ABI := armeabi" > jni/Application.mk
 	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
 
 afterReleaseAndroid:$(TARGET)
 	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
-	
+
 	@cp $(OF_ROOT)/libs/openFrameworksCompiled/project/android/libneondetection.so libs/armeabi-v7a/
 	@cp $(NDK_ROOT)/toolchains/arm-linux-androideabi-4.4.3/prebuilt/gdbserver libs/armeabi-v7a
-	
+
 	#create gdb.setup for armeabi-v7a
 	@echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup
 	@echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi-v7a/gdb.setup
 	@echo "directory $(PWD)/src" >> libs/armeabi-v7a/gdb.setup
 	@echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi-v7a/gdb.setup
-	@echo "directory $(PWD)/libs/armeabi-v7a" >> libs/armeabi-v7a/gdb.setup 
-	@echo "" >> libs/armeabi-v7a/gdb.setup 
-	
+	@echo "directory $(PWD)/libs/armeabi-v7a" >> libs/armeabi-v7a/gdb.setup
+	@echo "" >> libs/armeabi-v7a/gdb.setup
+
 	@if [ ! -d jni ]; then mkdir jni; fi
 	@echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk
 	@echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
 
 RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
 
-AndroidInstall:	
+AndroidInstall:
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
 		cd bin/data; \
 		zip -r ../../res/raw/$(RESNAME).zip *; \
 		cd ../..; \
-	fi 
+	fi
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
 	$(SDK_ROOT)/tools/android update project --target $(NDK_PLATFORM) --path $(PROJECT_PATH)
