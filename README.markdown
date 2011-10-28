@@ -50,7 +50,7 @@ The master branch of ofxKinect will work with the current master of OpenFramewor
 If you want to work with the latest unstable (still in development) ofxKinect, download the source from the develop branch [https://github.com/ofTheo/ofxKinect/tree/develop](https://github.com/ofTheo/ofxKinect/tree/develop) or via git clone:
 <pre>
 git clone git://github.com/ofTheo/ofxKinect.git -b develop
-</pre> 
+</pre>
 
 Warning: The develop branch will be in flux, so don't be suprised if things do not always work as expected!
 
@@ -146,12 +146,12 @@ In the Xcode project browser:
 * add the path to the libusb precompiled library: `../../../addons/ofxKinect/libs/libusb/osx/libs/usb-1.0.a`
   * Xcode3: under Targets->YourApp->Build->Library Search Paths (make sure All Configurations and All Settings are selected) and add the path
   * Xcode4: add the lib path to your Project.xconfig, see the example
-  
+
 ### Linux (Makefiles & Codeblocks):
 
 Edit the Makefile config files:
- 
-* edit addons.make in your project folder and add the following line to the end of the file: 
+
+* edit addons.make in your project folder and add the following line to the end of the file:
 	<pre>ofxKinect</pre>
 * edit config.make in your project folder and change the lines for USER_LIBS to:
 	<pre>
@@ -185,7 +185,7 @@ For libusb & freenect, link to the precompiled freenect library in:
 	..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs2010
 	</pre>
 	* repeat for the "Release" configuration
-	
+
 #### Windows (Codeblocks):
 
 * add the ofxPd sources to the project:
