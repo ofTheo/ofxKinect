@@ -275,12 +275,12 @@ private:
 
 	float nearClipping, farClipping;
 
-	bool bInfrared;
-	int bytespp;
+	bool bIsVideoInfrared;  ///< is the video image infrared or RGB?
+	int videoBytesPerPixel; ///< how many bytes per pixel in the video image
 
 	/// libfreenect callbacks
 	static void grabDepthFrame(freenect_device* dev, void* depth, uint32_t timestamp);
-	static void grabRgbFrame(freenect_device* dev, void* rgb, uint32_t timestamp);
+	static void grabVideoFrame(freenect_device* dev, void* video, uint32_t timestamp);
 
 	/// thread function
 	void threadedFunction();

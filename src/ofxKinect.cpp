@@ -54,6 +54,9 @@ ofxKinect::ofxKinect() {
 	bNeedsUpdate = false;
 	bUpdateTex = false;
 	bIsFrameNew = false;
+    
+    bIsVideoInfrared = false;
+    videoBytesPerPixel = 3;
 
 	kinectDevice = NULL;
 
@@ -82,9 +85,9 @@ bool ofxKinect::init(bool infrared, bool video, bool texture) {
 
 	clear();
 
-	bInfrared = infrared;
+	bIsVideoInfrared = infrared;
 	bGrabVideo = video;
-	bytespp = infrared?1:3;
+	videoBytesPerPixel = infrared?1:3;
 
 	bUseTexture = texture;
 
@@ -92,18 +95,18 @@ bool ofxKinect::init(bool infrared, bool video, bool texture) {
 	depthPixelsRaw = new unsigned short[length];
 	depthPixelsBack = new unsigned short[length];
 
-	videoPixels = new unsigned char[length*bytespp];
+	videoPixels = new unsigned char[length*videoBytesPerPixel];
 	pixels.setFromExternalPixels(videoPixels, width, height, OF_IMAGE_COLOR);
-	videoPixelsBack = new unsigned char[length*bytespp];
+	videoPixelsBack = new unsigned char[length*videoBytesPerPixel];
 
-	depthPixels = new unsigned char[length * bytespp];
+	depthPixels = new unsigned char[length];
 	distancePixels = new float[length];
 
 	memset(depthPixelsRaw, 0, length*sizeof(unsigned short));
 	memset(depthPixelsBack, 0, length*sizeof(unsigned short));
 
-	memset(videoPixels, 0, length*bytespp*sizeof(unsigned char));
-	memset(videoPixelsBack, 0, length*bytespp*sizeof(unsigned char));
+	memset(videoPixels, 0, length*videoBytesPerPixel*sizeof(unsigned char));
+	memset(videoPixelsBack, 0, length*videoBytesPerPixel*sizeof(unsigned char));
 
 	if(bUseTexture) {
 		depthTex.allocate(width, height, GL_LUMINANCE);
@@ -175,7 +178,7 @@ bool ofxKinect::open(int id){
 
 	freenect_set_user(kinectDevice, this);
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
-	freenect_set_video_callback(kinectDevice, &grabRgbFrame);
+	freenect_set_video_callback(kinectDevice, &grabVideoFrame);
 
 	startThread(true, false); // blocking, not verbose
 
@@ -225,7 +228,7 @@ void ofxKinect::update() {
 		int n = width * height;
 
 		memcpy(depthPixelsRaw, depthPixelsBack, n * sizeof(short));
-		memcpy(videoPixels, videoPixelsBack, n * bytespp);
+		memcpy(videoPixels, videoPixelsBack, n * videoBytesPerPixel);
 
 		//we have done the update
 		bNeedsUpdate = false;
@@ -237,7 +240,7 @@ void ofxKinect::update() {
 
 	if(bUseTexture) {
 		depthTex.loadData(depthPixels, width, height, GL_LUMINANCE);
-		videoTex.loadData(videoPixels, width, height, bInfrared ? GL_LUMINANCE : GL_RGB);
+		videoTex.loadData(videoPixels, width, height, bIsVideoInfrared ? GL_LUMINANCE : GL_RGB);
 		bUpdateTex = false;
 	}
 }
@@ -266,11 +269,11 @@ ofVec3f ofxKinect::getWorldCoordinateAt(float cx, float cy, float wz) {
 
 //------------------------------------
 ofColor ofxKinect::getColorAt(int x, int y) {
-	int index = (y * width + x) * bytespp;
+	int index = (y * width + x) * videoBytesPerPixel;
 	ofColor c;
 	c.r = videoPixels[index + 0];
-	c.g = videoPixels[index + (bytespp-1)/2];
-	c.b = videoPixels[index + (bytespp-1)];
+	c.g = videoPixels[index + (videoBytesPerPixel-1)/2];
+	c.b = videoPixels[index + (videoBytesPerPixel-1)];
 	c.a = 255;
 
 	return c;
@@ -503,41 +506,26 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 
 	ofxKinect* kinect = kinectContext.getKinect(dev);
 
-	if(kinect->kinectDevice == dev && kinect->lock()) {
-		try {
-			freenect_frame_mode curMode = freenect_get_current_depth_mode(dev);
-			memcpy(kinect->depthPixelsBack, depth, curMode.bytes);
-			kinect->bNeedsUpdate = true;
-		}
-		catch(...) {
-			ofLog(OF_LOG_ERROR, "ofxKinect: Depth memcpy failed for device %d", kinect->getDeviceId());
-		}
+	if(kinect->kinectDevice == dev) {
+        kinect->lock();
+        freenect_frame_mode curMode = freenect_get_current_depth_mode(dev);
+        memcpy(kinect->depthPixelsBack, depth, curMode.bytes);
+        kinect->bNeedsUpdate = true;
 		kinect->unlock();
-	}
-	else {
-		ofLog(OF_LOG_WARNING, "ofxKinect: grabDepthFrame unable to lock mutex");
-	}
+    }
 }
 
 //---------------------------------------------------------------------------
-void ofxKinect::grabRgbFrame(freenect_device *dev, void *rgb, uint32_t timestamp) {
+void ofxKinect::grabVideoFrame(freenect_device *dev, void *video, uint32_t timestamp) {
 
 	ofxKinect* kinect = kinectContext.getKinect(dev);
 
-	if(kinect->kinectDevice == dev && kinect->lock()) {
-		try {
-			freenect_frame_mode curMode = freenect_get_current_video_mode(dev);
-			memcpy(kinect->videoPixelsBack, rgb, curMode.bytes);
-			kinect->bNeedsUpdate = true;
-		}
-		catch (...) {
-			ofLog(OF_LOG_ERROR, "ofxKinect: Rgb memcpy failed for device %d",
-                kinect->getDeviceId());
-		}
+	if(kinect->kinectDevice == dev) {
+        kinect->lock();
+        freenect_frame_mode curMode = freenect_get_current_video_mode(dev);
+        memcpy(kinect->videoPixelsBack, video, curMode.bytes);
+        kinect->bNeedsUpdate = true;
 		kinect->unlock();
-	}
-	else {
-		ofLog(OF_LOG_ERROR, "ofxKinect: grabRgbFrame unable to lock mutex");
 	}
 }
 
@@ -545,7 +533,7 @@ void ofxKinect::grabRgbFrame(freenect_device *dev, void *rgb, uint32_t timestamp
 void ofxKinect::threadedFunction(){
 
 	freenect_set_led(kinectDevice, LED_GREEN);
-	freenect_frame_mode videoMode = freenect_find_video_mode(FREENECT_RESOLUTION_MEDIUM, bInfrared ? FREENECT_VIDEO_IR_8BIT : FREENECT_VIDEO_RGB);
+	freenect_frame_mode videoMode = freenect_find_video_mode(FREENECT_RESOLUTION_MEDIUM, bIsVideoInfrared ? FREENECT_VIDEO_IR_8BIT : FREENECT_VIDEO_RGB);
 	freenect_set_video_mode(kinectDevice, videoMode);
 	freenect_frame_mode depthMode = freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, bUseRegistration ? FREENECT_DEPTH_REGISTERED : FREENECT_DEPTH_MM);
 	freenect_set_depth_mode(kinectDevice, depthMode);
