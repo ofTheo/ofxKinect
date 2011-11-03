@@ -11,7 +11,7 @@ void testApp::setup() {
 	kinect.init();
 	//kinect.init(true); // shows infrared instead of RGB video image
 	//kinect.init(false, false); // disable video image (faster fps)
-	kinect.open();
+	kinect.open(0);
 	
 #ifdef USE_TWO_KINECTS
 	kinect2.init();
@@ -43,7 +43,7 @@ void testApp::update() {
 	ofBackground(100, 100, 100);
 	
 	kinect.update();
-	
+
 	// there is a new frame and we are connected
 	if(kinect.isFrameNew()) {
 		

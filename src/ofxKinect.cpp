@@ -47,8 +47,7 @@ ofxKinect::ofxKinect() {
 	// set defaults
 	bGrabberInited = false;
 	depthPixelsRaw = NULL;
-	depthPixelsBack = NULL;
-	videoPixels = NULL;
+	depthPixelsRawBack = NULL;
 	videoPixelsBack = NULL;
 
 	bNeedsUpdate = false;
@@ -92,25 +91,26 @@ bool ofxKinect::init(bool infrared, bool video, bool texture) {
 	bUseTexture = texture;
 
 	int length = width*height;
+    
+    // allocate
 	depthPixelsRaw = new unsigned short[length];
-	depthPixelsBack = new unsigned short[length];
-
-	videoPixels = new unsigned char[length*videoBytesPerPixel];
-	pixels.setFromExternalPixels(videoPixels, width, height, OF_IMAGE_COLOR);
+	depthPixelsRawBack = new unsigned short[length];
+    depthPixels.allocate(width, height, OF_IMAGE_GRAYSCALE);
+	videoPixels.allocate(width, height, infrared?OF_IMAGE_GRAYSCALE:OF_IMAGE_COLOR);
 	videoPixelsBack = new unsigned char[length*videoBytesPerPixel];
-
-	depthPixels = new unsigned char[length];
 	distancePixels = new float[length];
 
+    // set
 	memset(depthPixelsRaw, 0, length*sizeof(unsigned short));
-	memset(depthPixelsBack, 0, length*sizeof(unsigned short));
-
-	memset(videoPixels, 0, length*videoBytesPerPixel*sizeof(unsigned char));
+	memset(depthPixelsRawBack, 0, length*sizeof(unsigned short));
+    depthPixels.set(0);
+    videoPixels.set(0);
 	memset(videoPixelsBack, 0, length*videoBytesPerPixel*sizeof(unsigned char));
+    memset(distancePixels, 0, length*sizeof(float));
 
 	if(bUseTexture) {
 		depthTex.allocate(width, height, GL_LUMINANCE);
-		videoTex.allocate(width, height, infrared ? GL_LUMINANCE : GL_RGB);
+		videoTex.allocate(width, height, infrared?GL_LUMINANCE:GL_RGB);
 	}
 
 	if(!kinectContext.isInited()) {
@@ -138,14 +138,13 @@ void ofxKinect::clear() {
 		kinectContext.clear();
 	}
 
+    videoPixels.clear();
+    depthPixels.clear();
+
 	if(depthPixelsRaw != NULL){
 		delete[] depthPixelsRaw; depthPixelsRaw = NULL;
-		delete[] depthPixelsBack; depthPixelsBack = NULL;
-
-		delete[] videoPixels; videoPixels = NULL;
+		delete[] depthPixelsRawBack; depthPixelsRawBack = NULL;
 		delete[] videoPixelsBack; videoPixelsBack = NULL;
-
-		delete [] depthPixels; depthPixels = NULL;
 		delete [] distancePixels; distancePixels = NULL;
 	}
 
@@ -227,8 +226,8 @@ void ofxKinect::update() {
 	if(this->lock()) {
 		int n = width * height;
 
-		memcpy(depthPixelsRaw, depthPixelsBack, n * sizeof(short));
-		memcpy(videoPixels, videoPixelsBack, n * videoBytesPerPixel);
+		memcpy(depthPixelsRaw, depthPixelsRawBack, n * sizeof(short));
+		videoPixels.setFromExternalPixels(videoPixelsBack, width, height, bIsVideoInfrared?1:3);
 
 		//we have done the update
 		bNeedsUpdate = false;
@@ -239,8 +238,8 @@ void ofxKinect::update() {
 	}
 
 	if(bUseTexture) {
-		depthTex.loadData(depthPixels, width, height, GL_LUMINANCE);
-		videoTex.loadData(videoPixels, width, height, bIsVideoInfrared ? GL_LUMINANCE : GL_RGB);
+		depthTex.loadData(depthPixels.getPixels(), width, height, GL_LUMINANCE);
+		videoTex.loadData(videoPixels.getPixels(), width, height, bIsVideoInfrared?GL_LUMINANCE:GL_RGB);
 		bUpdateTex = false;
 	}
 }
@@ -296,12 +295,12 @@ ofPoint ofxKinect::getMksAccel() {
 
 //---------------------------------------------------------------------------
 unsigned char * ofxKinect::getPixels() {
-	return videoPixels;
+	return videoPixels.getPixels();
 }
 
 //---------------------------------------------------------------------------
 unsigned char * ofxKinect::getDepthPixels() {
-	return depthPixels;
+	return depthPixels.getPixels();
 }
 
 //---------------------------------------------------------------------------
@@ -332,9 +331,13 @@ ofTexture& ofxKinect::getDepthTextureReference(){
 
 //---------------------------------------------------------------------------
 ofPixels& ofxKinect::getPixelsRef() {
-	return pixels;
+	return videoPixels;
 }
 
+//---------------------------------------------------------------------------
+ofPixels& ofxKinect::getDepthPixelsRef() {
+	return depthPixels;
+}
 
 //---------------------------------------------------------------------------
 void ofxKinect::enableDepthNearValueWhite(bool bEnabled) {
@@ -509,7 +512,7 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 	if(kinect->kinectDevice == dev) {
         kinect->lock();
         freenect_frame_mode curMode = freenect_get_current_depth_mode(dev);
-        memcpy(kinect->depthPixelsBack, depth, curMode.bytes);
+        memcpy(kinect->depthPixelsRawBack, depth, curMode.bytes);
         kinect->bNeedsUpdate = true;
 		kinect->unlock();
     }
