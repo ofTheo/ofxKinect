@@ -142,14 +142,22 @@ public:
 	/// get the distance in millimeters to a given point as a float array
 	float* getDistancePixels();
 
+	/// get the pixel reference
+	ofPixels & getPixelsRef();
+
+	/// get the pixels of the most recent depth frame
+	ofPixels & getDepthPixelsRef();       ///< grayscale values
+	ofShortPixels & getRawDepthPixelsRef();   ///< raw 11 bit values
+
+	/// get the distance in millimeters to a given point as a float array
+	ofFloatPixels & getDistancePixelsRef();
+
 	/// get the RGB texture
 	ofTexture& getTextureReference();
 
 	/// get the grayscale depth texture
 	ofTexture& getDepthTextureReference();
 
-	/// get the pixel reference
-	ofPixels& getPixelsRef();
 
     /// \section Grayscale Depth Value
 
@@ -237,9 +245,8 @@ protected:
 	ofTexture videoTex; ///< the RGB texture
 	bool bGrabberInited;
 
-	ofPixels pixels;
-	unsigned char* videoPixels;
-	unsigned short* depthPixelsRaw;
+	ofPixels videoPixels;
+	ofShortPixels depthPixelsRaw;
 
 	ofPoint rawAccel;
 	ofPoint mksAccel;
@@ -257,11 +264,11 @@ private:
 
 	freenect_device* kinectDevice;      ///< kinect device handle
 
-	unsigned short* depthPixelsBack;    ///< depth back
-	unsigned char* videoPixelsBack;     ///< rgb back
+	ofShortPixels depthPixelsBack;    ///< depth back
+	ofPixels videoPixelsBack;     ///< rgb back
 
-	unsigned char* depthPixels;
-	float* distancePixels;
+	ofPixels depthPixels;
+	ofFloatPixels distancePixels;
 	vector<unsigned char> depthLookupTable;
 	void updateDepthLookupTable();
 	void updateDepthPixels();
