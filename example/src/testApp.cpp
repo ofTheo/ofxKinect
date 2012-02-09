@@ -5,7 +5,7 @@
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-    // enable depth->rgb image calibration
+	// enable depth->video image calibration
 	kinect.setRegistration(true);
     
 	kinect.init();

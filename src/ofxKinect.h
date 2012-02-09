@@ -70,69 +70,69 @@ public:
 	/// RGB color will be 0
 	bool init(bool infrared=false, bool video=true, bool texture=true);
 
-    /// clear resources, do not call this while ofxKinect is running!
+	/// clear resources, do not call this while ofxKinect is running!
 	void clear();
 
-    /// calibrates the depth image to align with the rgb image, disabled by default
-    ///
-    /// call this before open(), has no effect while the connection is running
-    ///
-    /// note: this calculation uses some cpu, leave off if not needed
+	/// calibrates the depth image to align with the rgb image, disabled by default
+	///
+	/// call this before open(), has no effect while the connection is running
+	///
+	/// note: this calculation uses some cpu, leave off if not needed
 	void setRegistration(bool bUseRegistration=false);
 
 	/// open the connection and start grabbing images
-    ///
-    /// set the id to choose a kinect, see numAvailableDevices()
-    /// if you don't set the id (ie id=-1), the first available kinect will be used
+	///
+	/// set the id to choose a kinect, see numAvailableDevices()
+	/// if you don't set the id (ie id=-1), the first available kinect will be used
 	bool open(int id=-1);
 
 	/// close the connection and stop grabbing images
 	void close();
 
-    /// is the connection currently open?
+	/// is the connection currently open?
 	bool isConnected();
 
 	/// is the current frame new?
 	bool isFrameNew();
 
 	/// updates the pixel buffers and textures
-    ///
-    /// make sure to call this to update to the latest incoming frames
-    void update();
+	///
+	/// make sure to call this to update to the latest incoming frames
+	void update();
 
 /// \section Depth Data
 
-    /// get the calulated distance for a depth point
+	/// get the calulated distance for a depth point
 	float getDistanceAt(int x, int y);
 	float getDistanceAt(const ofPoint & p);
 
 	/// calculates the coordinate in the world for the depth point (perspective calculation)
-    ///
-    /// center of image is (0.0)
+	///
+	/// center of image is (0.0)
 	ofVec3f getWorldCoordinateAt(int cx, int cy);
 	ofVec3f getWorldCoordinateAt(float cx, float cy, float wz);
 
 /// \section RGB Data
 
-    /// get the RGB value for a depth point
-    ///
-    /// see setRegistration() for calibrated depth->RGB points
+	/// get the RGB value for a depth point
+	///
+	/// see setRegistration() for calibrated depth->RGB points
 	ofColor getColorAt(int x, int y);
 	ofColor getColorAt(const ofPoint & p);
 
 /// \section Accelerometer Data
 
-    /// get the accelerometer values
-    ///
-    /// ... yes, the kinect has an accelerometer
+	/// get the accelerometer values
+	///
+	/// ... yes, the kinect has an accelerometer
 	ofPoint getRawAccel();
 	ofPoint getMksAccel();
 
 /// \section Pixel Data
 
 	/// get the pixels of the most recent rgb frame
-    ///
-    /// see setRegistration() for a calibrated depth->RGB image
+	///
+	/// see setRegistration() for a calibrated depth->RGB image
 	unsigned char* getPixels();
 
 	/// get the pixels of the most recent depth frame
@@ -162,21 +162,21 @@ public:
 
 	/// set the near value of the pixels in the grayscale depth image to white
 	///
-    /// bEnabled = true:  pixels closer to the camera are brighter (default)
-    /// bEnabled = false: pixels closer to the camera are darker
+	/// bEnabled = true:  pixels closer to the camera are brighter (default)
+	/// bEnabled = false: pixels closer to the camera are darker
 	void enableDepthNearValueWhite(bool bEnabled=true);
 	bool isDepthNearValueWhite();
 
-    /// set the clipping planes for the depth calculations in millimeters
-    ///
-    /// these are used for the depth value (12bit) -> grayscale (1 byte) conversion
-    /// ie setting a short range will give you greater sensitivity from 0-255
-    ///
-    /// default is 50cm - 4m
-    /// note: you won't get any data < 50cm and distances > 4m start to get noisy
+	/// set the clipping planes for the depth calculations in millimeters
+	///
+	/// these are used for the depth value (12bit) -> grayscale (1 byte) conversion
+	/// ie setting a short range will give you greater sensitivity from 0-255
+	///
+	/// default is 50cm - 4m
+	/// note: you won't get any data < 50cm and distances > 4m start to get noisy
 	void setDepthClipping(float nearClip=500, float farClip=4000);
-    float getNearClipping();
-    float getFarClipping();
+	float getNearClipping();
+	float getFarClipping();
 
 /// \section Camera Tilt
 
@@ -187,21 +187,21 @@ public:
 	/// get the current angle
 	float getCurrentCameraTiltAngle();
 
-    /// get the target angle (if the camera is currently moving)
+	/// get the target angle (if the camera is currently moving)
 	float getTargetCameraTiltAngle();
 
 /// \section Draw
 
-    /// enable/disable frame loading into textures on update()
+	/// enable/disable frame loading into textures on update()
 	void setUseTexture(bool bUse);
 
-    /// draw the RGB texture
+	/// draw the video texture
 	void draw(float x, float y, float w, float h);
 	void draw(float x, float y);
 	void draw(const ofPoint& point);
 	void draw(const ofRectangle& rect);
 
-    /// draw the grayscale depth texture
+	/// draw the grayscale depth texture
 	void drawDepth(float x, float y, float w, float h);
 	void drawDepth(float x, float y);
 	void drawDepth(const ofPoint& point);
@@ -213,10 +213,10 @@ public:
 	/// returns -1 if not connected
 	int getDeviceId();
 
-    /// static kinect image size
+	/// static kinect image size
 	const static int width = 640;
 	const static int height = 480;
-    float getHeight();
+	float getHeight();
 	float getWidth();
 
 /// \section Static global kinect context functions

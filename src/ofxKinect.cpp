@@ -51,8 +51,8 @@ ofxKinect::ofxKinect() {
 	bUpdateTex = false;
 	bIsFrameNew = false;
     
-    bIsVideoInfrared = false;
-    videoBytesPerPixel = 3;
+	bIsVideoInfrared = false;
+	videoBytesPerPixel = 3;
 
 	kinectDevice = NULL;
 
@@ -515,10 +515,10 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 	ofxKinect* kinect = kinectContext.getKinect(dev);
 
 	if(kinect->kinectDevice == dev) {
-        kinect->lock();
-        freenect_frame_mode curMode = freenect_get_current_depth_mode(dev);
+		kinect->lock();
+		freenect_frame_mode curMode = freenect_get_current_depth_mode(dev);
 		kinect->depthPixelsRawBack.setFromPixels((unsigned short*) depth, width, height, 1);
-        kinect->bNeedsUpdate = true;
+		kinect->bNeedsUpdate = true;
 		kinect->unlock();
     }
 }
@@ -529,10 +529,10 @@ void ofxKinect::grabVideoFrame(freenect_device *dev, void *video, uint32_t times
 	ofxKinect* kinect = kinectContext.getKinect(dev);
 
 	if(kinect->kinectDevice == dev) {
-        kinect->lock();
-        freenect_frame_mode curMode = freenect_get_current_video_mode(dev);
-        kinect->videoPixelsBack.setFromPixels((unsigned char*)video, width, height, curMode.data_bits_per_pixel/8);
-        kinect->bNeedsUpdate = true;
+		kinect->lock();
+		freenect_frame_mode curMode = freenect_get_current_video_mode(dev);
+		kinect->videoPixelsBack.setFromPixels((unsigned char*)video, width, height, curMode.data_bits_per_pixel/8);
+		kinect->bNeedsUpdate = true;
 		kinect->unlock();
 	}
 }
@@ -576,7 +576,7 @@ void ofxKinect::threadedFunction(){
 		freenect_get_mks_accel(tilt, &dx, &dy, &dz);
 		mksAccel.set(dx, dy, dz);
 
-        // ... and $0.02 for the scheduler
+		// ... and $0.02 for the scheduler
 		ofSleepMillis(10);
 	}
 
