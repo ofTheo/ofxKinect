@@ -59,7 +59,7 @@ public:
 	ofxKinect();
 	virtual ~ofxKinect();
 
-/// \section Main
+    /// \section Main
 
 	/// initialize resources, must be called before open()
 	/// infrared controls whether the video image is rgb or IR
@@ -100,7 +100,7 @@ public:
     /// make sure to call this to update to the latest incoming frames
     void update();
 
-/// \section Depth Data
+    /// \section Depth Data
 
     /// get the calulated distance for a depth point
 	float getDistanceAt(int x, int y);
@@ -112,7 +112,7 @@ public:
 	ofVec3f getWorldCoordinateAt(int cx, int cy);
 	ofVec3f getWorldCoordinateAt(float cx, float cy, float wz);
 
-/// \section RGB Data
+    /// \section RGB Data
 
     /// get the RGB value for a depth point
     ///
@@ -120,7 +120,7 @@ public:
 	ofColor getColorAt(int x, int y);
 	ofColor getColorAt(const ofPoint & p);
 
-/// \section Accelerometer Data
+    /// \section Accelerometer Data
 
     /// get the accelerometer values
     ///
@@ -128,7 +128,7 @@ public:
 	ofPoint getRawAccel();
 	ofPoint getMksAccel();
 
-/// \section Pixel Data
+    /// \section Pixel Data
 
 	/// get the pixels of the most recent rgb frame
     ///
@@ -142,23 +142,36 @@ public:
 	/// get the distance in millimeters to a given point as a float array
 	float* getDistancePixels();
 
-	/// get the video pixels reference
+<<<<<<< HEAD
+	/// get the pixel reference
 	ofPixels & getPixelsRef();
 
 	/// get the pixels of the most recent depth frame
-	ofPixels & getDepthPixelsRef();       	///< grayscale values
-	ofShortPixels & getRawDepthPixelsRef();	///< raw 11 bit values
+	ofPixels & getDepthPixelsRef();       ///< grayscale values
+	ofShortPixels & getRawDepthPixelsRef();   ///< raw 11 bit values
 
 	/// get the distance in millimeters to a given point as a float array
 	ofFloatPixels & getDistancePixelsRef();
 
+	/// get the RGB texture
+=======
 	/// get the video (ir or rgb) texture
+>>>>>>> develop
 	ofTexture& getTextureReference();
 
 	/// get the grayscale depth texture
 	ofTexture& getDepthTextureReference();
 
-/// \section Grayscale Depth Value
+<<<<<<< HEAD
+=======
+	/// get the video pixels reference
+	ofPixels& getPixelsRef();
+    
+    /// get the depth pixels reference
+    ofPixels& getDepthPixelsRef();
+>>>>>>> develop
+
+    /// \section Grayscale Depth Value
 
 	/// set the near value of the pixels in the grayscale depth image to white
 	///
@@ -178,7 +191,7 @@ public:
     float getNearClipping();
     float getFarClipping();
 
-/// \section Camera Tilt
+    /// \section Camera Tilt
 
 	/// set tilt angle of the camera in degrees
 	/// 0 is flat, the range is -30 to 30
@@ -190,7 +203,7 @@ public:
     /// get the target angle (if the camera is currently moving)
 	float getTargetCameraTiltAngle();
 
-/// \section Draw
+    /// \section Draw
 
     /// enable/disable frame loading into textures on update()
 	void setUseTexture(bool bUse);
@@ -207,7 +220,7 @@ public:
 	void drawDepth(const ofPoint& point);
 	void drawDepth(const ofRectangle& rect);
 
-/// \section Util
+    /// \section Util
 
 	/// get the device id
 	/// returns -1 if not connected
@@ -219,7 +232,7 @@ public:
     float getHeight();
 	float getWidth();
 
-/// \section Static global kinect context functions
+	/// \section Static global kinect context functions
 
 	/// get the total number of devices
 	static int numTotalDevices();
@@ -244,10 +257,14 @@ protected:
 	ofTexture videoTex; ///< the RGB texture
 	bool bGrabberInited;
 
+<<<<<<< HEAD
 	ofPixels videoPixels;
-	ofPixels depthPixels;
 	ofShortPixels depthPixelsRaw;
-	ofFloatPixels distancePixels;
+=======
+    ofPixels videoPixels;
+	ofPixels depthPixels;
+	unsigned short* depthPixelsRaw;
+>>>>>>> develop
 
 	ofPoint rawAccel;
 	ofPoint mksAccel;
@@ -265,9 +282,19 @@ private:
 
 	freenect_device* kinectDevice;      ///< kinect device handle
 
-	ofShortPixels depthPixelsRawBack;	///< depth back
-	ofPixels videoPixelsBack;			///< rgb back
+<<<<<<< HEAD
+	ofShortPixels depthPixelsBack;    ///< depth back
+	ofPixels videoPixelsBack;     ///< rgb back
 
+	ofPixels depthPixels;
+	ofFloatPixels distancePixels;
+=======
+	unsigned char* videoPixelsBack;     ///< rgb back
+    unsigned short* depthPixelsRawBack; ///< depth back
+
+	//unsigned char* depthPixels;
+	float* distancePixels;
+>>>>>>> develop
 	vector<unsigned char> depthLookupTable;
 	void updateDepthLookupTable();
 	void updateDepthPixels();
@@ -305,7 +332,7 @@ public:
 	ofxKinectContext();
 	~ofxKinectContext();
 
-/// \section Main
+	/// \section Main
 
 	/// init the freenect context
 	bool init();
@@ -327,7 +354,7 @@ public:
 	/// closes all currently connected kinects
 	void closeAll();
 
-/// \section Util
+	/// \section Util
 
 	/// get the total number of devices
 	int numTotal();
