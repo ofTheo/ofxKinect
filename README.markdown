@@ -69,7 +69,7 @@ Xcode4: Open the Xcode project, select the "ofxKinectExample" scheme, and hit "R
 
 Install the libusb-1.0 library. On Ubuntu, you can do this with:
 <pre>
-sudo apt-get install libusb1.0-0-dev
+sudo apt-get install libusb-1.0-0-dev
 </pre>
 
 Open the Code::Blocks .cbp and hit F9 to build. Optionally, you can build the example with the Makefile.
@@ -99,7 +99,7 @@ libs/libusb/win/inf
 
 You may need to manually update each driver individually if you've plugged it in before. ofxKinect will not work if the drivers are not installed.
 
-**NOTE**: You cannot use the OpenNI drivers and the libfreenetc drivers included with ofxKinect at the same time. You must manually uninstall one and reinstall the other in the Device Manager. Sorry, that's just how it is. :P 
+**NOTE**: You cannot use the OpenNI drivers and the libfreenect drivers included with ofxKinect at the same time. You must manually uninstall one and reinstall the other in the Device Manager. Sorry, that's just how it is. :P 
 
 How to Create a New ofxKinect Project
 -----------------------------------------
