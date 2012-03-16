@@ -34,6 +34,8 @@
 
 #include "libfreenect-registration.h"
 
+#define GRAVITY 9.80665
+
 // context static
 ofxKinectContext ofxKinect::kinectContext;
 
@@ -275,6 +277,16 @@ ofPoint ofxKinect::getRawAccel() {
 //---------------------------------------------------------------------------
 ofPoint ofxKinect::getMksAccel() {
 	return mksAccel;
+}
+
+//---------------------------------------------------------------------------
+float ofxKinect::getAbsoluteTilt(){
+	return ofRadToDeg(asin(getMksAccel().z/GRAVITY));
+}
+
+//---------------------------------------------------------------------------
+float ofxKinect::getAbsoluteRoll(){
+	return ofRadToDeg(asin(getMksAccel().x/GRAVITY));
 }
 
 //---------------------------------------------------------------------------
