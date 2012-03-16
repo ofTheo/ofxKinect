@@ -108,8 +108,9 @@ bool ofxKinect::init(bool infrared, bool video, bool texture) {
 	distancePixels.set(0);
 
 	if(bUseTexture) {
-		depthTex.allocate(width, height, GL_LUMINANCE);
-		videoTex.allocate(width, height, infrared ? GL_LUMINANCE : GL_RGB);
+		depthTex.allocate(width, height, ofGetGlInternalFormat(depthPixels));
+		videoTex.allocate(width, height, ofGetGlInternalFormat(videoPixels));
+		distanceTex.allocate(width,height,ofGetGlInternalFormat(distancePixels));
 	}
 
 	if(!kinectContext.isInited()) {
@@ -148,6 +149,7 @@ void ofxKinect::clear() {
 
 	depthTex.clear();
 	videoTex.clear();
+	distanceTex.clear();
 
 	bGrabberInited = false;
 }
@@ -444,6 +446,25 @@ void ofxKinect::drawDepth(const ofRectangle & rect) {
 	drawDepth(rect.x, rect.y, rect.width, rect.height);
 }
 
+
+void ofxKinect::drawDistance(float x, float y, float w, float h){
+	if(bUseTexture) {
+		distanceTex.draw(x, y, w, h);
+	}
+}
+
+void ofxKinect::drawDistance(float x, float y){
+	drawDistance(x, y, (float)width, (float)height);
+}
+
+void ofxKinect::drawDistance(const ofPoint& point){
+	drawDistance(point.x, point.y);
+}
+
+void ofxKinect::drawDistance(const ofRectangle& rect){
+	drawDistance(rect.x, rect.y, rect.width, rect.height);
+}
+
 //---------------------------------------------------------------------------
 int ofxKinect::getDeviceId() {
 	return kinectContext.getId(*this);
@@ -501,9 +522,10 @@ void ofxKinect::updateDepthLookupTable() {
 //----------------------------------------------------------
 void ofxKinect::updateDepthPixels() {
 	int n = width * height;
-	for(int i = 0; i < n; i++) {
-		distancePixels[i] = depthPixelsRaw[i];
-	}
+	/*for(int i = 0; i < n; i++) {
+		distancePixels[i] = double(depthPixelsRaw[i]/65535.;
+	}*/
+	distancePixels = depthPixelsRaw;
 	for(int i = 0; i < n; i++) {
 		depthPixels[i] = depthLookupTable[depthPixelsRaw[i]];
 	}
