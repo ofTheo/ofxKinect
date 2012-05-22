@@ -41,10 +41,10 @@
 #define DEPTH_SENSOR_X_RES 1280
 #define DEPTH_MIRROR_X 0
 
-#define DEPTH_MAX_METRIC_VALUE 10000
-#define DEPTH_MAX_RAW_VALUE 2048
-#define DEPTH_NO_RAW_VALUE 2047
-#define DEPTH_NO_MM_VALUE 0
+#define DEPTH_MAX_METRIC_VALUE FREENECT_DEPTH_MM_MAX_VALUE
+#define DEPTH_NO_MM_VALUE      FREENECT_DEPTH_MM_NO_VALUE
+#define DEPTH_MAX_RAW_VALUE    FREENECT_DEPTH_RAW_MAX_VALUE
+#define DEPTH_NO_RAW_VALUE     FREENECT_DEPTH_RAW_NO_VALUE
 
 #define DEPTH_X_OFFSET 1
 #define DEPTH_Y_OFFSET 1
@@ -319,6 +319,11 @@ void freenect_camera_to_world(freenect_device* dev, int cx, int cy, int wz, doub
 {
 	double ref_pix_size = dev->registration.zero_plane_info.reference_pixel_size;
 	double ref_distance = dev->registration.zero_plane_info.reference_distance;
+	// We multiply cx and cy by these factors because they come from a 640x480 image,
+	// but the zero plane pixel size is for a 1280x1024 image.
+	// However, the 640x480 image is produced by cropping the 1280x1024 image
+	// to 1280x960 and then scaling by .5, so aspect ratio is maintained, and
+	// we should simply multiply by two in each dimension.
 	double factor = 2 * ref_pix_size * wz / ref_distance;
 	*wx = (double)(cx - DEPTH_X_RES/2) * factor;
 	*wy = (double)(cy - DEPTH_Y_RES/2) * factor;

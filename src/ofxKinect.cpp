@@ -37,6 +37,13 @@
 // context static
 ofxKinectContext ofxKinect::kinectContext;
 
+//for auto-enumeration
+class indexPair{
+	public:
+		string serial;
+		int id;
+};
+
 //--------------------------------------------------------------------
 ofxKinect::ofxKinect() {
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Creating ofxKinect");
@@ -609,11 +616,50 @@ ofxKinectContext::~ofxKinectContext() {
 }
 
 //---------------------------------------------------------------------------
+static bool sortIndex( indexPair A, indexPair B ){
+	return A.serial < B.serial; 
+}
+        
+//---------------------------------------------------------------------------
 bool ofxKinectContext::init() {
 	if(freenect_init(&kinectContext, NULL) < 0) {
 		ofLog(OF_LOG_ERROR, "ofxKinect: freenect_init failed");
 		return false;
 	}
+
+	vector <indexPair> devicesList;
+		
+	//lets sort the devices by the unique ids
+	freenect_device_attributes * devAttrib; 
+	int numDevices = freenect_list_device_attributes(kinectContext, &devAttrib);
+
+	int id = 0;
+	devicesList.clear();
+	for(int i = 0; i < numDevices; i++){
+		indexPair dl;
+		dl.id = id;
+		dl.serial = devAttrib->camera_serial; 
+		devicesList.push_back( dl );
+		id++;
+		devAttrib = devAttrib->next;
+	}
+	
+	freenect_free_device_attributes(devAttrib);
+	
+	
+	ofLogVerbose() << "numDevices is " << numDevices << endl;
+	ofLogVerbose() << "order is: " << endl; 	
+	for(int i = 0; i < devicesList.size(); i++){
+		ofLogVerbose() << "["<<devicesList[i].id<<"] " << devicesList[i].serial <<endl;
+	}
+	
+	sort( devicesList.begin(), devicesList.end(), sortIndex); 
+	
+	ofLogVerbose() << "order is now: " << endl; 
+	for(int i = 0; i < devicesList.size(); i++){
+		ofLogVerbose() << "["<<devicesList[i].id<<"] " << devicesList[i].serial <<endl;
+	}	
+	
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Context inited");
 	return true;
 }
