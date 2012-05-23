@@ -128,8 +128,12 @@ public:
 	ofPoint getRawAccel();
 	ofPoint getMksAccel();
 
-	float getAbsoluteTilt();
-	float getAbsoluteRoll();
+    /// get the current pitch (x axis) & roll (z axis) of the kinect
+    ///
+    /// useful to correct the 3d scene based on the camera inclination
+    ///
+	float getAccelPitch();
+	float getAccelRoll();
 
 /// \section Pixel Data
 
