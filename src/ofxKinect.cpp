@@ -61,6 +61,11 @@ ofxKinect::ofxKinect() {
 
 	targetTiltAngleDeg = 0;
 	currentTiltAngleDeg = 0;
+	lastDeviceId	= 0;
+	tryCount	= 0;
+	timeSinceOpen = ofGetElapsedTimef();
+	bGotData	  = false;
+
 	bTiltNeedsApplying = false;
 
 	bUseRegistration = false;
@@ -176,6 +181,10 @@ bool ofxKinect::open(int id) {
 		return false;
 	}
 
+	lastDeviceId  = id;
+	timeSinceOpen = ofGetElapsedTimef();
+	bGotData      = false;
+
 	freenect_set_user(kinectDevice, this);
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
 	freenect_set_video_callback(kinectDevice, &grabVideoFrame);
@@ -244,11 +253,20 @@ void ofxKinect::update() {
 		return;
 	}
 
-	if(!bNeedsUpdate) {
+	if( !bNeedsUpdate && !bGotData && tryCount < 5 && ofGetElapsedTimef() - timeSinceOpen > 2.0 ){
+		close();
+		ofLogWarning() << "ofxKinect device isn't delivering data - reconnecting tries: " << tryCount << endl; 
+		open(lastDeviceId);
+		tryCount++;
+	}
+
+	if (!bNeedsUpdate){
 		return;
 	} else {
 		bIsFrameNew = true;
 		bUpdateTex = true;
+		bGotData = true;
+		tryCount = 0;
 	}
 
 	if(this->lock()) {

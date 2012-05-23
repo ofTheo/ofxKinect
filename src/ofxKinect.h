@@ -272,6 +272,10 @@ protected:
 
 	float targetTiltAngleDeg;
 	float currentTiltAngleDeg;
+	float timeSinceOpen;
+	int lastDeviceId;
+	bool bGotData;
+	int tryCount;
 	bool bTiltNeedsApplying;
 
 private:
