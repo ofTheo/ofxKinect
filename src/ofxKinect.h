@@ -128,6 +128,9 @@ public:
 	ofPoint getRawAccel();
 	ofPoint getMksAccel();
 
+	float getAbsoluteTilt();
+	float getAbsoluteRoll();
+
 /// \section Pixel Data
 
 	/// get the pixels of the most recent rgb frame
