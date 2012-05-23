@@ -36,6 +36,13 @@
 #include "libfreenect-audio.h"
 #endif
 
+#ifdef __ELF__
+#define FN_INTERNAL	__attribute__ ((visibility ("hidden")))
+#else
+#define FN_INTERNAL
+#endif
+
+
 typedef void (*fnusb_iso_cb)(freenect_device *dev, uint8_t *buf, int len);
 
 #include "usb_libusb10.h"
@@ -89,12 +96,24 @@ static inline uint32_t fn_le32(uint32_t d)
 static inline int16_t fn_le16s(int16_t s)
 {
 	// reinterpret cast to unsigned, use the normal fn_le16, and then reinterpret cast back
-	return *((int16_t*)(&fn_le16(*((uint16_t*)(&s)))));
+	union {
+		int16_t s;
+		uint16_t u;
+	} conversion_union;
+	conversion_union.s = s;
+	conversion_union.u = fn_le16(conversion_union.u);
+	return conversion_union.s;
 }
 static inline int32_t fn_le32s(int32_t s)
 {
 	// reinterpret cast to unsigned, use the normal fn_le32, and then reinterpret cast back
-	return *((int32_t*)(&fn_le32(*((uint32_t*)(&s)))));
+	union {
+		int32_t s;
+		uint32_t u;
+	} conversion_union;
+	conversion_union.s = s;
+	conversion_union.u = fn_le32(conversion_union.u);
+	return conversion_union.s;
 }
 #else
 #define fn_le16(x) (x)
