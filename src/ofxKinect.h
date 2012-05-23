@@ -85,6 +85,9 @@ public:
 	/// set the id to choose a kinect, see numAvailableDevices()
 	/// if you don't set the id (ie id=-1), the first available kinect will be used
 	bool open(int id=-1);
+	
+	/// open using a kinect unique serial number
+	bool open(string serial);
 
 	/// close the connection and stop grabbing images
 	void close();
@@ -212,6 +215,10 @@ public:
 	/// get the device id
 	/// returns -1 if not connected
 	int getDeviceId();
+	
+	/// get the unique serial number
+	/// returns an empty string "" if not connected
+	string getSerial();
 
 	/// static kinect image size
 	const static int width = 640;
@@ -221,6 +228,9 @@ public:
 
 /// \section Static global kinect context functions
 
+	/// print the device list
+	static void listDevices();
+	
 	/// get the total number of devices
 	static int numTotalDevices();
 
@@ -232,13 +242,21 @@ public:
 
 	/// is a device already connected?
 	static bool isDeviceConnected(int id);
+	static bool isDeviceConnected(string serial);
 
 	/// get the id of the next available device,
 	/// returns -1 if nothing found
 	static int nextAvailableId();
+	
+	/// get the serial number of the next available device,
+	/// returns an empty string "" if nothing found
+	static string nextAvailableSerial();
 
 protected:
 
+	int id;			///< device id, -1 when not connected
+	string serial;	///< unique serial number, "" when not connected
+	
 	bool bUseTexture;
 	ofTexture depthTex; ///< the depth texture
 	ofTexture videoTex; ///< the RGB texture
@@ -292,8 +310,7 @@ private:
 	void threadedFunction();
 };
 
-
-/// \class ofxKinect
+/// \class ofxKinectContext
 ///
 /// wrapper for the freenect context
 ///
@@ -321,6 +338,9 @@ public:
 	/// open a kinect device
 	/// an id of -1 will open the first available
 	bool open(ofxKinect& kinect, int id=-1);
+	
+	/// open a kinect device by it's unique serial number
+	bool open(ofxKinect& kinect, string serial);
 
 	/// close a kinect device
 	void close(ofxKinect& kinect);
@@ -329,7 +349,10 @@ public:
 	void closeAll();
 
 /// \section Util
-
+	
+	/// print the device list
+	void listDevices();
+	
 	/// get the total number of devices
 	int numTotal();
 
@@ -339,26 +362,36 @@ public:
 	/// get the number of currently connected devices
 	int numConnected();
 
-	/// get the device id of a kinect object
-	/// returns index or -1 if not connected
-	int getId(ofxKinect& kinect);
-
 	/// get the kinect object from a device pointer
 	/// returns NULL if not found
 	ofxKinect* getKinect(freenect_device* dev);
 
-	/// is the an id already connected?
+	/// is a device with this id already connected?
 	bool isConnected(int id);
+	
+	/// is a deice with this serial already connected?
+	bool isConnected(string serial);
 
 	/// get the id of the next available device,
 	/// returns -1 if nothing found
 	int nextAvailableId();
+	
+	/// get the serial number of the next available device,
+	/// returns an empty string "" if nothing found
+	string nextAvailableSerial();
 
 	/// get the raw pointer
 	freenect_context* getContext() {return kinectContext;}
 
+	// for auto-enumeration
+    struct KinectPair{
+		string serial;	///< unique serial number
+		int busId;		///< freenect bus id
+    };
+	
 private:
-
+    
 	freenect_context* kinectContext;    ///< kinect context handle
+	std::vector<KinectPair> deviceList;	///< list of available devices, sorted by serial lexicographically
 	std::map<int,ofxKinect*> kinects;   ///< the connected kinects
 };

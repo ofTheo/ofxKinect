@@ -37,17 +37,13 @@
 // context static
 ofxKinectContext ofxKinect::kinectContext;
 
-//for auto-enumeration
-class indexPair{
-	public:
-		string serial;
-		int id;
-};
-
 //--------------------------------------------------------------------
 ofxKinect::ofxKinect() {
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Creating ofxKinect");
 
+	id = -1;
+	serial = "";
+	
 	bUseTexture = true;
 	bGrabVideo = true;
 
@@ -139,7 +135,7 @@ void ofxKinect::clear() {
 		ofLog(OF_LOG_WARNING, "ofxKinect: Do not call clear while ofxKinect is running!");
 		return;
 	}
-
+	
 	if(kinectContext.numConnected() < 1) {
 		kinectContext.clear();
 	}
@@ -165,7 +161,7 @@ void ofxKinect::setRegistration(bool bUseRegistration) {
 }
 
 //--------------------------------------------------------------------
-bool ofxKinect::open(int id){
+bool ofxKinect::open(int id) {
 	if(!bGrabberInited) {
 		ofLog(OF_LOG_WARNING, "ofxKinect: Cannot open, init not called");
 		return false;
@@ -189,12 +185,39 @@ bool ofxKinect::open(int id){
 	return true;
 }
 
+//--------------------------------------------------------------------
+bool ofxKinect::open(string serial) {
+	if(!bGrabberInited) {
+		ofLog(OF_LOG_WARNING, "ofxKinect: Cannot open, init not called");
+		return false;
+	}
+	
+	if(kinectContext.numAvailable() < 1) {
+		ofLog(OF_LOG_ERROR, "ofxKinect: No available devices found");
+		return false;
+	}
+	
+	if(!kinectContext.open(*this, serial)) {
+		return false;
+	}
+	
+	freenect_set_user(kinectDevice, this);
+	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
+	freenect_set_video_callback(kinectDevice, &grabVideoFrame);
+	
+	startThread(true, false); // blocking, not verbose
+	
+	return true;
+}
+
 //---------------------------------------------------------------------------
 void ofxKinect::close() {
 	if(isThreadRunning()) {
 		waitForThread(true);
 	}
 
+	id = -1;
+	serial = "";
 	bIsFrameNew = false;
 	bNeedsUpdate = false;
 	bUpdateTex = false;
@@ -453,7 +476,12 @@ void ofxKinect::drawDepth(const ofRectangle & rect) {
 
 //---------------------------------------------------------------------------
 int ofxKinect::getDeviceId() {
-	return kinectContext.getId(*this);
+	return id;
+}
+
+//---------------------------------------------------------------------------
+string ofxKinect::getSerial() {
+	return serial;
 }
 
 //----------------------------------------------------------
@@ -464,6 +492,11 @@ float ofxKinect::getHeight() {
 //---------------------------------------------------------------------------
 float ofxKinect::getWidth() {
 	return (float) width;
+}
+
+//----------------------------------------------------------
+void ofxKinect::listDevices() {
+	kinectContext.listDevices();
 }
 
 //---------------------------------------------------------------------------
@@ -487,8 +520,18 @@ bool ofxKinect::isDeviceConnected(int id) {
 }
 
 //---------------------------------------------------------------------------
+bool ofxKinect::isDeviceConnected(string serial) {
+	return kinectContext.isConnected(serial);
+}
+
+//---------------------------------------------------------------------------
 int ofxKinect::nextAvailableId() {
 	return kinectContext.nextAvailableId();
+}
+
+//---------------------------------------------------------------------------
+string ofxKinect::nextAvailableSerial() {
+	return kinectContext.nextAvailableSerial();
 }
 
 /* ***** PRIVATE ***** */
@@ -553,7 +596,7 @@ void ofxKinect::threadedFunction(){
 	freenect_frame_mode depthMode = freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, bUseRegistration?FREENECT_DEPTH_REGISTERED:FREENECT_DEPTH_MM);
 	freenect_set_depth_mode(kinectDevice, depthMode);
 
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d connection opened", kinectContext.getId(*this));
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d connection opened", id);
 
 	freenect_start_depth(kinectDevice);
 	if(bGrabVideo) {
@@ -597,7 +640,6 @@ void ofxKinect::threadedFunction(){
 	freenect_stop_video(kinectDevice);
 	freenect_set_led(kinectDevice, LED_YELLOW);
 
-	int id = kinectContext.getId(*this);
 	kinectContext.close(*this);
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d connection closed", id);
 }
@@ -616,49 +658,33 @@ ofxKinectContext::~ofxKinectContext() {
 }
 
 //---------------------------------------------------------------------------
-static bool sortIndex( indexPair A, indexPair B ){
-	return A.serial < B.serial; 
+static bool sortKinectPairs(ofxKinectContext::KinectPair A, ofxKinectContext::KinectPair B){
+	return A.serial < B.serial;
 }
         
 //---------------------------------------------------------------------------
 bool ofxKinectContext::init() {
+	
 	if(freenect_init(&kinectContext, NULL) < 0) {
 		ofLog(OF_LOG_ERROR, "ofxKinect: freenect_init failed");
 		return false;
 	}
-
-	vector <indexPair> devicesList;
 		
-	//lets sort the devices by the unique ids
+	// build the device list
 	freenect_device_attributes * devAttrib; 
 	int numDevices = freenect_list_device_attributes(kinectContext, &devAttrib);
-
-	int id = 0;
-	devicesList.clear();
+	deviceList.clear();
 	for(int i = 0; i < numDevices; i++){
-		indexPair dl;
-		dl.id = id;
-		dl.serial = devAttrib->camera_serial; 
-		devicesList.push_back( dl );
-		id++;
+		KinectPair kp;
+		kp.busId = i;
+		kp.serial = devAttrib->camera_serial; 
+		deviceList.push_back(kp);
 		devAttrib = devAttrib->next;
 	}
-	
 	freenect_free_device_attributes(devAttrib);
 	
-	
-	ofLogVerbose() << "numDevices is " << numDevices << endl;
-	ofLogVerbose() << "order is: " << endl; 	
-	for(int i = 0; i < devicesList.size(); i++){
-		ofLogVerbose() << "["<<devicesList[i].id<<"] " << devicesList[i].serial <<endl;
-	}
-	
-	sort( devicesList.begin(), devicesList.end(), sortIndex); 
-	
-	ofLogVerbose() << "order is now: " << endl; 
-	for(int i = 0; i < devicesList.size(); i++){
-		ofLogVerbose() << "["<<devicesList[i].id<<"] " << devicesList[i].serial <<endl;
-	}	
+	// sort devices by serial number
+	sort(deviceList.begin(), deviceList.end(), sortKinectPairs); 
 	
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Context inited");
 	return true;
@@ -688,33 +714,64 @@ bool ofxKinectContext::open(ofxKinect& kinect, int id) {
 	if(id < 0) {
 		id = nextAvailableId();
 	}
-	else {
-		if(isConnected(id)) {
-			ofLog(OF_LOG_WARNING, "ofxKinect: Device %d already connected", id);
-			return false;
-		}
+	else if(isConnected(id)) {
+		ofLog(OF_LOG_WARNING, "ofxKinect: Device %d already connected", id);
+		return false;
 	}
 
 	// open and add to vector
-	if(freenect_open_device(kinectContext, &kinect.kinectDevice, id) < 0) {
+	if(freenect_open_device(kinectContext, &kinect.kinectDevice, deviceList[id].busId) < 0) {
 		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device %d", id);
 		return false;
 	}
 	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
+	kinect.id = id;
+	kinect.serial = deviceList[id].serial;
 
+	return true;
+}
+
+bool ofxKinectContext::open(ofxKinect& kinect, string serial) {
+	
+	if(numConnected() >= numTotal()) {
+		ofLog(OF_LOG_WARNING, "ofxKinect: Cannot open any more devices");
+		return false;
+	}
+	
+	// is the serial available?
+	if(isConnected(serial)) {
+		ofLog(OF_LOG_WARNING, "ofxKinect: Device %s already connected", serial.c_str());
+		return false;
+	}
+	
+	// open and add to vector
+	if(freenect_open_device_by_camera_serial(kinectContext, &kinect.kinectDevice, serial.c_str()) < 0) {
+		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device %s", serial.c_str());
+	}
+	int id = nextAvailableId();
+	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
+	kinect.id = id;
+	kinect.serial = deviceList[id].serial;
+	
 	return true;
 }
 
 void ofxKinectContext::close(ofxKinect& kinect) {
 
-	// already closed?
-	int id = getId(kinect);
-	if(id == -1) {
-		return;
+	// check if it's already closed
+	int id = -1;
+	std::map<int,ofxKinect*>::iterator iter;
+	for(iter = kinects.begin(); iter != kinects.end(); ++iter) {
+		if(iter->second == &kinect) {
+			id = iter->first;
+			break;
+		}
 	}
+	if(id == -1)
+		return;
 
 	// remove connected device and close
-	std::map<int,ofxKinect*>::iterator iter = kinects.find(id);
+	iter = kinects.find(id);
 	if(iter != kinects.end()) {
 		kinects.erase(iter);
 		freenect_close_device(kinect.kinectDevice);
@@ -729,29 +786,37 @@ void ofxKinectContext::closeAll() {
 }
 
 //---------------------------------------------------------------------------
+void ofxKinectContext::listDevices() {
+    if(!isInited())
+		init();
+	
+	if(numTotal() == 0) {
+		cout << "ofxKinect: No kinects found" << endl;
+		return;
+	}
+	
+	cout << "ofxKinect: " << numTotal() << " kinects found" << endl;
+	for(int i = 0; i < deviceList.size(); ++i) {
+		cout << "    " << i << " serial: " << deviceList[i].serial
+			 //<< " bus id: " << deviceList[i].busId
+			 << endl;
+	}
+}
+
 int ofxKinectContext::numTotal() {
     if(!isInited())
 		init();
-    return freenect_num_devices(kinectContext);
+    return deviceList.size();
 }
 
 int ofxKinectContext::numAvailable() {
 	if(!isInited())
 		init();
-    return freenect_num_devices(kinectContext) - kinects.size();
+    return deviceList.size() - kinects.size();
 }
 
 int ofxKinectContext::numConnected() {
 	return kinects.size();
-}
-
-int ofxKinectContext::getId(ofxKinect& kinect) {
-	std::map<int,ofxKinect*>::iterator iter;
-	for(iter = kinects.begin(); iter != kinects.end(); ++iter) {
-		if(iter->second == &kinect)
-			return iter->first;
-	}
-	return -1;
 }
 
 ofxKinect* ofxKinectContext::getKinect(freenect_device* dev) {
@@ -768,8 +833,19 @@ bool ofxKinectContext::isConnected(int index) {
 	return iter != kinects.end();
 }
 
-int ofxKinectContext::nextAvailableId() {
+bool ofxKinectContext::isConnected(string serial) {
+	std::map<int,ofxKinect*>::iterator iter;
+	for(iter = kinects.begin(); iter != kinects.end(); ++iter) {
+		if(iter->second->getSerial() == serial)
+			return true;
+	}
+	return false;
+}
 
+int ofxKinectContext::nextAvailableId() {
+	if(!isInited())
+		init();
+	
 	// a brute force free index finder :D
 	std::map<int,ofxKinect*>::iterator iter;
 	for(int i = 0; i < numTotal(); ++i) {
@@ -778,5 +854,16 @@ int ofxKinectContext::nextAvailableId() {
 			return i;
 	}
 	return -1;
+}
+
+string ofxKinectContext::nextAvailableSerial() {
+	if(!isInited())
+		init();
+	
+	int id = nextAvailableId();
+	if(id == -1) {
+		return "";
+	}
+	return deviceList[id].serial;
 }
 

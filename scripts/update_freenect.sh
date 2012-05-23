@@ -16,7 +16,7 @@ rm libfreenect/src/CMakeLists.txt
 rm libfreenect/src/audio.c
 rm libfreenect/src/libfreenect-audio.h
 rm libfreenect/src/loader.c
-rm libfreenect/src/loader.h
+#rm libfreenect/src/loader.h
 
 # no python either
 rm libfreenect/src/fwfetcher.py
