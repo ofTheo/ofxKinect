@@ -292,6 +292,7 @@ private:
 	void threadedFunction();
 };
 
+
 /// \class ofxKinect
 ///
 /// wrapper for the freenect context
