@@ -133,6 +133,13 @@ public:
 	ofPoint getRawAccel();
 	ofPoint getMksAccel();
 
+    /// get the current pitch (x axis) & roll (z axis) of the kinect
+    ///
+    /// useful to correct the 3d scene based on the camera inclination
+    ///
+	float getAccelPitch();
+	float getAccelRoll();
+
 /// \section Pixel Data
 
 	/// get the pixels of the most recent rgb frame

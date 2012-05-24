@@ -34,6 +34,8 @@
 
 #include "libfreenect-registration.h"
 
+#define OFX_KINECT_GRAVITY 9.80665
+
 // context static
 ofxKinectContext ofxKinect::kinectContext;
 
@@ -327,6 +329,16 @@ ofPoint ofxKinect::getRawAccel() {
 //---------------------------------------------------------------------------
 ofPoint ofxKinect::getMksAccel() {
 	return mksAccel;
+}
+
+//---------------------------------------------------------------------------
+float ofxKinect::getAccelPitch(){
+	return ofRadToDeg(asin(getMksAccel().z/OFX_KINECT_GRAVITY));
+}
+
+//---------------------------------------------------------------------------
+float ofxKinect::getAccelRoll(){
+	return ofRadToDeg(asin(getMksAccel().x/OFX_KINECT_GRAVITY));
 }
 
 //---------------------------------------------------------------------------
