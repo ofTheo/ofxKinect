@@ -41,7 +41,7 @@ ofxKinectContext ofxKinect::kinectContext;
 ofxKinect::ofxKinect() {
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Creating ofxKinect");
 
-	id = -1;
+	deviceId = -1;
 	serial = "";
 	
 	bUseTexture = true;
@@ -61,12 +61,12 @@ ofxKinect::ofxKinect() {
 
 	targetTiltAngleDeg = 0;
 	currentTiltAngleDeg = 0;
-	lastDeviceId	= 0;
-	tryCount	= 0;
-	timeSinceOpen = ofGetElapsedTimef();
-	bGotData	  = false;
-
 	bTiltNeedsApplying = false;
+	
+	lastDeviceId = 0;
+	tryCount = 0;
+	timeSinceOpen = 0;
+	bGotData = false;
 
 	bUseRegistration = false;
 	bNearWhite = true;
@@ -172,18 +172,13 @@ bool ofxKinect::open(int id) {
 		return false;
 	}
 
-	if(kinectContext.numAvailable() < 1) {
-		ofLog(OF_LOG_ERROR, "ofxKinect: No available devices found");
-		return false;
-	}
-
 	if(!kinectContext.open(*this, id)) {
 		return false;
 	}
 
-	lastDeviceId  = id;
+	lastDeviceId = id;
 	timeSinceOpen = ofGetElapsedTimef();
-	bGotData      = false;
+	bGotData = false;
 
 	freenect_set_user(kinectDevice, this);
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
@@ -201,14 +196,13 @@ bool ofxKinect::open(string serial) {
 		return false;
 	}
 	
-	if(kinectContext.numAvailable() < 1) {
-		ofLog(OF_LOG_ERROR, "ofxKinect: No available devices found");
-		return false;
-	}
-	
 	if(!kinectContext.open(*this, serial)) {
 		return false;
 	}
+	
+	lastDeviceId = deviceId;
+	timeSinceOpen = ofGetElapsedTimef();
+	bGotData = false;
 	
 	freenect_set_user(kinectDevice, this);
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
@@ -225,7 +219,7 @@ void ofxKinect::close() {
 		waitForThread(true);
 	}
 
-	id = -1;
+	deviceId = -1;
 	serial = "";
 	bIsFrameNew = false;
 	bNeedsUpdate = false;
@@ -253,14 +247,15 @@ void ofxKinect::update() {
 		return;
 	}
 
-	if( !bNeedsUpdate && !bGotData && tryCount < 5 && ofGetElapsedTimef() - timeSinceOpen > 2.0 ){
+	if(!bNeedsUpdate && !bGotData && tryCount < 5 && ofGetElapsedTimef() - timeSinceOpen > 2.0 ){
 		close();
-		ofLogWarning() << "ofxKinect device isn't delivering data - reconnecting tries: " << tryCount << endl; 
+		ofLog(OF_LOG_WARNING, "ofxKinect: Device %d isn't delivering data, reconnecting tries: %d", lastDeviceId, tryCount); 
 		open(lastDeviceId);
 		tryCount++;
+		return;
 	}
 
-	if (!bNeedsUpdate){
+	if(!bNeedsUpdate){
 		return;
 	} else {
 		bIsFrameNew = true;
@@ -275,7 +270,7 @@ void ofxKinect::update() {
 		depthPixelsRaw = depthPixelsRawBack;
 		videoPixels = videoPixelsBack;
 
-		//we have done the update
+		// we have done the update
 		bNeedsUpdate = false;
 
 		this->unlock();
@@ -378,7 +373,7 @@ ofFloatPixels & ofxKinect::getDistancePixelsRef(){
 //------------------------------------
 ofTexture& ofxKinect::getTextureReference(){
 	if(!videoTex.bAllocated()){
-		ofLog(OF_LOG_WARNING, "ofxKinect: getTextureReference - texture is not allocated");
+		ofLog(OF_LOG_WARNING, "ofxKinect: Device %d video texture is not allocated", deviceId);
 	}
 	return videoTex;
 }
@@ -386,11 +381,10 @@ ofTexture& ofxKinect::getTextureReference(){
 //---------------------------------------------------------------------------
 ofTexture& ofxKinect::getDepthTextureReference(){
 	if(!depthTex.bAllocated()){
-		ofLog(OF_LOG_WARNING, "ofxKinect: getDepthTextureReference - texture is not allocated");
+		ofLog(OF_LOG_WARNING, "ofxKinect: Device %d depth texture is not allocated", deviceId);
 	}
 	return depthTex;
 }
-
 
 //---------------------------------------------------------------------------
 void ofxKinect::enableDepthNearValueWhite(bool bEnabled) {
@@ -494,7 +488,7 @@ void ofxKinect::drawDepth(const ofRectangle & rect) {
 
 //---------------------------------------------------------------------------
 int ofxKinect::getDeviceId() {
-	return id;
+	return deviceId;
 }
 
 //---------------------------------------------------------------------------
@@ -614,7 +608,7 @@ void ofxKinect::threadedFunction(){
 	freenect_frame_mode depthMode = freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, bUseRegistration?FREENECT_DEPTH_REGISTERED:FREENECT_DEPTH_MM);
 	freenect_set_depth_mode(kinectDevice, depthMode);
 
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d connection opened", id);
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d connection opened", deviceId);
 
 	freenect_start_depth(kinectDevice);
 	if(bGrabVideo) {
@@ -623,7 +617,7 @@ void ofxKinect::threadedFunction(){
 
 	// call platform specific processors (needed for Win)
 	if(freenect_process_events(kinectContext.getContext()) != 0) {
-		ofLog(OF_LOG_ERROR, "ofxKinect: freenect_process_events failed!");
+		ofLog(OF_LOG_ERROR, "ofxKinect: Device %d freenect_process_events failed!", deviceId);
 		return;
 	}
 
@@ -659,7 +653,7 @@ void ofxKinect::threadedFunction(){
 	freenect_set_led(kinectDevice, LED_YELLOW);
 
 	kinectContext.close(*this);
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d connection closed", id);
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d connection closed", deviceId);
 }
 
 //---------------------------------------------------------------------------
@@ -722,28 +716,29 @@ bool ofxKinectContext::isInited() {
 }
 
 bool ofxKinectContext::open(ofxKinect& kinect, int id) {
-
-	if(numConnected() >= numTotal()) {
-		ofLog(OF_LOG_WARNING, "ofxKinect Cannot open any more devices");
+	
+	if(isConnected(id)) {
+		ofLog(OF_LOG_WARNING, "ofxKinect: Device %d already connected", id);
 		return false;
 	}
-
+	
+	if(numConnected() >= numTotal()) {
+		ofLog(OF_LOG_WARNING, "ofxKinect: No available devices found");
+		return false;
+	}
+	
 	// is the id available?
 	if(id < 0) {
 		id = nextAvailableId();
 	}
-	else if(isConnected(id)) {
-		ofLog(OF_LOG_WARNING, "ofxKinect: Device %d already connected", id);
-		return false;
-	}
-
+	
 	// open and add to vector
 	if(freenect_open_device(kinectContext, &kinect.kinectDevice, deviceList[id].busId) < 0) {
 		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device %d", id);
 		return false;
 	}
 	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
-	kinect.id = id;
+	kinect.deviceId = id;
 	kinect.serial = deviceList[id].serial;
 
 	return true;
@@ -751,24 +746,25 @@ bool ofxKinectContext::open(ofxKinect& kinect, int id) {
 
 bool ofxKinectContext::open(ofxKinect& kinect, string serial) {
 	
-	if(numConnected() >= numTotal()) {
-		ofLog(OF_LOG_WARNING, "ofxKinect: Cannot open any more devices");
-		return false;
-	}
-	
 	// is the serial available?
 	if(isConnected(serial)) {
 		ofLog(OF_LOG_WARNING, "ofxKinect: Device %s already connected", serial.c_str());
 		return false;
 	}
 	
+	if(numConnected() >= numTotal()) {
+		ofLog(OF_LOG_WARNING, "ofxKinect: No available devices found");
+		return false;
+	}
+	
 	// open and add to vector
 	if(freenect_open_device_by_camera_serial(kinectContext, &kinect.kinectDevice, serial.c_str()) < 0) {
 		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device %s", serial.c_str());
+		return false;
 	}
 	int id = nextAvailableId();
 	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
-	kinect.id = id;
+	kinect.deviceId = id;
 	kinect.serial = deviceList[id].serial;
 	
 	return true;

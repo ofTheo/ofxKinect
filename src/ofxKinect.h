@@ -254,7 +254,7 @@ public:
 
 protected:
 
-	int id;			///< device id, -1 when not connected
+	int deviceId;	///< -1 when not connected
 	string serial;	///< unique serial number, "" when not connected
 	
 	bool bUseTexture;
@@ -272,11 +272,13 @@ protected:
 
 	float targetTiltAngleDeg;
 	float currentTiltAngleDeg;
+	bool bTiltNeedsApplying;
+	
+	// for auto connect tries
 	float timeSinceOpen;
 	int lastDeviceId;
 	bool bGotData;
 	int tryCount;
-	bool bTiltNeedsApplying;
 
 private:
 
