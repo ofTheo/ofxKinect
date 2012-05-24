@@ -127,13 +127,24 @@ public:
 
 /// \section Accelerometer Data
 
-	/// get the accelerometer values
+	/// get the XYZ accelerometer values
 	///
 	/// ... yes, the kinect has an accelerometer
+	
+	/// raw axis values
 	ofPoint getRawAccel();
+	
+	/// axis-based gravity adjusted accelerometer values
+	///
+	/// from libfreeenect:
+	///
+	/// as laid out via the accelerometer data sheet, which is available at
+	///
+	/// http://www.kionix.com/Product%20Sheets/KXSD9%20Product%20Brief.pdf
+	///
 	ofPoint getMksAccel();
 
-    /// get the current pitch (x axis) & roll (z axis) of the kinect
+    /// get the current pitch (x axis) & roll (z axis) of the kinect in degrees
     ///
     /// useful to correct the 3d scene based on the camera inclination
     ///
