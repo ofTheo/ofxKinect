@@ -362,7 +362,7 @@ public:
 	void buildDeviceList();
 	
 	/// print the device list
-	void listDevices();
+	void listDevices(bool verbose=false);
 	
 	/// get the total number of devices
 	int numTotal();
@@ -406,6 +406,7 @@ public:
 	
 private:
     
+	bool bInited;						///< has the context been initialized?
 	freenect_context* kinectContext;    ///< kinect context handle
 	std::vector<KinectPair> deviceList;	///< list of available devices, sorted by serial lexicographically
 	std::map<int,ofxKinect*> kinects;   ///< the connected kinects

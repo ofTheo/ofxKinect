@@ -126,10 +126,6 @@ bool ofxKinect::init(bool infrared, bool video, bool texture) {
 		}
 	}
 
-//	kinectContext.buildDeviceList();
-//	ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of devices found: %d", kinectContext.numTotal());
-//	ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of available devices: %d", kinectContext.numAvailable());
-
 	bGrabberInited = true;
 
 	return bGrabberInited;
@@ -140,10 +136,6 @@ void ofxKinect::clear() {
 	if(isConnected()) {
 		ofLog(OF_LOG_WARNING, "ofxKinect: Do not call clear while ofxKinect is running!");
 		return;
-	}
-	
-	if(kinectContext.numConnected() < 1) {
-		kinectContext.clear();
 	}
 
 	depthPixelsRaw.clear();
@@ -665,6 +657,7 @@ void ofxKinect::threadedFunction(){
 
 //---------------------------------------------------------------------------
 ofxKinectContext::ofxKinectContext() {
+	bInited = false;
 	kinectContext = NULL;
 }
 ofxKinectContext::~ofxKinectContext() {
@@ -682,12 +675,16 @@ bool ofxKinectContext::init() {
 	
 	if(freenect_init(&kinectContext, NULL) < 0) {
 		ofLog(OF_LOG_ERROR, "ofxKinect: freenect_init failed");
+		bInited = false;
 		return false;
 	}
-		
-	buildDeviceList();
-	
+
+	bInited = true;
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Context inited");
+	
+	buildDeviceList();
+	listDevices(true);
+
 	return true;
 }
 
@@ -696,12 +693,13 @@ void ofxKinectContext::clear() {
 	if(isInited() && numConnected() < 1) {
 		freenect_shutdown(kinectContext);
 		kinectContext = NULL;
+		bInited = false;
 		ofLog(OF_LOG_VERBOSE, "ofxKinect: Context cleared");
 	}
 }
 
 bool ofxKinectContext::isInited() {
-	return kinectContext != NULL;
+	return bInited;
 }
 
 bool ofxKinectContext::open(ofxKinect& kinect, int id) {
@@ -817,27 +815,42 @@ void ofxKinectContext::buildDeviceList() {
 	
 	// sort devices by serial number
 	sort(deviceList.begin(), deviceList.end(), sortKinectPairs);
-	
-	listDevices();
 }
 
-void ofxKinectContext::listDevices() {
+void ofxKinectContext::listDevices(bool verbose) {
     if(!isInited())
 		init();
 	
+	stringstream stream;
+	
 	if(numTotal() == 0) {
-		cout << "ofxKinect: No kinects found" << endl;
+		stream << "ofxKinect: No devices found";
 		return;
 	}
 	else if(numTotal() == 1) {
-		cout << "ofxKinect: " << 1 << " kinect found" << endl;
+		stream << "ofxKinect: " << 1 << " device found";
 	}
 	else {
-		cout << "ofxKinect: " << deviceList.size() << " kinects found" << endl;
+		stream << "ofxKinect: " << deviceList.size() << " devices found";
 	}
 	
+	if(verbose) {
+		ofLog(OF_LOG_VERBOSE, stream.str());
+	}
+	else {
+		cout << stream.str() << endl;
+	}
+	stream.str("");
+	
 	for(int i = 0; i < deviceList.size(); ++i) {
-		cout << "    id: " << deviceList[i].id << " serial: " << deviceList[i].serial << endl;
+		stream << "    id: " << deviceList[i].id << " serial: " << deviceList[i].serial;
+		if(verbose) {
+			ofLog(OF_LOG_VERBOSE, stream.str());
+		}
+		else {
+			cout << stream.str() << endl;
+		}
+		stream.str("");
 	}
 }
 

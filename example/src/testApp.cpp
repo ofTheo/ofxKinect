@@ -5,9 +5,6 @@
 void testApp::setup() {
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	// list kinects
-	ofxKinect::listDevices();
-	
 	// enable depth->video image calibration
 	kinect.setRegistration(true);
     
