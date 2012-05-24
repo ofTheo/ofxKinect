@@ -63,7 +63,7 @@ ofxKinect::ofxKinect() {
 	currentTiltAngleDeg = 0;
 	bTiltNeedsApplying = false;
 	
-	lastDeviceId = 0;
+	lastDeviceId = -1;
 	tryCount = 0;
 	timeSinceOpen = 0;
 	bGotData = false;
@@ -126,8 +126,9 @@ bool ofxKinect::init(bool infrared, bool video, bool texture) {
 		}
 	}
 
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of devices found: %d", kinectContext.numTotal());
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of available devices: %d", kinectContext.numAvailable());
+//	kinectContext.buildDeviceList();
+//	ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of devices found: %d", kinectContext.numTotal());
+//	ofLog(OF_LOG_VERBOSE, "ofxKinect: Number of available devices: %d", kinectContext.numAvailable());
 
 	bGrabberInited = true;
 
@@ -176,7 +177,7 @@ bool ofxKinect::open(int id) {
 		return false;
 	}
 
-	lastDeviceId = id;
+	lastDeviceId = deviceId;
 	timeSinceOpen = ofGetElapsedTimef();
 	bGotData = false;
 
@@ -249,9 +250,11 @@ void ofxKinect::update() {
 
 	if(!bNeedsUpdate && !bGotData && tryCount < 5 && ofGetElapsedTimef() - timeSinceOpen > 2.0 ){
 		close();
-		ofLog(OF_LOG_WARNING, "ofxKinect: Device %d isn't delivering data, reconnecting tries: %d", lastDeviceId, tryCount); 
+		ofLog(OF_LOG_WARNING, "ofxKinect: Device %d isn't delivering data, reconnecting tries: %d", lastDeviceId, tryCount+1);
+		kinectContext.buildDeviceList();
 		open(lastDeviceId);
 		tryCount++;
+		timeSinceOpen = ofGetElapsedTimef();
 		return;
 	}
 
@@ -682,21 +685,7 @@ bool ofxKinectContext::init() {
 		return false;
 	}
 		
-	// build the device list
-	freenect_device_attributes * devAttrib; 
-	int numDevices = freenect_list_device_attributes(kinectContext, &devAttrib);
-	deviceList.clear();
-	for(int i = 0; i < numDevices; i++){
-		KinectPair kp;
-		kp.busId = i;
-		kp.serial = devAttrib->camera_serial; 
-		deviceList.push_back(kp);
-		devAttrib = devAttrib->next;
-	}
-	freenect_free_device_attributes(devAttrib);
-	
-	// sort devices by serial number
-	sort(deviceList.begin(), deviceList.end(), sortKinectPairs); 
+	buildDeviceList();
 	
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Context inited");
 	return true;
@@ -717,10 +706,8 @@ bool ofxKinectContext::isInited() {
 
 bool ofxKinectContext::open(ofxKinect& kinect, int id) {
 	
-	if(isConnected(id)) {
-		ofLog(OF_LOG_WARNING, "ofxKinect: Device %d already connected", id);
-		return false;
-	}
+	// rebuild if necessary (aka new kinects plugged in)
+	buildDeviceList();
 	
 	if(numConnected() >= numTotal()) {
 		ofLog(OF_LOG_WARNING, "ofxKinect: No available devices found");
@@ -731,29 +718,37 @@ bool ofxKinectContext::open(ofxKinect& kinect, int id) {
 	if(id < 0) {
 		id = nextAvailableId();
 	}
+	if(isConnected(id)) {
+		ofLog(OF_LOG_WARNING, "ofxKinect: Device %d already connected", id);
+		return false;
+	}
 	
 	// open and add to vector
-	if(freenect_open_device(kinectContext, &kinect.kinectDevice, deviceList[id].busId) < 0) {
+	if(freenect_open_device(kinectContext, &kinect.kinectDevice, id) < 0) {
 		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device %d", id);
 		return false;
 	}
 	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
-	kinect.deviceId = id;
+	kinect.deviceId = deviceList[id].busId;
 	kinect.serial = deviceList[id].serial;
+	cout << "bus id: " << kinect.deviceId << endl;
 
 	return true;
 }
 
 bool ofxKinectContext::open(ofxKinect& kinect, string serial) {
 	
-	// is the serial available?
-	if(isConnected(serial)) {
-		ofLog(OF_LOG_WARNING, "ofxKinect: Device %s already connected", serial.c_str());
-		return false;
-	}
+	// rebuild if necessary (aka new kinects plugged in)
+	buildDeviceList();
 	
 	if(numConnected() >= numTotal()) {
 		ofLog(OF_LOG_WARNING, "ofxKinect: No available devices found");
+		return false;
+	}
+	
+	// is the serial available?
+	if(isConnected(serial)) {
+		ofLog(OF_LOG_WARNING, "ofxKinect: Device %s already connected", serial.c_str());
 		return false;
 	}
 	
@@ -764,7 +759,7 @@ bool ofxKinectContext::open(ofxKinect& kinect, string serial) {
 	}
 	int id = nextAvailableId();
 	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
-	kinect.deviceId = id;
+	kinect.deviceId = deviceList[id].busId;
 	kinect.serial = deviceList[id].serial;
 	
 	return true;
@@ -800,6 +795,28 @@ void ofxKinectContext::closeAll() {
 }
 
 //---------------------------------------------------------------------------
+void ofxKinectContext::buildDeviceList() {
+	
+	deviceList.clear();
+	
+	// build the device list from freenect
+	freenect_device_attributes * devAttrib; 
+	int numDevices = freenect_list_device_attributes(kinectContext, &devAttrib);
+	
+	// save bus ids ...
+	for(int i = 0; i < numDevices; i++){
+		KinectPair kp;
+		kp.busId = i;
+		kp.serial = (string) devAttrib->camera_serial; 
+		deviceList.push_back(kp);
+		devAttrib = devAttrib->next;
+	}
+	freenect_free_device_attributes(devAttrib);
+	
+	// sort devices by serial number
+	sort(deviceList.begin(), deviceList.end(), sortKinectPairs); 
+}
+
 void ofxKinectContext::listDevices() {
     if(!isInited())
 		init();
@@ -808,25 +825,28 @@ void ofxKinectContext::listDevices() {
 		cout << "ofxKinect: No kinects found" << endl;
 		return;
 	}
+	else if(numTotal() == 1) {
+		cout << "ofxKinect: " << 1 << " kinect found" << endl;
+	}
+	else {
+		cout << "ofxKinect: " << deviceList.size() << " kinects found" << endl;
+	}
 	
-	cout << "ofxKinect: " << numTotal() << " kinects found" << endl;
 	for(int i = 0; i < deviceList.size(); ++i) {
-		cout << "    " << i << " serial: " << deviceList[i].serial
-			 //<< " bus id: " << deviceList[i].busId
-			 << endl;
+		cout << "    " << deviceList[i].busId << " serial: " << deviceList[i].serial << endl;
 	}
 }
 
 int ofxKinectContext::numTotal() {
     if(!isInited())
 		init();
-    return deviceList.size();
+    return freenect_num_devices(kinectContext);
 }
 
 int ofxKinectContext::numAvailable() {
 	if(!isInited())
 		init();
-    return deviceList.size() - kinects.size();
+    return freenect_num_devices(kinectContext) - kinects.size();
 }
 
 int ofxKinectContext::numConnected() {

@@ -356,6 +356,9 @@ public:
 
 /// \section Util
 	
+	/// (re)build the list of devices
+	void buildDeviceList();
+	
 	/// print the device list
 	void listDevices();
 	
