@@ -84,6 +84,8 @@ public:
 	///
 	/// set the id to choose a kinect, see numAvailableDevices()
 	/// if you don't set the id (ie id=-1), the first available kinect will be used
+	///
+	/// note: this is the freenct bus id and may change each time the app is run
 	bool open(int id=-1);
 	
 	/// open using a kinect unique serial number
@@ -374,11 +376,15 @@ public:
 	/// get the kinect object from a device pointer
 	/// returns NULL if not found
 	ofxKinect* getKinect(freenect_device* dev);
+	
+	/// get the deviceList index from an id
+	/// returns -1 if not found
+	int getDeviceIndex(int id);
 
 	/// is a device with this id already connected?
 	bool isConnected(int id);
 	
-	/// is a deice with this serial already connected?
+	/// is a device with this serial already connected?
 	bool isConnected(string serial);
 
 	/// get the id of the next available device,
@@ -395,7 +401,7 @@ public:
 	// for auto-enumeration
     struct KinectPair{
 		string serial;	///< unique serial number
-		int busId;		///< freenect bus id
+		int id;			///< freenect bus id
     };
 	
 private:

@@ -729,9 +729,11 @@ bool ofxKinectContext::open(ofxKinect& kinect, int id) {
 		return false;
 	}
 	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
-	kinect.deviceId = deviceList[id].busId;
-	kinect.serial = deviceList[id].serial;
-	cout << "bus id: " << kinect.deviceId << endl;
+	
+	// set kinect id & serial from bus id
+	int index = getDeviceIndex(id);
+	kinect.deviceId = id;
+	kinect.serial = deviceList[index].serial;
 
 	return true;
 }
@@ -759,7 +761,7 @@ bool ofxKinectContext::open(ofxKinect& kinect, string serial) {
 	}
 	int id = nextAvailableId();
 	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
-	kinect.deviceId = deviceList[id].busId;
+	kinect.deviceId = id;
 	kinect.serial = deviceList[id].serial;
 	
 	return true;
@@ -806,7 +808,7 @@ void ofxKinectContext::buildDeviceList() {
 	// save bus ids ...
 	for(int i = 0; i < numDevices; i++){
 		KinectPair kp;
-		kp.busId = i;
+		kp.id = i;
 		kp.serial = (string) devAttrib->camera_serial; 
 		deviceList.push_back(kp);
 		devAttrib = devAttrib->next;
@@ -814,7 +816,9 @@ void ofxKinectContext::buildDeviceList() {
 	freenect_free_device_attributes(devAttrib);
 	
 	// sort devices by serial number
-	sort(deviceList.begin(), deviceList.end(), sortKinectPairs); 
+	sort(deviceList.begin(), deviceList.end(), sortKinectPairs);
+	
+	listDevices();
 }
 
 void ofxKinectContext::listDevices() {
@@ -833,7 +837,7 @@ void ofxKinectContext::listDevices() {
 	}
 	
 	for(int i = 0; i < deviceList.size(); ++i) {
-		cout << "    " << deviceList[i].busId << " serial: " << deviceList[i].serial << endl;
+		cout << "    id: " << deviceList[i].id << " serial: " << deviceList[i].serial << endl;
 	}
 }
 
@@ -862,8 +866,16 @@ ofxKinect* ofxKinectContext::getKinect(freenect_device* dev) {
 	return NULL;
 }
 
-bool ofxKinectContext::isConnected(int index) {
-	std::map<int,ofxKinect*>::iterator iter = kinects.find(index);
+int ofxKinectContext::getDeviceIndex(int id) {
+	for(int i = 0; i < deviceList.size(); ++i) {
+		if(deviceList[i].id == id)
+			return i;
+	}
+	return -1;
+}
+
+bool ofxKinectContext::isConnected(int id) {
+	std::map<int,ofxKinect*>::iterator iter = kinects.find(id);
 	return iter != kinects.end();
 }
 
@@ -882,10 +894,10 @@ int ofxKinectContext::nextAvailableId() {
 	
 	// a brute force free index finder :D
 	std::map<int,ofxKinect*>::iterator iter;
-	for(int i = 0; i < numTotal(); ++i) {
-		iter = kinects.find(i);
+	for(int i = 0; i < deviceList.size(); ++i) {
+		iter = kinects.find(deviceList[i].id);
 		if(iter == kinects.end())
-			return i;
+			return deviceList[i].id;
 	}
 	return -1;
 }
@@ -898,6 +910,6 @@ string ofxKinectContext::nextAvailableSerial() {
 	if(id == -1) {
 		return "";
 	}
-	return deviceList[id].serial;
+	return deviceList[getDeviceIndex(id)].serial;
 }
 
