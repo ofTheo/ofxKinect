@@ -212,6 +212,16 @@ public:
 
 	/// get the target angle (if the camera is currently moving)
 	float getTargetCameraTiltAngle();
+    
+/// \section LED
+    
+    /// 0 = off
+    /// 1 = green
+    /// 2 = red
+    /// 3 = yellow
+    /// 4,5 = blink green
+    /// 6 = blink yellow/red...
+    void setLed(int mode);
 
 /// \section Draw
 

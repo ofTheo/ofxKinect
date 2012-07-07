@@ -444,6 +444,13 @@ float ofxKinect::getCurrentCameraTiltAngle() {
 	return currentTiltAngleDeg;
 }
 
+//--------------------------------------------------------------------
+
+void ofxKinect::setLed(int mode) {
+    if (mode < 0 || mode > 6) { return; }
+    freenect_set_led(kinectDevice, (freenect_led_options)mode);
+}
+
 //------------------------------------
 void ofxKinect::setUseTexture(bool bUse){
 	bUseTexture = bUse;
