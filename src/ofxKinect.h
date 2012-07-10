@@ -215,6 +215,7 @@ public:
     
 /// \section LED
     
+    /// -1 = (default) yellow, with micro green flash
     /// 0 = off
     /// 1 = green
     /// 2 = red
@@ -303,6 +304,9 @@ protected:
 	float targetTiltAngleDeg;
 	float currentTiltAngleDeg;
 	bool bTiltNeedsApplying;
+    
+    int currentLed;
+    bool bLedNeedsApplying;
 	
 	// for auto connect tries
 	float timeSinceOpen;
