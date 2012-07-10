@@ -64,6 +64,9 @@ ofxKinect::ofxKinect() {
 	targetTiltAngleDeg = 0;
 	currentTiltAngleDeg = 0;
 	bTiltNeedsApplying = false;
+    
+    currentLed = -1;
+    bLedNeedsApplying = false;
 	
 	lastDeviceId = -1;
 	tryCount = 0;
@@ -444,6 +447,16 @@ float ofxKinect::getCurrentCameraTiltAngle() {
 	return currentTiltAngleDeg;
 }
 
+//--------------------------------------------------------------------
+
+void ofxKinect::setLed(int mode) {
+    if (mode < -1 || mode > 6) { 
+        return; 
+    }
+    bLedNeedsApplying = true;
+    currentLed = mode;
+}
+
 //------------------------------------
 void ofxKinect::setUseTexture(bool bUse){
 	bUseTexture = bUse;
@@ -609,7 +622,11 @@ void ofxKinect::grabVideoFrame(freenect_device *dev, void *video, uint32_t times
 //---------------------------------------------------------------------------
 void ofxKinect::threadedFunction(){
 
-	freenect_set_led(kinectDevice, LED_GREEN);
+	if (currentLed < 0) { 
+        freenect_set_led(kinectDevice, LED_GREEN); 
+    } else if (bLedNeedsApplying) {
+        freenect_set_led(kinectDevice, (freenect_led_options)currentLed);
+    }
 	freenect_frame_mode videoMode = freenect_find_video_mode(FREENECT_RESOLUTION_MEDIUM, bIsVideoInfrared?FREENECT_VIDEO_IR_8BIT:FREENECT_VIDEO_RGB);
 	freenect_set_video_mode(kinectDevice, videoMode);
 	freenect_frame_mode depthMode = freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, bUseRegistration?FREENECT_DEPTH_REGISTERED:FREENECT_DEPTH_MM);
@@ -657,7 +674,9 @@ void ofxKinect::threadedFunction(){
 
 	freenect_stop_depth(kinectDevice);
 	freenect_stop_video(kinectDevice);
-	freenect_set_led(kinectDevice, LED_YELLOW);
+	if (currentLed < 0) { 
+        freenect_set_led(kinectDevice, LED_YELLOW); 
+    }
 
 	kinectContext.close(*this);
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d connection closed", deviceId);
