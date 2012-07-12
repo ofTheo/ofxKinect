@@ -111,6 +111,18 @@ public:
 	float getDistanceAt(int x, int y);
 	float getDistanceAt(const ofPoint & p);
 
+	///New feature:
+	float getDistanceAt(int n);
+	///Adding this feature because I was working with the pixels of the grayImage
+	///with a loop and then needed a more accurate description of distance for
+	///very few pixels, so I have to make something horrible like:
+	///
+	///printf("%f \n",kinect.getDistanceAt((int)i%640, (int)i/640)); 
+	///
+	///To get this number, the other way could be using a pointer or something
+	///but this to me is a more elegant solution, hope will be useful.
+
+
 	/// calculates the coordinate in the world for the depth point (perspective calculation)
 	///
 	/// center of image is (0.0)
