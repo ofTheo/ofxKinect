@@ -291,6 +291,22 @@ float ofxKinect::getDistanceAt(int x, int y) {
 float ofxKinect::getDistanceAt(const ofPoint & p) {
 	return getDistanceAt(p.x, p.y);
 }
+//------------------------------------
+
+    ///New feature:
+float ofxKinect::getDistanceAt(int n) {
+	return depthPixelsRaw[n];
+}
+	///Adding this feature because I was working with the pixels of the grayImage
+    ///with a loop and then needed a more accurate description of distance for
+    ///very few pixels, so I have to make something horrible like:
+    ///
+    ///printf("%f \n",kinect.getDistanceAt((int)i%640, (int)i/640)); 
+    ///
+    ///To get this number, the other way could be using a pointer or something
+    ///but this to me is a more elegant solution, hope will be useful.
+
+
 
 //------------------------------------
 ofVec3f ofxKinect::getWorldCoordinateAt(int x, int y) {
