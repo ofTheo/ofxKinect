@@ -398,6 +398,10 @@ public:
 	/// get the deviceList index from an id
 	/// returns -1 if not found
 	int getDeviceIndex(int id);
+	
+	/// get the deviceList index from an id
+	/// returns -1 if not found
+	int getDeviceIndex(string serial);
 
 	/// is a device with this id already connected?
 	bool isConnected(int id);

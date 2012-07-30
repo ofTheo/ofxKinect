@@ -615,7 +615,7 @@ void ofxKinect::threadedFunction(){
 	freenect_frame_mode depthMode = freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, bUseRegistration?FREENECT_DEPTH_REGISTERED:FREENECT_DEPTH_MM);
 	freenect_set_depth_mode(kinectDevice, depthMode);
 
-	ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d connection opened", deviceId);
+	ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d %s connection opened", deviceId, serial.c_str());
 
 	freenect_start_depth(kinectDevice);
 	if(bGrabVideo) {
@@ -769,7 +769,7 @@ bool ofxKinectContext::open(ofxKinect& kinect, string serial) {
 		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device %s", serial.c_str());
 		return false;
 	}
-	int id = nextAvailableId();
+	int id = getDeviceIndex(serial);
 	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
 	kinect.deviceId = id;
 	kinect.serial = deviceList[id].serial;
@@ -894,6 +894,14 @@ ofxKinect* ofxKinectContext::getKinect(freenect_device* dev) {
 int ofxKinectContext::getDeviceIndex(int id) {
 	for(int i = 0; i < deviceList.size(); ++i) {
 		if(deviceList[i].id == id)
+			return i;
+	}
+	return -1;
+}
+
+int ofxKinectContext::getDeviceIndex(string serial) {
+	for(int i = 0; i < deviceList.size(); ++i) {
+		if(deviceList[i].serial == serial)
 			return i;
 	}
 	return -1;
