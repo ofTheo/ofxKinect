@@ -1,5 +1,5 @@
 ofxKinect
-==================
+=========
 
 Copyright (c) 2010, 2011 ofxKinect Team
 
@@ -19,6 +19,12 @@ ofxKinect is an Open Frameworks addon for the Xbox Kinect that runs on Linux and
 OpenFrameworks is a cross platform open source toolkit for creative coding in C++.
 
 [http://www.openframeworks.cc/](http://www.openframeworks.cc/)
+
+###NOTE: Does not currently support Kinect4Windows Hardware!
+
+If you have a Kinect4Windows device, it will not currently work in ofxKinect as libfreenect does not support them yet. The [fix is in the works](https://github.com/OpenKinect/libfreenect/issues/298).
+
+In the meantime, we suggest you use ofxOpenNI or get an Xbox Kinect instead ...
 
 Installation
 ------------
