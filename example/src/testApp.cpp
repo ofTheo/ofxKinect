@@ -11,7 +11,10 @@ void testApp::setup() {
 	kinect.init();
 	//kinect.init(true); // shows infrared instead of RGB video image
 	//kinect.init(false, false); // disable video image (faster fps)
-	kinect.open();
+	
+	kinect.open();		// opens first available kinect
+	//kinect.open(1);	// open a kinect by id, starting with 0 (sorted by serial # lexicographically))
+	//kinect.open("A00362A08602047A");	// open a kinect using it's unique serial #
 	
 #ifdef USE_TWO_KINECTS
 	kinect2.init();
