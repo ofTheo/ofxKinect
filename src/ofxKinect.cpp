@@ -449,10 +449,10 @@ float ofxKinect::getCurrentCameraTiltAngle() {
 
 //--------------------------------------------------------------------
 
-void ofxKinect::setLed(int mode) {
-    if (mode < -1 || mode > 6) { 
-        return; 
-    }
+void ofxKinect::setLed(ofxKinect::LedMode mode) {
+	if(mode == currentLed) {
+		return;
+	}
     bLedNeedsApplying = true;
     currentLed = mode;
 }
@@ -623,10 +623,9 @@ void ofxKinect::grabVideoFrame(freenect_device *dev, void *video, uint32_t times
 void ofxKinect::threadedFunction(){
 
 	if (currentLed < 0) { 
-        freenect_set_led(kinectDevice, LED_GREEN); 
-    } else if (bLedNeedsApplying) {
-        freenect_set_led(kinectDevice, (freenect_led_options)currentLed);
+        freenect_set_led(kinectDevice, (freenect_led_options)ofxKinect::LED_GREEN); 
     }
+	
 	freenect_frame_mode videoMode = freenect_find_video_mode(FREENECT_RESOLUTION_MEDIUM, bIsVideoInfrared?FREENECT_VIDEO_IR_8BIT:FREENECT_VIDEO_RGB);
 	freenect_set_video_mode(kinectDevice, videoMode);
 	freenect_frame_mode depthMode = freenect_find_depth_mode(FREENECT_RESOLUTION_MEDIUM, bUseRegistration?FREENECT_DEPTH_REGISTERED:FREENECT_DEPTH_MM);
@@ -646,14 +645,24 @@ void ofxKinect::threadedFunction(){
 	}
 
 	while(isThreadRunning()) {
+		
 		if(bTiltNeedsApplying) {
 			freenect_set_tilt_degs(kinectDevice, targetTiltAngleDeg);
 			bTiltNeedsApplying = false;
 		}
+		
+		if(bLedNeedsApplying) {
+			if(currentLed == ofxKinect::LED_DEFAULT) {
+				freenect_set_led(kinectDevice, (freenect_led_options)ofxKinect::LED_GREEN);
+			}
+			else {
+				freenect_set_led(kinectDevice, (freenect_led_options)currentLed);
+			}
+			bLedNeedsApplying = false;
+		}
 
 		freenect_update_tilt_state(kinectDevice);
 		freenect_raw_tilt_state * tilt = freenect_get_tilt_state(kinectDevice);
-
 		currentTiltAngleDeg = freenect_get_tilt_degs(tilt);
 
 		rawAccel.set(tilt->accelerometer_x, tilt->accelerometer_y, tilt->accelerometer_z);
@@ -675,7 +684,7 @@ void ofxKinect::threadedFunction(){
 	freenect_stop_depth(kinectDevice);
 	freenect_stop_video(kinectDevice);
 	if (currentLed < 0) { 
-        freenect_set_led(kinectDevice, LED_YELLOW); 
+        freenect_set_led(kinectDevice, (freenect_led_options)ofxKinect::LED_YELLOW); 
     }
 
 	kinectContext.close(*this);

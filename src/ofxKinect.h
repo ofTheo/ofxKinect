@@ -215,14 +215,20 @@ public:
     
 /// \section LED
     
-    /// -1 = (default) yellow, with micro green flash
-    /// 0 = off
-    /// 1 = green
-    /// 2 = red
-    /// 3 = yellow
-    /// 4,5 = blink green
-    /// 6 = blink yellow/red...
-    void setLed(int mode);
+	enum LedMode {
+		LED_DEFAULT = -1, // yellow when not running, green when running
+		LED_OFF = 0,
+		LED_GREEN = 1,
+		LED_RED = 2,
+		LED_YELLOW = 3,
+		LED_BLINK_GREEN = 4,
+		LED_BLINK_YELLOW_RED = 6
+	};
+	
+    /// set the current led color and/or blink mode
+	///
+	/// note: is only applied while the kinect is open
+    void setLed(ofxKinect::LedMode mode);
 
 /// \section Draw
 
