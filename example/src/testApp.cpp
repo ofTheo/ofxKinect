@@ -124,7 +124,7 @@ void testApp::draw() {
 	<< ", fps: " << ofGetFrameRate() << endl
 	<< "press c to close the connection and o to open it again, connection is: " << kinect.isConnected() << endl
 	<< "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
-	<< "press 1-5 & 0 to change the led mode" << endl;
+	<< "press 1-5 & 0 to change the led mode (mac/linux only)" << endl;
 	ofDrawBitmapString(reportStream.str(),20,652);
 }
 
