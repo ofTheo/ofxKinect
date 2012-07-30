@@ -223,6 +223,8 @@ ofxKinect supports multiple kinects, however stability is based on the bandwidth
 kinect.init(false, false);  // disable video image (faster fps)
 </pre>
 
+For Kinect4Windows, Microsoft states that only 2 Kinects can be supported on the same USB bus. In practice on OSX, this proves to be the case as, even with the RGB images disabled, there are transfer errors using ofxKinect and 3 Kinects simultaneously. If you need to support many Kinects, you will probably need to add extra USB controllers to your machine …
+
 Developing ofxKinect
 --------------------
 
