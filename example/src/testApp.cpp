@@ -123,7 +123,8 @@ void testApp::draw() {
 	<< "set far threshold " << farThreshold << " (press: < >) num blobs found " << contourFinder.nBlobs
 	<< ", fps: " << ofGetFrameRate() << endl
 	<< "press c to close the connection and o to open it again, connection is: " << kinect.isConnected() << endl
-	<< "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl;
+	<< "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
+	<< "press 1-5 & 0 to change the led mode (mac/linux only)" << endl;
 	ofDrawBitmapString(reportStream.str(),20,652);
 }
 
@@ -208,6 +209,30 @@ void testApp::keyPressed (int key) {
 		case 'c':
 			kinect.setCameraTiltAngle(0); // zero the tilt
 			kinect.close();
+			break;
+			
+		case '1':
+			kinect.setLed(ofxKinect::LED_GREEN);
+			break;
+			
+		case '2':
+			kinect.setLed(ofxKinect::LED_YELLOW);
+			break;
+			
+		case '3':
+			kinect.setLed(ofxKinect::LED_RED);
+			break;
+			
+		case '4':
+			kinect.setLed(ofxKinect::LED_BLINK_GREEN);
+			break;
+			
+		case '5':
+			kinect.setLed(ofxKinect::LED_BLINK_YELLOW_RED);
+			break;
+			
+		case '0':
+			kinect.setLed(ofxKinect::LED_OFF);
 			break;
 			
 		case OF_KEY_UP:

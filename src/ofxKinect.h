@@ -33,6 +33,8 @@
 
 #include "ofMain.h"
 #include "libfreenect.h"
+#include "freenect_internal.h" // for access to freenect_device.registration.zero_plane_info
+
 #include "ofxBase3DVideo.h"
 
 #if defined(_MSC_VER) || defined(_WIN32) || defined(WIN32) || defined(__MINGW32__)
@@ -116,6 +118,10 @@ public:
 	/// center of image is (0.0)
 	ofVec3f getWorldCoordinateAt(int cx, int cy);
 	ofVec3f getWorldCoordinateAt(float cx, float cy, float wz);
+
+/// \section Intrinsic camera parameters
+	float getRefPixelSize();
+	float getRefDistance();
 
 /// \section RGB Data
 
@@ -212,6 +218,24 @@ public:
 
 	/// get the target angle (if the camera is currently moving)
 	float getTargetCameraTiltAngle();
+    
+/// \section LED
+    
+	enum LedMode {
+		LED_DEFAULT = -1, // yellow when not running, green when running
+		LED_OFF = 0,
+		LED_GREEN = 1,
+		LED_RED = 2,
+		LED_YELLOW = 3,
+		LED_BLINK_GREEN = 4,
+		LED_BLINK_YELLOW_RED = 6
+	};
+	
+    /// set the current led color and/or blink mode,
+	/// only applied while the kinect is open
+	///
+	/// note: this currently only works on OSX & Linux, blinks green on Win
+    void setLed(ofxKinect::LedMode mode);
 
 /// \section Draw
 
@@ -293,6 +317,9 @@ protected:
 	float targetTiltAngleDeg;
 	float currentTiltAngleDeg;
 	bool bTiltNeedsApplying;
+    
+    int currentLed;
+    bool bLedNeedsApplying;
 	
 	// for auto connect tries
 	float timeSinceOpen;
