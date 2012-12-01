@@ -10,7 +10,7 @@ OF_ROOT = ../../..
 # for example search paths like:
 # USER_CFLAGS = -I src/objects
 
-USER_CFLAGS = 
+USER_CFLAGS = $(shell pkg-config libusb-1.0 --cflags)
 
 
 # USER_LDFLAGS allows to pass custom flags to the linker
@@ -23,7 +23,7 @@ USER_LDFLAGS =
 # use this to add system libraries for example:
 # USER_LIBS = -lpango
  
-USER_LIBS = -lusb-1.0
+USER_LIBS = $(shell pkg-config libusb-1.0 --libs)
 
 
 # change this to add different compiler optimizations to your project
