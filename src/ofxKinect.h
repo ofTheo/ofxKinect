@@ -212,6 +212,24 @@ public:
 
 	/// get the target angle (if the camera is currently moving)
 	float getTargetCameraTiltAngle();
+    
+/// \section LED
+    
+	enum LedMode {
+		LED_DEFAULT = -1, // yellow when not running, green when running
+		LED_OFF = 0,
+		LED_GREEN = 1,
+		LED_RED = 2,
+		LED_YELLOW = 3,
+		LED_BLINK_GREEN = 4,
+		LED_BLINK_YELLOW_RED = 6
+	};
+	
+    /// set the current led color and/or blink mode,
+	/// only applied while the kinect is open
+	///
+	/// note: this currently only works on OSX & Linux, blinks green on Win
+    void setLed(ofxKinect::LedMode mode);
 
 /// \section Draw
 
@@ -293,6 +311,9 @@ protected:
 	float targetTiltAngleDeg;
 	float currentTiltAngleDeg;
 	bool bTiltNeedsApplying;
+    
+    int currentLed;
+    bool bLedNeedsApplying;
 	
 	// for auto connect tries
 	float timeSinceOpen;
