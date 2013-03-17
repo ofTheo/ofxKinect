@@ -827,10 +827,12 @@ void ofxKinectContext::close(ofxKinect& kinect) {
 }
 
 void ofxKinectContext::closeAll() {
-	std::map<int,ofxKinect*>::iterator iter;
-	for(iter = kinects.begin(); iter != kinects.end(); ++iter) {
-		iter->second->close();
-	}
+	// make copy of map to avoid invalidating iter when calling close()
+	std::map<int,ofxKinect*> kinectsCopy(kinects);
+    std::map<int,ofxKinect*>::iterator iter;
+    for(iter = kinectsCopy.begin(); iter != kinectsCopy.end(); ++iter) {
+        iter->second->close();
+    }
 }
 
 //---------------------------------------------------------------------------
