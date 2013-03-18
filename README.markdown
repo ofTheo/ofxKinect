@@ -58,7 +58,7 @@ If you want to work with the latest unstable (still in development) ofxKinect, d
 git clone git://github.com/ofTheo/ofxKinect.git -b develop
 </pre> 
 
-Warning: The develop branch will be in flux, so don't be suprised if things do not always work as expected!
+Warning: The develop branch will be in flux, so don't be surprised if things do not always work as expected!
 
 Running the Example Project
 ---------------------------
@@ -116,7 +116,7 @@ You may need to manually update each driver individually if you've plugged it in
 **NOTE**: You cannot use the OpenNI drivers and the libfreenect drivers included with ofxKinect at the same time. You must manually uninstall one and reinstall the other in the Device Manager. Sorry, that's just how it is. :P 
 
 How to Create a New ofxKinect Project
------------------------------------------
+-------------------------------------
 
 To develop your own project based on ofxKinect, simply copy the example project and rename it. You probably want to put it in your apps folder, for example, after copying:
 
@@ -137,6 +137,13 @@ Close Codeblocks and rename the *.cbp and *.workspace files to the same name as 
 ### Windows (Visual Studio):
 
 Close Visual Studio and rename the *.sln file. Open the solution, right click on the project in the project broswer and select "Rename ...".
+
+###NOTE: Does not currently support the OF Project Generator on Windows
+
+On Windows, libfreenect is provided in a precompiled static library with a few header files and does *not* use the freenect source files. The current OF Project Generator does not handle this situation correctly and adds the source files, resulting in projects which will not build. It's recommended to either copy the example project or generate a new project without ofxKinect, then follow instructions in the next section to add ofxKinect to your project.
+
+The **best option** would be for someone to help us by updating ofxKinect to build freenect on Windows. This most probably involves pthread32 and other libraries …
+
 
 Adding ofxKinect to an Existing Project
 ---------------------------------------
