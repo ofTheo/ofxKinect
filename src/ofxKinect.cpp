@@ -572,7 +572,7 @@ string ofxKinect::nextAvailableSerial() {
 void ofxKinect::updateDepthLookupTable() {
 	unsigned char nearColor = bNearWhite ? 255 : 0;
 	unsigned char farColor = bNearWhite ? 0 : 255;
-	unsigned int maxDepthLevels = 10000;
+	unsigned int maxDepthLevels = 10001;
 	depthLookupTable.resize(maxDepthLevels);
 	depthLookupTable[0] = 0;
 	for(int i = 1; i < maxDepthLevels; i++) {
