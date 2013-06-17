@@ -790,9 +790,8 @@ bool ofxKinectContext::open(ofxKinect& kinect, int id) {
 	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
 	
 	// set kinect id & serial from bus id
-	int index = getDeviceIndex(id);
 	kinect.deviceId = id;
-	kinect.serial = deviceList[index].serial;
+	kinect.serial = deviceList[getDeviceIndex(id)].serial;
 
 	return true;
 }
@@ -818,10 +817,10 @@ bool ofxKinectContext::open(ofxKinect& kinect, string serial) {
 		ofLog(OF_LOG_ERROR, "ofxKinect: Could not open device %s", serial.c_str());
 		return false;
 	}
-	int id = getDeviceIndex(serial);
-	kinects.insert(pair<int,ofxKinect*>(id, &kinect));
-	kinect.deviceId = id;
-	kinect.serial = deviceList[id].serial;
+	int index = getDeviceIndex(serial);
+	kinects.insert(pair<int,ofxKinect*>(deviceList[index].id, &kinect));
+	kinect.deviceId = deviceList[index].id;
+	kinect.serial = serial;
 	
 	return true;
 }
@@ -849,10 +848,12 @@ void ofxKinectContext::close(ofxKinect& kinect) {
 }
 
 void ofxKinectContext::closeAll() {
-	std::map<int,ofxKinect*>::iterator iter;
-	for(iter = kinects.begin(); iter != kinects.end(); ++iter) {
-		iter->second->close();
-	}
+	// make copy of map to avoid invalidating iter when calling close()
+	std::map<int,ofxKinect*> kinectsCopy(kinects);
+    std::map<int,ofxKinect*>::iterator iter;
+    for(iter = kinectsCopy.begin(); iter != kinectsCopy.end(); ++iter) {
+        iter->second->close();
+    }
 }
 
 //---------------------------------------------------------------------------
