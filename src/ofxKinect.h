@@ -33,7 +33,6 @@
 
 #include "ofMain.h"
 #include "libfreenect.h"
-#include "freenect_internal.h" // for access to freenect_device.registration.zero_plane_info
 
 #include "ofxBase3DVideo.h"
 
@@ -119,9 +118,24 @@ public:
 	ofVec3f getWorldCoordinateAt(int cx, int cy);
 	ofVec3f getWorldCoordinateAt(float cx, float cy, float wz);
 
-/// \section Intrinsic camera parameters
-	float getRefPixelSize();
-	float getRefDistance();
+/// \section Intrinsic IR Sensor Parameters
+
+	/// these values are used when depth registration is enabled to align the
+	/// depth image to the rgb image, see http://www.ros.org/wiki/kinect_calibration/technical
+	///
+	/// they could also be useful for real world accurate point clouds ... weee!
+	
+	/// get the distance between the IR sensor and IR emitter in cm
+	float getSensorEmitterDistance();
+	
+	/// get the distance between the IR sensor and the RGB camera in cm
+	float getSensorCameraDistance();
+	
+	/// get the size of a single pixel on the zero plane in mm
+	float getZeroPlanePixelSize();
+	
+	/// get the focal length of the IR sensor in mm
+	float getZeroPlaneDistance();
 
 /// \section RGB Data
 
