@@ -33,6 +33,8 @@
 
 #include "ofMain.h"
 #include "libfreenect.h"
+#include "freenect_internal.h" // for access to freenect_device.registration.zero_plane_info
+
 #include "ofxBase3DVideo.h"
 
 #if defined(_MSC_VER) || defined(_WIN32) || defined(WIN32) || defined(__MINGW32__)
@@ -116,6 +118,10 @@ public:
 	/// center of image is (0.0)
 	ofVec3f getWorldCoordinateAt(int cx, int cy);
 	ofVec3f getWorldCoordinateAt(float cx, float cy, float wz);
+
+/// \section Intrinsic camera parameters
+	float getRefPixelSize();
+	float getRefDistance();
 
 /// \section RGB Data
 

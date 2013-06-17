@@ -308,6 +308,16 @@ ofVec3f ofxKinect::getWorldCoordinateAt(float cx, float cy, float wz) {
 }
 
 //------------------------------------
+float ofxKinect::getRefPixelSize() {
+	return kinectDevice->registration.zero_plane_info.reference_pixel_size;
+}
+
+//------------------------------------
+float ofxKinect::getRefDistance() {
+	return kinectDevice->registration.zero_plane_info.reference_distance;
+}
+
+//------------------------------------
 ofColor ofxKinect::getColorAt(int x, int y) {
 	int index = (y * width + x) * videoBytesPerPixel;
 	ofColor c;
