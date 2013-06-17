@@ -688,7 +688,8 @@ static int send_cmd(freenect_device *dev, uint16_t cmd, void *cmdbuf, unsigned i
 
 	do {
 		actual_len = fnusb_control(&dev->usb_cam, 0xc0, 0, 0, 0, ibuf, 0x200);
-	} while (actual_len == 0);
+		FN_FLOOD("actual_len: %d\n", actual_len);
+	} while ((actual_len == 0) || (actual_len == 0x200));
 	FN_SPEW("Control reply: %d\n", res);
 	if (actual_len < (int)sizeof(*rhdr)) {
 		FN_ERROR("send_cmd: Input control transfer failed (%d)\n", res);
@@ -903,9 +904,9 @@ static int freenect_fetch_zero_plane_info(freenect_device *dev)
 	uint16_t cmd[5] = {0}; // Offset is the only field in this command, and it's 0
 
 	int res;
-	res = send_cmd(dev, 0x04, cmd, 10, reply, 322); //OPCODE_GET_FIXED_PARAMS = 4,
-	if (res != 322) {
-		FN_ERROR("freenect_fetch_zero_plane_info: send_cmd read %d bytes (expected 322)\n", res);
+	res = send_cmd(dev, 0x04, cmd, 10, reply, ctx->zero_plane_res); //OPCODE_GET_FIXED_PARAMS = 4,
+	if (res != ctx->zero_plane_res) {
+		FN_ERROR("freenect_fetch_zero_plane_info: send_cmd read %d bytes (expected %d)\n", res,ctx->zero_plane_res);
 		return -1;
 	}
 
