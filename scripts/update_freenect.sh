@@ -21,7 +21,6 @@ rm libfreenect/src/libfreenect.pc.in
 rm libfreenect/include/libfreenect-audio.h
 rm libfreenect/src/audio.c
 rm libfreenect/src/loader.c
-rm libfreenect/src/loader.h
 
 # no python either
 rm libfreenect/src/fwfetcher.py

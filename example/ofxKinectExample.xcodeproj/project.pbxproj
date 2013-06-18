@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		27974FE1144D1A5A00BF8888 /* cameras.c in Sources */ = {isa = PBXBuildFile; fileRef = 27974FD5144D1A5A00BF8888 /* cameras.c */; };
-		27974FE2144D1A5A00BF8888 /* core.c in Sources */ = {isa = PBXBuildFile; fileRef = 27974FD7144D1A5A00BF8888 /* core.c */; };
-		27974FE3144D1A5A00BF8888 /* registration.c in Sources */ = {isa = PBXBuildFile; fileRef = 27974FDC144D1A5A00BF8888 /* registration.c */; };
-		27974FE4144D1A5A00BF8888 /* tilt.c in Sources */ = {isa = PBXBuildFile; fileRef = 27974FDE144D1A5A00BF8888 /* tilt.c */; };
-		27974FE5144D1A5A00BF8888 /* usb_libusb10.c in Sources */ = {isa = PBXBuildFile; fileRef = 27974FDF144D1A5A00BF8888 /* usb_libusb10.c */; };
+		3028FFF7176FED26001FCFBB /* cameras.c in Sources */ = {isa = PBXBuildFile; fileRef = 3028FFEC176FED26001FCFBB /* cameras.c */; };
+		3028FFF8176FED26001FCFBB /* core.c in Sources */ = {isa = PBXBuildFile; fileRef = 3028FFEE176FED26001FCFBB /* core.c */; };
+		3028FFFA176FED26001FCFBB /* registration.c in Sources */ = {isa = PBXBuildFile; fileRef = 3028FFF2176FED26001FCFBB /* registration.c */; };
+		3028FFFB176FED26001FCFBB /* tilt.c in Sources */ = {isa = PBXBuildFile; fileRef = 3028FFF4176FED26001FCFBB /* tilt.c */; };
+		3028FFFC176FED26001FCFBB /* usb_libusb10.c in Sources */ = {isa = PBXBuildFile; fileRef = 3028FFF5176FED26001FCFBB /* usb_libusb10.c */; };
 		30F2B69C1415565E00597A7B /* usb-1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30F2B5581415565D00597A7B /* usb-1.0.a */; };
 		30F2B69D1415565E00597A7B /* ofxKinect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30F2B58E1415565D00597A7B /* ofxKinect.cpp */; };
 		30F2B6DA1415565F00597A7B /* opencv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30F2B6301415565D00597A7B /* opencv.a */; };
@@ -72,18 +72,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		27974FD5144D1A5A00BF8888 /* cameras.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cameras.c; path = ../../../addons/ofxKinect/libs/libfreenect/cameras.c; sourceTree = SOURCE_ROOT; };
-		27974FD6144D1A5A00BF8888 /* cameras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cameras.h; path = ../../../addons/ofxKinect/libs/libfreenect/cameras.h; sourceTree = SOURCE_ROOT; };
-		27974FD7144D1A5A00BF8888 /* core.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = core.c; path = ../../../addons/ofxKinect/libs/libfreenect/core.c; sourceTree = SOURCE_ROOT; };
-		27974FD8144D1A5A00BF8888 /* freenect_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = freenect_internal.h; path = ../../../addons/ofxKinect/libs/libfreenect/freenect_internal.h; sourceTree = SOURCE_ROOT; };
-		27974FD9144D1A5A00BF8888 /* libfreenect-registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "libfreenect-registration.h"; path = "../../../addons/ofxKinect/libs/libfreenect/libfreenect-registration.h"; sourceTree = SOURCE_ROOT; };
-		27974FDA144D1A5A00BF8888 /* libfreenect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libfreenect.h; path = ../../../addons/ofxKinect/libs/libfreenect/libfreenect.h; sourceTree = SOURCE_ROOT; };
-		27974FDB144D1A5A00BF8888 /* libfreenect.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = libfreenect.pc.in; path = ../../../addons/ofxKinect/libs/libfreenect/libfreenect.pc.in; sourceTree = SOURCE_ROOT; };
-		27974FDC144D1A5A00BF8888 /* registration.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = registration.c; path = ../../../addons/ofxKinect/libs/libfreenect/registration.c; sourceTree = SOURCE_ROOT; };
-		27974FDE144D1A5A00BF8888 /* tilt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tilt.c; path = ../../../addons/ofxKinect/libs/libfreenect/tilt.c; sourceTree = SOURCE_ROOT; };
-		27974FDF144D1A5A00BF8888 /* usb_libusb10.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = usb_libusb10.c; path = ../../../addons/ofxKinect/libs/libfreenect/usb_libusb10.c; sourceTree = SOURCE_ROOT; };
-		27974FE0144D1A5A00BF8888 /* usb_libusb10.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_libusb10.h; path = ../../../addons/ofxKinect/libs/libfreenect/usb_libusb10.h; sourceTree = SOURCE_ROOT; };
-		27975048144D1F9600BF8888 /* registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = registration.h; path = ../../../addons/ofxKinect/libs/libfreenect/registration.h; sourceTree = SOURCE_ROOT; };
+		3028FFE9176FED26001FCFBB /* libfreenect-registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "libfreenect-registration.h"; sourceTree = "<group>"; };
+		3028FFEA176FED26001FCFBB /* libfreenect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libfreenect.h; sourceTree = "<group>"; };
+		3028FFEC176FED26001FCFBB /* cameras.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cameras.c; sourceTree = "<group>"; };
+		3028FFED176FED26001FCFBB /* cameras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cameras.h; sourceTree = "<group>"; };
+		3028FFEE176FED26001FCFBB /* core.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = core.c; sourceTree = "<group>"; };
+		3028FFEF176FED26001FCFBB /* freenect_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = freenect_internal.h; sourceTree = "<group>"; };
+		3028FFF1176FED26001FCFBB /* loader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
+		3028FFF2176FED26001FCFBB /* registration.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = registration.c; sourceTree = "<group>"; };
+		3028FFF3176FED26001FCFBB /* registration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = registration.h; sourceTree = "<group>"; };
+		3028FFF4176FED26001FCFBB /* tilt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tilt.c; sourceTree = "<group>"; };
+		3028FFF5176FED26001FCFBB /* usb_libusb10.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = usb_libusb10.c; sourceTree = "<group>"; };
+		3028FFF6176FED26001FCFBB /* usb_libusb10.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = usb_libusb10.h; sourceTree = "<group>"; };
 		30F2B5561415565D00597A7B /* libusb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libusb.h; sourceTree = "<group>"; };
 		30F2B5581415565D00597A7B /* usb-1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "usb-1.0.a"; sourceTree = "<group>"; };
 		30F2B58D1415565D00597A7B /* ofxBase3DVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxBase3DVideo.h; sourceTree = "<group>"; };
@@ -174,7 +174,6 @@
 		30F2B6731415565D00597A7B /* ofxCvShortImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxCvShortImage.cpp; sourceTree = "<group>"; };
 		30F2B6741415565D00597A7B /* ofxCvShortImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxCvShortImage.h; sourceTree = "<group>"; };
 		30F2B6751415565D00597A7B /* ofxOpenCv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOpenCv.h; sourceTree = "<group>"; };
-		9D03FCC9156DA82000292683 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -225,6 +224,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3028FFE8176FED26001FCFBB /* include */ = {
+			isa = PBXGroup;
+			children = (
+				3028FFE9176FED26001FCFBB /* libfreenect-registration.h */,
+				3028FFEA176FED26001FCFBB /* libfreenect.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		3028FFEB176FED26001FCFBB /* src */ = {
+			isa = PBXGroup;
+			children = (
+				3028FFEC176FED26001FCFBB /* cameras.c */,
+				3028FFED176FED26001FCFBB /* cameras.h */,
+				3028FFEE176FED26001FCFBB /* core.c */,
+				3028FFEF176FED26001FCFBB /* freenect_internal.h */,
+				3028FFF1176FED26001FCFBB /* loader.h */,
+				3028FFF2176FED26001FCFBB /* registration.c */,
+				3028FFF3176FED26001FCFBB /* registration.h */,
+				3028FFF4176FED26001FCFBB /* tilt.c */,
+				3028FFF5176FED26001FCFBB /* usb_libusb10.c */,
+				3028FFF6176FED26001FCFBB /* usb_libusb10.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		30F2B5011415565D00597A7B /* ofxKinect */ = {
 			isa = PBXGroup;
 			children = (
@@ -247,19 +272,8 @@
 		30F2B5441415565D00597A7B /* libfreenect */ = {
 			isa = PBXGroup;
 			children = (
-				27975048144D1F9600BF8888 /* registration.h */,
-				27974FD5144D1A5A00BF8888 /* cameras.c */,
-				9D03FCC9156DA82000292683 /* loader.h */,
-				27974FD6144D1A5A00BF8888 /* cameras.h */,
-				27974FD7144D1A5A00BF8888 /* core.c */,
-				27974FD8144D1A5A00BF8888 /* freenect_internal.h */,
-				27974FD9144D1A5A00BF8888 /* libfreenect-registration.h */,
-				27974FDA144D1A5A00BF8888 /* libfreenect.h */,
-				27974FDB144D1A5A00BF8888 /* libfreenect.pc.in */,
-				27974FDC144D1A5A00BF8888 /* registration.c */,
-				27974FDE144D1A5A00BF8888 /* tilt.c */,
-				27974FDF144D1A5A00BF8888 /* usb_libusb10.c */,
-				27974FE0144D1A5A00BF8888 /* usb_libusb10.h */,
+				3028FFE8176FED26001FCFBB /* include */,
+				3028FFEB176FED26001FCFBB /* src */,
 			);
 			path = libfreenect;
 			sourceTree = "<group>";
@@ -750,11 +764,11 @@
 				30F2B70E1415565F00597A7B /* ofxCvHaarFinder.cpp in Sources */,
 				30F2B70F1415565F00597A7B /* ofxCvImage.cpp in Sources */,
 				30F2B7101415565F00597A7B /* ofxCvShortImage.cpp in Sources */,
-				27974FE1144D1A5A00BF8888 /* cameras.c in Sources */,
-				27974FE2144D1A5A00BF8888 /* core.c in Sources */,
-				27974FE3144D1A5A00BF8888 /* registration.c in Sources */,
-				27974FE4144D1A5A00BF8888 /* tilt.c in Sources */,
-				27974FE5144D1A5A00BF8888 /* usb_libusb10.c in Sources */,
+				3028FFF7176FED26001FCFBB /* cameras.c in Sources */,
+				3028FFF8176FED26001FCFBB /* core.c in Sources */,
+				3028FFFA176FED26001FCFBB /* registration.c in Sources */,
+				3028FFFB176FED26001FCFBB /* tilt.c in Sources */,
+				3028FFFC176FED26001FCFBB /* usb_libusb10.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
