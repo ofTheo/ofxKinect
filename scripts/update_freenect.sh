@@ -7,7 +7,8 @@ WD=$(dirname $0)
 cd $WD
 
 # get latest source
-git clone git://github.com/OpenKinect/libfreenect.git
+#git clone git://github.com/OpenKinect/libfreenect.git
+git clone git://github.com/wizgrav/libfreenect.git
 
 # remove uneeded makefiles
 rm libfreenect/src/CMakeLists.txt

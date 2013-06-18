@@ -16,6 +16,12 @@ void testApp::setup() {
 	//kinect.open(1);	// open a kinect by id, starting with 0 (sorted by serial # lexicographically))
 	//kinect.open("A00362A08602047A");	// open a kinect using it's unique serial #
 	
+	// print the intrinsic IR sensor values
+	ofLogNotice() << "sensor-emitter dist: " << kinect.getSensorEmitterDistance() << "cm";
+	ofLogNotice() << "sensor-camera dist:  " << kinect.getSensorCameraDistance() << "cm";
+	ofLogNotice() << "zero plane pixel size: " << kinect.getZeroPlanePixelSize() << "mm";
+	ofLogNotice() << "zero plane dist: " << kinect.getZeroPlaneDistance() << "mm";
+	
 #ifdef USE_TWO_KINECTS
 	kinect2.init();
 	kinect2.open();

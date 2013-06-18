@@ -33,6 +33,7 @@
 #include "ofMain.h"
 
 #include "libfreenect-registration.h"
+#include "freenect_internal.h" // for access to freenect_device.registration.zero_plane_info
 
 #define OFX_KINECT_GRAVITY 9.80665
 
@@ -308,6 +309,26 @@ ofVec3f ofxKinect::getWorldCoordinateAt(float cx, float cy, float wz) {
 }
 
 //------------------------------------
+float ofxKinect::getSensorEmitterDistance() {
+	return kinectDevice->registration.zero_plane_info.dcmos_emitter_dist;
+}
+
+//------------------------------------
+float ofxKinect::getSensorCameraDistance() {
+	return kinectDevice->registration.zero_plane_info.dcmos_rcmos_dist;
+}
+
+//------------------------------------
+float ofxKinect::getZeroPlanePixelSize() {
+	return kinectDevice->registration.zero_plane_info.reference_pixel_size;
+}
+
+//------------------------------------
+float ofxKinect::getZeroPlaneDistance() {
+	return kinectDevice->registration.zero_plane_info.reference_distance;
+}
+
+//------------------------------------
 ofColor ofxKinect::getColorAt(int x, int y) {
 	int index = (y * width + x) * videoBytesPerPixel;
 	ofColor c;
@@ -572,7 +593,7 @@ string ofxKinect::nextAvailableSerial() {
 void ofxKinect::updateDepthLookupTable() {
 	unsigned char nearColor = bNearWhite ? 255 : 0;
 	unsigned char farColor = bNearWhite ? 0 : 255;
-	unsigned int maxDepthLevels = 10000;
+	unsigned int maxDepthLevels = 10001;
 	depthLookupTable.resize(maxDepthLevels);
 	depthLookupTable[0] = 0;
 	for(int i = 1; i < maxDepthLevels; i++) {
@@ -622,7 +643,7 @@ void ofxKinect::grabVideoFrame(freenect_device *dev, void *video, uint32_t times
 //---------------------------------------------------------------------------
 void ofxKinect::threadedFunction(){
 
-	if (currentLed < 0) { 
+	if(currentLed < 0) { 
         freenect_set_led(kinectDevice, (freenect_led_options)ofxKinect::LED_GREEN); 
     }
 	
@@ -683,7 +704,7 @@ void ofxKinect::threadedFunction(){
 
 	freenect_stop_depth(kinectDevice);
 	freenect_stop_video(kinectDevice);
-	if (currentLed < 0) { 
+	if(currentLed < 0) { 
         freenect_set_led(kinectDevice, (freenect_led_options)ofxKinect::LED_YELLOW); 
     }
 
