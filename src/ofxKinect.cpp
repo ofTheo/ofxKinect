@@ -33,7 +33,7 @@
 #include "ofMain.h"
 
 #include "libfreenect-registration.h"
-#include "freenect_internal.h" // for access to freenect_device.registration.zero_plane_info
+//#include "freenect_internal.h" // for access to freenect_device.registration.zero_plane_info
 
 #define OFX_KINECT_GRAVITY 9.80665
 
@@ -310,22 +310,22 @@ ofVec3f ofxKinect::getWorldCoordinateAt(float cx, float cy, float wz) {
 
 //------------------------------------
 float ofxKinect::getSensorEmitterDistance() {
-	return kinectDevice->registration.zero_plane_info.dcmos_emitter_dist;
+	return 0;//kinectDevice->registration.zero_plane_info.dcmos_emitter_dist;
 }
 
 //------------------------------------
 float ofxKinect::getSensorCameraDistance() {
-	return kinectDevice->registration.zero_plane_info.dcmos_rcmos_dist;
+	return 0;//kinectDevice->registration.zero_plane_info.dcmos_rcmos_dist;
 }
 
 //------------------------------------
 float ofxKinect::getZeroPlanePixelSize() {
-	return kinectDevice->registration.zero_plane_info.reference_pixel_size;
+	return 0;// kinectDevice->registration.zero_plane_info.reference_pixel_size;
 }
 
 //------------------------------------
 float ofxKinect::getZeroPlaneDistance() {
-	return kinectDevice->registration.zero_plane_info.reference_distance;
+	return 0;//kinectDevice->registration.zero_plane_info.reference_distance;
 }
 
 //------------------------------------

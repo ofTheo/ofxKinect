@@ -208,7 +208,7 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 					/* The good old kinect that tilts and tweets */
 					ctx->zero_plane_res = 322;
 				}
-
+				
 #ifndef _WIN32
 				// Detach an existing kernel driver for the device
 				res = libusb_kernel_driver_active(dev->usb_cam.dev, 0);
@@ -228,6 +228,16 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 					libusb_close(dev->usb_cam.dev);
 					dev->usb_cam.dev = NULL;
 					break;
+				}
+				if(desc.idProduct == PID_K4W_CAMERA){
+					res = libusb_set_interface_alt_setting(dev->usb_cam.dev, 0, 1);
+         				if (res != 0) {
+           					FN_ERROR("Failed to set alternate interface #1 for K4W: %d\n", res);
+           					libusb_close(dev->usb_cam.dev);
+          					dev->usb_cam.dev = NULL;
+           					break;
+          				}
+					
 				}
 			} else {
 				nr_cam++;
