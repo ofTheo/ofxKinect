@@ -50,9 +50,9 @@ int freenect_update_tilt_state(freenect_device *dev)
 
     uint8_t buf[10];
 	uint16_t ux, uy, uz;
-
+    
 	if(!(ctx->enabled_subdevices & FREENECT_DEVICE_MOTOR)){
-    	int ret = fnusb_control(&dev->usb_cam, 0xC0, 0x32, 0x0, 0x0, buf, 0);
+    	int ret = fnusb_control(&dev->usb_cam, 0xC0, 0x32, 0x0, 0x0, buf, 10);
 		return 0;
 	}
 
