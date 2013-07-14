@@ -201,11 +201,18 @@ For libusb & freenect, link to the precompiled freenect library in:
 	* under C/C++->General, add the following to the "Additional Include Directories":
 	<pre>
 	..\\..\\..\addons\ofxKinect\src
-	..\\..\\..\addons\ofxPd\libs\libsfreenect
+	..\\..\\..\addons\ofxKinect\libs\libfreenect\src
+	..\\..\\..\addons\ofxKinect\libs\libfreenect\include
+	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows
+	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0
 	</pre>
 	* under Linker->General, add the following to the "Additional Library Directories":
 	<pre>
-	..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs2010
+	..\..\..\addons\ofxKinect\libs\libusb-win32\lib\vs2010
+	</pre>
+	* under Linker->Input, add the following to the "Additional Dependencies":
+	<pre>
+	
 	</pre>
 	* repeat for the "Release" configuration
 	
@@ -222,7 +229,10 @@ For libusb & freenect, link to the precompiled freenect library in:
 	* select the "Search diectories" tab, click add the search paths:
 	<pre>
 	..\\..\\..\addons\ofxKinect\src
-	..\\..\\..\addons\ofxPd\libs\libsfreenect
+	..\\..\\..\addons\ofxKinect\libs\libfreenect\src
+	..\\..\\..\addons\ofxKinect\libs\libfreenect\include
+	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows
+	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0
 	</pre>
 	* select the "Linker settings" tab, add the following to Link libraries:
 	<pre>
@@ -231,7 +241,7 @@ For libusb & freenect, link to the precompiled freenect library in:
 	</pre>
 	* select the "Linker settings" tab, add the following to Other liker options:
 	<pre>
-	../../../addons/ofxKinect/libs/libfreenect/lib/vs2010/freenect.lib
+	..\..\..\addons\ofxKinect\libs\libusb-win32\lib\win_cb\libusb.lib
 	</pre>
 
 Notes

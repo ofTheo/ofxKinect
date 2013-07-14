@@ -47,15 +47,10 @@ freenect_raw_tilt_state* freenect_get_tilt_state(freenect_device *dev)
 int freenect_update_tilt_state(freenect_device *dev)
 {
 	freenect_context *ctx = dev->parent;
-
-    uint8_t buf[10];
-	uint16_t ux, uy, uz;
-    
-	if(!(ctx->enabled_subdevices & FREENECT_DEVICE_MOTOR)){
-    	int ret = fnusb_control(&dev->usb_cam, 0xC0, 0x32, 0x0, 0x0, buf, 10);
+	if(!(ctx->enabled_subdevices & FREENECT_DEVICE_MOTOR))
 		return 0;
-	}
-
+	uint8_t buf[10];
+	uint16_t ux, uy, uz;
 	int ret = fnusb_control(&dev->usb_motor, 0xC0, 0x32, 0x0, 0x0, buf, 10);
 	if (ret != 10) {
 		FN_ERROR("Error in accelerometer reading, libusb_control_transfer returned %d\n", ret);
