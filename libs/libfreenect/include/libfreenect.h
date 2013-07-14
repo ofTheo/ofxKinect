@@ -29,6 +29,13 @@
 
 #include <stdint.h>
 
+/* We need struct timeval */
+#ifdef _WIN32
+#include <winsock.h>
+#else
+#include <sys/time.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -156,13 +163,7 @@ struct _freenect_device;
 typedef struct _freenect_device freenect_device; /**< Holds device information. */
 
 // usb backend specific section
-#ifdef _WIN32
-  /* frees Windows users of the burden of specifying the path to <libusb-1.0/libusb.h> */
-  typedef void freenect_usb_context;
-#else
-  #include <libusb-1.0/libusb.h>
-  typedef libusb_context freenect_usb_context; /**< Holds libusb-1.0 specific information */
-#endif
+typedef void freenect_usb_context; /**< Holds libusb-1.0 context */
 //
 
 /// If Win32, export all functions for DLL usage
