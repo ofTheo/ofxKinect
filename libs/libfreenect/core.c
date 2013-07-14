@@ -87,22 +87,22 @@ FREENECTAPI int freenect_process_events_timeout(freenect_context *ctx, struct ti
 	int res = fnusb_process_events_timeout(&ctx->usb, timeout);
 	// Iterate over the devices in ctx.  If any of them are flagged as
 	freenect_device* dev = ctx->first;
-//	while(dev) {
-//		if (dev->usb_cam.device_dead) {
-//			FN_ERROR("USB camera marked dead, stopping streams\n");
-//			res = -1;
-//			freenect_stop_video(dev);
-//			freenect_stop_depth(dev);
-//		}
-//#ifdef BUILD_AUDIO
-//		if (dev->usb_audio.device_dead) {
-//			FN_ERROR("USB audio marked dead, stopping streams\n");
-//			res = -1; // Or something else to tell the user that the device just vanished.
-//			freenect_stop_audio(dev);
-//		}
-//#endif
-//		dev = dev->next;
-//	}
+	while(dev) {
+		if (dev->usb_cam.device_dead) {
+			FN_ERROR("USB camera marked dead, stopping streams\n");
+			res = -1;
+			freenect_stop_video(dev);
+			freenect_stop_depth(dev);
+		}
+#ifdef BUILD_AUDIO
+		if (dev->usb_audio.device_dead) {
+			FN_ERROR("USB audio marked dead, stopping streams\n");
+			res = -1; // Or something else to tell the user that the device just vanished.
+			freenect_stop_audio(dev);
+		}
+#endif
+		dev = dev->next;
+	}
 	return res;
 }
 
