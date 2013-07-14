@@ -120,18 +120,29 @@ void testApp::draw() {
 	// draw instructions
 	ofSetColor(255, 255, 255);
 	stringstream reportStream;
-	reportStream << "accel is: " << ofToString(kinect.getMksAccel().x, 2) << " / "
-	<< ofToString(kinect.getMksAccel().y, 2) << " / "
-	<< ofToString(kinect.getMksAccel().z, 2) << endl
-	<< "press p to switch between images and point cloud, rotate the point cloud with the mouse" << endl
+        
+    if( kinect.deviceHasMotorControl() ){
+        reportStream << "accel is: " << ofToString(kinect.getMksAccel().x, 2) << " / "
+        << ofToString(kinect.getMksAccel().y, 2) << " / "
+        << ofToString(kinect.getMksAccel().z, 2) << endl;
+    }else{
+        reportStream << "Note: this is a newer Xbox Kinect or Kinect For Windows device.\n      motor / led / accel controls are not currently supported " << endl << endl; 
+    }
+    
+	reportStream << "press p to switch between images and point cloud, rotate the point cloud with the mouse" << endl
 	<< "using opencv threshold = " << bThreshWithOpenCV <<" (press spacebar)" << endl
 	<< "set near threshold " << nearThreshold << " (press: + -)" << endl
 	<< "set far threshold " << farThreshold << " (press: < >) num blobs found " << contourFinder.nBlobs
 	<< ", fps: " << ofGetFrameRate() << endl
-	<< "press c to close the connection and o to open it again, connection is: " << kinect.isConnected() << endl
-	<< "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
-	<< "press 1-5 & 0 to change the led mode (mac/linux only)" << endl;
+	<< "press c to close the connection and o to open it again, connection is: " << kinect.isConnected() << endl;
+
+    if( kinect.deviceHasMotorControl() ){
+    	reportStream << "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
+        << "press 1-5 & 0 to change the led mode (mac/linux only)" << endl;
+    }
+    
 	ofDrawBitmapString(reportStream.str(),20,652);
+    
 }
 
 void testApp::drawPointCloud() {

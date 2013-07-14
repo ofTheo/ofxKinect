@@ -232,7 +232,10 @@ public:
 
 	/// get the target angle (if the camera is currently moving)
 	float getTargetCameraTiltAngle();
-    
+
+	/// newer Kinects don't currently allow motor, led, or accelerometer control, this allows you to query if they do.  
+	bool deviceHasMotorControl();
+        
 /// \section LED
     
 	enum LedMode {
@@ -334,6 +337,7 @@ protected:
     
     int currentLed;
     bool bLedNeedsApplying;
+    bool bHasMotorControl;
 	
 	// for auto connect tries
 	float timeSinceOpen;

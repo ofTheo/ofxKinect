@@ -61,6 +61,7 @@ ofxKinect::ofxKinect() {
 	videoBytesPerPixel = 3;
 
 	kinectDevice = NULL;
+    bHasMotorControl = false;
 
 	targetTiltAngleDeg = 0;
 	currentTiltAngleDeg = 0;
@@ -469,7 +470,14 @@ float ofxKinect::getCurrentCameraTiltAngle() {
 }
 
 //--------------------------------------------------------------------
+bool ofxKinect::deviceHasMotorControl(){
+    if( !bGrabberInited ){
+		ofLog(OF_LOG_WARNING, "ofxKinect::deviceHasMotorControl() requires the device to be opened first");
+    }
+    return bHasMotorControl; 
+}
 
+//--------------------------------------------------------------------
 void ofxKinect::setLed(ofxKinect::LedMode mode) {
 	if(mode == currentLed) {
 		return;
@@ -645,6 +653,15 @@ void ofxKinect::threadedFunction(){
 
 	if(currentLed < 0) { 
         freenect_set_led(kinectDevice, (freenect_led_options)ofxKinect::LED_GREEN); 
+    }
+        
+    //for now this is how we tell if the device has motor control. 
+    //if we want to do it the same way as tilt.c we would need to access the freenect_context struct
+    //this is how we would do it though: if( (ctx->enabled_subdevices & FREENECT_DEVICE_MOTOR) == false ) // no motor access 
+    if( getSerial() != "0000000000000000" ){
+        bHasMotorControl = true;
+    }else{
+        bHasMotorControl = false; 
     }
 	
 	freenect_frame_mode videoMode = freenect_find_video_mode(FREENECT_RESOLUTION_MEDIUM, bIsVideoInfrared?FREENECT_VIDEO_IR_8BIT:FREENECT_VIDEO_RGB);
