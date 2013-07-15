@@ -112,6 +112,10 @@ win_cb:
 	# but if the addon or addon libraries need special search paths they can be
 	# specified here separated by spaces or one per line using +=
 	ADDON_INCLUDES += libs/libfreenect/platform
+
+	# when parsing the file system looking for include paths exclude this for all or
+	# a specific platform
+	ADDON_INCLUDES_EXCLUDE += libs/libusb-1.0/%
 	
 vs:
 	# source files, these will be usually parsed from the file system looking
@@ -125,6 +129,10 @@ vs:
 	# but if the addon or addon libraries need special search paths they can be
 	# specified here separated by spaces or one per line using +=
 	ADDON_INCLUDES += libs/libfreenect/platform
+	
+	# when parsing the file system looking for include paths exclude this for all or
+	# a specific platform
+	ADDON_INCLUDES_EXCLUDE += libs/libusb-1.0/%
 	
 linuxarmv6l:
 	# linux only, any library that should be included in the project using
