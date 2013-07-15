@@ -40,7 +40,7 @@
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">bin\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">obj\$(Configuration)\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">bin\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">obj\$(Configuration)\</IntDir>
@@ -51,7 +51,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\libs\cairo\include\cairo;..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\math;..\..\..\libs\openFrameworks\gl;..\..\..\libs\openFrameworks\3d;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\openframeworks\types;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\tess2\include;..\..\..\libs\videoInput\include;..\..\..\libs\glew\include;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxKinect\src;..\..\..\addons\ofxKinect\libs\pthreads-w32\include;..\..\..\addons\ofxKinect\libs\libusb-win32\include;..\..\..\addons\ofxKinect\libs\libfreenect\src;..\..\..\addons\ofxKinect\libs\libfreenect\include;..\..\..\addons\ofxKinect\libs\libfreenect\platform\windows;..\..\..\addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\libs\cairo\include\cairo;..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\math;..\..\..\libs\openFrameworks\gl;..\..\..\libs\openFrameworks\3d;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\openframeworks\types;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\tess2\include;..\..\..\libs\videoInput\include;..\..\..\libs\glew\include;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxKinect\src;..\..\..\addons\ofxKinect\libs\libfreenect\src;..\..\..\addons\ofxKinect\libs\libfreenect\include;..\..\..\addons\ofxKinect\libs\libfreenect\platform\windows;..\..\..\addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0;..\..\..\addons\ofxKinect\libs\libusb-win32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -85,7 +85,7 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs20
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\math;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\openFrameworks\3d;..\..\..\libs\openFrameworks\gl;..\..\..\libs\openFrameworks\types;..\..\..\libs\cairo\include\cairo;..\..\..\libs\tess2\include;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\videoInput\include;..\..\..\libs\glew\include;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxKinect\src;..\..\..\addons\ofxKinect\libs\libfreenect\include;..\..\..\addons\ofxKinect\libs\libfreenect\src;..\..\..\addons\ofxKinect\libs\libfreenect\platform\windows;..\..\..\addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\math;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\events;..\..\..\libs\openFrameworks\3d;..\..\..\libs\openFrameworks\gl;..\..\..\libs\openFrameworks\types;..\..\..\libs\cairo\include\cairo;..\..\..\libs\tess2\include;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\videoInput\include;..\..\..\libs\glew\include;..\..\..\libs\glu\include;..\..\..\libs\poco\include;..\..\..\addons;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxKinect\src;..\..\..\addons\ofxKinect\libs\libfreenect\include;..\..\..\addons\ofxKinect\libs\libfreenect\src;..\..\..\addons\ofxKinect\libs\libfreenect\platform\windows;..\..\..\addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0;..\..\..\addons\ofxKinect\libs\libusb-win32\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;POCO_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -127,11 +127,21 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxKinect\libs\libfreenect\lib\vs20
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.cpp" />
     <ClCompile Include="..\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0\failguard.cpp" />
     <ClCompile Include="..\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0\libusbemu.cpp" />
-    <ClCompile Include="..\libs\libfreenect\src\cameras.cpp" />
-    <ClCompile Include="..\libs\libfreenect\src\core.cpp" />
-    <ClCompile Include="..\libs\libfreenect\src\registration.cpp" />
-    <ClCompile Include="..\libs\libfreenect\src\tilt.cpp" />
-    <ClCompile Include="..\libs\libfreenect\src\usb_libusb10.cpp" />
+    <ClCompile Include="..\libs\libfreenect\src\cameras.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\libs\libfreenect\src\core.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\libs\libfreenect\src\registration.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\libs\libfreenect\src\tilt.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\libs\libfreenect\src\usb_libusb10.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\testApp.cpp" />
   </ItemGroup>

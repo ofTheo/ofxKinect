@@ -90,6 +90,9 @@ public:
 	bool open(int id=-1);
 	
 	/// open using a kinect unique serial number
+	///
+	/// NOTE: currently, libfreenect returns a serial number with all 0s for
+	/// kinect models > 1414, so this will only work with the original xbox kinect
 	bool open(string serial);
 
 	/// close the connection and stop grabbing images
@@ -145,32 +148,6 @@ public:
 	ofColor getColorAt(int x, int y);
 	ofColor getColorAt(const ofPoint & p);
 
-/// \section Accelerometer Data
-
-	/// get the XYZ accelerometer values
-	///
-	/// ... yes, the kinect has an accelerometer
-	
-	/// raw axis values
-	ofPoint getRawAccel();
-	
-	/// axis-based gravity adjusted accelerometer values
-	///
-	/// from libfreeenect:
-	///
-	/// as laid out via the accelerometer data sheet, which is available at
-	///
-	/// http://www.kionix.com/Product%20Sheets/KXSD9%20Product%20Brief.pdf
-	///
-	ofPoint getMksAccel();
-
-    /// get the current pitch (x axis) & roll (z axis) of the kinect in degrees
-    ///
-    /// useful to correct the 3d scene based on the camera inclination
-    ///
-	float getAccelPitch();
-	float getAccelRoll();
-
 /// \section Pixel Data
 
 	/// get the pixels of the most recent rgb frame
@@ -221,7 +198,42 @@ public:
 	float getNearClipping();
 	float getFarClipping();
 
-/// \section Camera Tilt
+/// \section Query Capabilities
+
+	/// check for device capabilites ...
+	/// motor, led, or accelerometer control isn't currently supported 
+	/// by libfreenect with newer Kinect models (> 1414)
+	bool hasAccelControl();
+	bool hasCamTiltControl();
+	bool hasLedControl();
+
+/// \section Accelerometer Data
+
+	/// get the XYZ accelerometer values
+	///
+	/// ... yes, the kinect has an accelerometer
+	
+	/// raw axis values
+	ofPoint getRawAccel();
+	
+	/// axis-based gravity adjusted accelerometer values
+	///
+	/// from libfreeenect:
+	///
+	/// as laid out via the accelerometer data sheet, which is available at
+	///
+	/// http://www.kionix.com/Product%20Sheets/KXSD9%20Product%20Brief.pdf
+	///
+	ofPoint getMksAccel();
+
+    /// get the current pitch (x axis) & roll (z axis) of the kinect in degrees
+    ///
+    /// useful to correct the 3d scene based on the camera inclination
+    ///
+	float getAccelPitch();
+	float getAccelRoll();
+
+/// \section Camera Tilt Motor
 
 	/// set tilt angle of the camera in degrees
 	/// 0 is flat, the range is -30 to 30
@@ -232,9 +244,6 @@ public:
 
 	/// get the target angle (if the camera is currently moving)
 	float getTargetCameraTiltAngle();
-
-	/// newer Kinects don't currently allow motor, led, or accelerometer control, this allows you to query if they do.  
-	bool deviceHasMotorControl();
         
 /// \section LED
     
@@ -279,6 +288,9 @@ public:
 	
 	/// get the unique serial number
 	/// returns an empty string "" if not connected
+	///
+	/// NOTE: currently, libfreenect returns a serial number with all 0s for
+	/// kinect models > 1414, so this will only work with the original xbox kinect
 	string getSerial();
 
 	/// static kinect image size
@@ -337,7 +349,9 @@ protected:
     
     int currentLed;
     bool bLedNeedsApplying;
-    bool bHasMotorControl;
+    bool bHasMotorControl; // cam tilt motor
+	//bool bHasAccelContol; // for future use
+	//bool bHasLedControl; // for future use
 	
 	// for auto connect tries
 	float timeSinceOpen;

@@ -24,26 +24,26 @@
     <ClCompile Include="..\..\..\addons\ofxKinect\src\ofxKinect.cpp">
       <Filter>addons\ofxKinect\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\libfreenect\src\tilt.cpp">
-      <Filter>addons\ofxKinect\libs\libfreenect\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\libfreenect\src\registration.cpp">
-      <Filter>addons\ofxKinect\libs\libfreenect\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\libfreenect\src\cameras.cpp">
-      <Filter>addons\ofxKinect\libs\libfreenect\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\libfreenect\src\core.cpp">
-      <Filter>addons\ofxKinect\libs\libfreenect\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\libfreenect\src\usb_libusb10.cpp">
-      <Filter>addons\ofxKinect\libs\libfreenect\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0\failguard.cpp">
       <Filter>addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0</Filter>
     </ClCompile>
     <ClCompile Include="..\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0\libusbemu.cpp">
       <Filter>addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\libfreenect\src\cameras.c">
+      <Filter>addons\ofxKinect\libs\libfreenect\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\libfreenect\src\core.c">
+      <Filter>addons\ofxKinect\libs\libfreenect\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\libfreenect\src\registration.c">
+      <Filter>addons\ofxKinect\libs\libfreenect\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\libfreenect\src\tilt.c">
+      <Filter>addons\ofxKinect\libs\libfreenect\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\libfreenect\src\usb_libusb10.c">
+      <Filter>addons\ofxKinect\libs\libfreenect\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

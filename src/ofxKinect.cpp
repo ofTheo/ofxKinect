@@ -61,7 +61,6 @@ ofxKinect::ofxKinect() {
 	videoBytesPerPixel = 3;
 
 	kinectDevice = NULL;
-    bHasMotorControl = false;
 
 	targetTiltAngleDeg = 0;
 	currentTiltAngleDeg = 0;
@@ -347,26 +346,6 @@ ofColor ofxKinect::getColorAt(const ofPoint & p) {
 }
 
 //---------------------------------------------------------------------------
-ofPoint ofxKinect::getRawAccel() {
-	return rawAccel;
-}
-
-//---------------------------------------------------------------------------
-ofPoint ofxKinect::getMksAccel() {
-	return mksAccel;
-}
-
-//---------------------------------------------------------------------------
-float ofxKinect::getAccelPitch(){
-	return ofRadToDeg(asin(getMksAccel().z/OFX_KINECT_GRAVITY));
-}
-
-//---------------------------------------------------------------------------
-float ofxKinect::getAccelRoll(){
-	return ofRadToDeg(asin(getMksAccel().x/OFX_KINECT_GRAVITY));
-}
-
-//---------------------------------------------------------------------------
 unsigned char * ofxKinect::getPixels() {
 	return videoPixels.getPixels();
 }
@@ -446,11 +425,44 @@ float ofxKinect::getFarClipping() {
     return farClipping;
 }
 
+//--------------------------------------------------------------------
+bool ofxKinect::hasAccelControl() {
+	return bHasMotorControl; // depends on motor for now
+}
+
+bool ofxKinect::hasCamTiltControl() {
+	return bHasMotorControl; // depends on motor for now
+}
+
+bool ofxKinect::hasLedControl() {
+	return bHasMotorControl; // depends on motor for now
+}
+
+//---------------------------------------------------------------------------
+ofPoint ofxKinect::getRawAccel() {
+	return rawAccel;
+}
+
+//---------------------------------------------------------------------------
+ofPoint ofxKinect::getMksAccel() {
+	return mksAccel;
+}
+
+//---------------------------------------------------------------------------
+float ofxKinect::getAccelPitch(){
+	return ofRadToDeg(asin(getMksAccel().z/OFX_KINECT_GRAVITY));
+}
+
+//---------------------------------------------------------------------------
+float ofxKinect::getAccelRoll(){
+	return ofRadToDeg(asin(getMksAccel().x/OFX_KINECT_GRAVITY));
+}
+
 // we update the value here, but apply it in kinect thread
 //--------------------------------------------------------------------
 bool ofxKinect::setCameraTiltAngle(float angleInDegrees) {
 
-	if(!bGrabberInited) {
+	if(!hasCamTiltControl() || !bGrabberInited) {
 		return false;
 	}
 
@@ -470,16 +482,9 @@ float ofxKinect::getCurrentCameraTiltAngle() {
 }
 
 //--------------------------------------------------------------------
-bool ofxKinect::deviceHasMotorControl(){
-    if( !bGrabberInited ){
-		ofLog(OF_LOG_WARNING, "ofxKinect::deviceHasMotorControl() requires the device to be opened first");
-    }
-    return bHasMotorControl; 
-}
 
-//--------------------------------------------------------------------
 void ofxKinect::setLed(ofxKinect::LedMode mode) {
-	if(mode == currentLed) {
+	if(!hasLedControl() || mode == currentLed) {
 		return;
 	}
     bLedNeedsApplying = true;
@@ -653,15 +658,6 @@ void ofxKinect::threadedFunction(){
 
 	if(currentLed < 0) { 
         freenect_set_led(kinectDevice, (freenect_led_options)ofxKinect::LED_GREEN); 
-    }
-        
-    //for now this is how we tell if the device has motor control. 
-    //if we want to do it the same way as tilt.c we would need to access the freenect_context struct
-    //this is how we would do it though: if( (ctx->enabled_subdevices & FREENECT_DEVICE_MOTOR) == false ) // no motor access 
-    if( getSerial() != "0000000000000000" ){
-        bHasMotorControl = true;
-    }else{
-        bHasMotorControl = false; 
     }
 	
 	freenect_frame_mode videoMode = freenect_find_video_mode(FREENECT_RESOLUTION_MEDIUM, bIsVideoInfrared?FREENECT_VIDEO_IR_8BIT:FREENECT_VIDEO_RGB);

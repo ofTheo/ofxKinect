@@ -121,7 +121,7 @@ void testApp::draw() {
 	ofSetColor(255, 255, 255);
 	stringstream reportStream;
         
-    if( kinect.deviceHasMotorControl() ){
+    if(kinect.hasAccelControl()) {
         reportStream << "accel is: " << ofToString(kinect.getMksAccel().x, 2) << " / "
         << ofToString(kinect.getMksAccel().y, 2) << " / "
         << ofToString(kinect.getMksAccel().z, 2) << endl;
@@ -136,12 +136,12 @@ void testApp::draw() {
 	<< ", fps: " << ofGetFrameRate() << endl
 	<< "press c to close the connection and o to open it again, connection is: " << kinect.isConnected() << endl;
 
-    if( kinect.deviceHasMotorControl() ){
+    if(kinect.hasCamTiltControl()) {
     	reportStream << "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
         << "press 1-5 & 0 to change the led mode (mac/linux only)" << endl;
     }
     
-	ofDrawBitmapString(reportStream.str(),20,652);
+	ofDrawBitmapString(reportStream.str(), 20, 652);
     
 }
 

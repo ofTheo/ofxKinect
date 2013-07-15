@@ -111,7 +111,7 @@ win_cb:
 	# include search paths, this will be usually parsed from the file system
 	# but if the addon or addon libraries need special search paths they can be
 	# specified here separated by spaces or one per line using +=
-	ADDON_INCLUDES += libs/libfreenect/platform
+	ADDON_INCLUDES += libs/libfreenect/platform/windows
 
 	# when parsing the file system looking for include paths exclude this for all or
 	# a specific platform
@@ -128,7 +128,7 @@ vs:
 	# include search paths, this will be usually parsed from the file system
 	# but if the addon or addon libraries need special search paths they can be
 	# specified here separated by spaces or one per line using +=
-	ADDON_INCLUDES += libs/libfreenect/platform
+	ADDON_INCLUDES += libs/libfreenect/platform/windows
 	
 	# when parsing the file system looking for include paths exclude this for all or
 	# a specific platform
