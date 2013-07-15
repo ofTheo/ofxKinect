@@ -1,7 +1,7 @@
 ofxKinect
 =========
 
-Copyright (c) 2010, 2011 ofxKinect Team
+Copyright (c) 2010-2013 ofxKinect Team
 
 MIT License.
 
@@ -20,11 +20,11 @@ OpenFrameworks is a cross platform open source toolkit for creative coding in C+
 
 [http://www.openframeworks.cc/](http://www.openframeworks.cc/)
 
-###NOTE: Does not currently support Kinect4Windows Hardware!
+### NOTE: Does not currently support newer Xbox Kinect models > 1414 (1473, etc) or Kinect4Windows devices on Mac OSX
 
-If you have a Kinect4Windows device, it will not currently work in ofxKinect as libfreenect does not support them yet. The [fix is in the works](https://github.com/OpenKinect/libfreenect/issues/298).
+If you have an Xbox Kinect model 1473 or Kinect4Windows device, it will not currently work in ofxKinect on OSX. The [fix is in the works](https://github.com/OpenKinect/libfreenect/pull/325).
 
-In the meantime, we suggest you use ofxOpenNI or get an Xbox Kinect instead ...
+In the meantime, we suggest you get the *original* Xbox Kinect model 1414 instead ...
 
 Installation
 ------------
@@ -87,20 +87,9 @@ cd bin
 ./example_debug
 </pre>
 
-Also, you should create some udev rules in order to run the app without root privileges. As the root user, write this to `/etc/udev/rules.d/51-kinect.rules` (this works on Ubuntu 10.10):
-<pre>
-SUBSYSTEM=="usb", SYSFS{idVendor}=="045e", SYSFS{idProduct}=="02ae", MODE="0660", GROUP="plugdev"
-SUBSYSTEM=="usb", SYSFS{idVendor}=="045e", SYSFS{idProduct}=="02ad", MODE="0660", GROUP="plugdev"
-SUBSYSTEM=="usb", SYSFS{idVendor}=="045e", SYSFS{idProduct}=="02b0", MODE="0660", GROUP="plugdev"
-</pre>
+Also, you can add a set of udev rules which allow you to run a kinect app without root privileges:
 
-From Ubuntu 12.10 the correct settings for udev rules are:
-<pre>
-SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02ae", MODE="0660", GROUP="plugdev"
-SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02ad", MODE="0660", GROUP="plugdev"
-SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02b0", MODE="0660", GROUP="plugdev"
-</pre>
-
+   sudo libs\libfreenect\platform\linux\udev\51-kinect.rules /etc/udev/rules.d
 
 ### Windows
 
@@ -138,13 +127,6 @@ Close Codeblocks and rename the *.cbp and *.workspace files to the same name as 
 
 Close Visual Studio and rename the *.sln file. Open the solution, right click on the project in the project broswer and select "Rename ...".
 
-###NOTE: Does not currently support the OF Project Generator on Windows
-
-On Windows, libfreenect is provided in a precompiled static library with a few header files and does *not* use the freenect source files. The current OF Project Generator does not handle this situation correctly and adds the source files, resulting in projects which will not build. It's recommended to either copy the example project or generate a new project without ofxKinect, then follow instructions in the next section to add ofxKinect to your project.
-
-The **best option** would be for someone to help us by updating ofxKinect to build freenect on Windows. This most probably involves pthread32 and other libraries …
-
-
 Adding ofxKinect to an Existing Project
 ---------------------------------------
 
@@ -166,7 +148,7 @@ In the Xcode project browser:
 * add a search path to the libusb headers: `../../../addons/ofxKinect/libs/libusb/include/libusb-1.0` to your project Target build settings
   * Xcode3: under Targets->YourApp->Build->Header Search Paths (make sure All Configurations and All Settings are selected) and add the path
   * Xcode4: add the lib path to your Project.xconfig, see the example
-* add the path to the libusb precompiled library: `../../../addons/ofxKinect/libs/libusb/osx/libs/usb-1.0.a`
+* add the path to the libusb precompiled library: `../../../addons/ofxKinect/libs/libusb-1.0/lib/osx/usb-1.0.a`
   * Xcode3: under Targets->YourApp->Build->Library Search Paths (make sure All Configurations and All Settings are selected) and add the path
   * Xcode4: add the lib path to your Project.xconfig, see the example
   
@@ -205,14 +187,11 @@ For libusb & freenect, link to the precompiled freenect library in:
 	..\\..\\..\addons\ofxKinect\libs\libfreenect\include
 	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows
 	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0
+	..\\..\\..\addons\ofxKinect\libs\libusb-win32\include
 	</pre>
 	* under Linker->General, add the following to the "Additional Library Directories":
 	<pre>
-	..\..\..\addons\ofxKinect\libs\libusb-win32\lib\vs2010
-	</pre>
-	* under Linker->Input, add the following to the "Additional Dependencies":
-	<pre>
-	
+	..\..\..\addons\ofxKinect\libs\libusb-win32\lib\vs
 	</pre>
 	* repeat for the "Release" configuration
 	
@@ -233,6 +212,7 @@ For libusb & freenect, link to the precompiled freenect library in:
 	..\\..\\..\addons\ofxKinect\libs\libfreenect\include
 	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows
 	..\\..\\..\addons\ofxKinect\libs\libfreenect\platform\windows\libusb10emu\libusb-1.0
+	..\\..\\..\addons\ofxKinect\libs\libusb-win32\include
 	</pre>
 	* select the "Linker settings" tab, add the following to Link libraries:
 	<pre>
