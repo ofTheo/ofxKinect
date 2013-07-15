@@ -62,11 +62,11 @@ common:
 	
 	# when parsing the file system looking for sources exclude this for all or
 	# a specific platform
-	ADDONS_SOURCES_EXCLUDE = 
+	ADDON_SOURCES_EXCLUDE = 
 	
 	# when parsing the file system looking for include paths exclude this for all or
 	# a specific platform
-    ADDONS_INCLUDES_EXCLUDE =
+    ADDON_INCLUDES_EXCLUDE =
 	
 linux64:
 	# linux only, any library that should be included in the project using
@@ -75,14 +75,14 @@ linux64:
 	
 	# when parsing the file system looking for sources exclude this for all or
 	# a specific platform
-	ADDONS_SOURCES_EXCLUDE = libs/libfreenect/platform/%
-	ADDONS_SOURCES_EXCLUDE += libs/libusb-win32/%
+	ADDON_SOURCES_EXCLUDE = libs/libfreenect/platform/%
+	ADDON_SOURCES_EXCLUDE += libs/libusb-win32/%
 	
 	# when parsing the file system looking for include paths exclude this for all or
 	# a specific platform
-    ADDONS_INCLUDES_EXCLUDE = libs/libfreenect/platform/%
-    ADDONS_INCLUDES_EXCLUDE += libs/libusb-win32/%
-	ADDONS_INCLUDES_EXCLUDE += libs/libusb-1.0/%
+    ADDON_INCLUDES_EXCLUDE = libs/libfreenect/platform/%
+    ADDON_INCLUDES_EXCLUDE += libs/libusb-win32/%
+	ADDON_INCLUDES_EXCLUDE += libs/libusb-1.0/%
 	
 linux:
 	# linux only, any library that should be included in the project using
@@ -91,14 +91,14 @@ linux:
 	
 	# when parsing the file system looking for sources exclude this for all or
 	# a specific platform
-	ADDONS_SOURCES_EXCLUDE = libs/libfreenect/platform/%
-	ADDONS_SOURCES_EXCLUDE += libs/libusb-win32/%
+	ADDON_SOURCES_EXCLUDE = libs/libfreenect/platform/%
+	ADDON_SOURCES_EXCLUDE += libs/libusb-win32/%
 	
 	# when parsing the file system looking for include paths exclude this for all or
 	# a specific platform
-    ADDONS_INCLUDES_EXCLUDE = libs/libfreenect/platform/%
-    ADDONS_INCLUDES_EXCLUDE += libs/libusb-win32/%
-	ADDONS_INCLUDES_EXCLUDE += libs/libusb-1.0/%
+    ADDON_INCLUDES_EXCLUDE = libs/libfreenect/platform/%
+    ADDON_INCLUDES_EXCLUDE += libs/libusb-win32/%
+	ADDON_INCLUDES_EXCLUDE += libs/libusb-1.0/%
 	
 win_cb:
 	# source files, these will be usually parsed from the file system looking
@@ -133,14 +133,14 @@ linuxarmv6l:
 	
 	# when parsing the file system looking for sources exclude this for all or
 	# a specific platform
-	ADDONS_SOURCES_EXCLUDE = libs/libfreenect/platform/%
-	ADDONS_SOURCES_EXCLUDE += libs/libusb-win32/%
+	ADDON_SOURCES_EXCLUDE = libs/libfreenect/platform/%
+	ADDON_SOURCES_EXCLUDE += libs/libusb-win32/%
 	
 	# when parsing the file system looking for include paths exclude this for all or
 	# a specific platform
-    ADDONS_INCLUDES_EXCLUDE = libs/libfreenect/platform/%
-    ADDONS_INCLUDES_EXCLUDE += libs/libusb-win32/%
-	ADDONS_INCLUDES_EXCLUDE += libs/libusb-1.0/%
+    ADDON_INCLUDES_EXCLUDE = libs/libfreenect/platform/%
+    ADDON_INCLUDES_EXCLUDE += libs/libusb-win32/%
+	ADDON_INCLUDES_EXCLUDE += libs/libusb-1.0/%
 	
 	
 linuxarmv7l:
@@ -150,14 +150,14 @@ linuxarmv7l:
 	
 	# when parsing the file system looking for sources exclude this for all or
 	# a specific platform
-	ADDONS_SOURCES_EXCLUDE = libs/libfreenect/platform/%
-	ADDONS_SOURCES_EXCLUDE += libs/libusb-win32/%
+	ADDON_SOURCES_EXCLUDE = libs/libfreenect/platform/%
+	ADDON_SOURCES_EXCLUDE += libs/libusb-win32/%
 	
 	# when parsing the file system looking for include paths exclude this for all or
 	# a specific platform
-    ADDONS_INCLUDES_EXCLUDE = libs/libfreenect/platform/%
-    ADDONS_INCLUDES_EXCLUDE += libs/libusb-win32/%
-	ADDONS_INCLUDES_EXCLUDE += libs/libusb-1.0/%
+    ADDON_INCLUDES_EXCLUDE = libs/libfreenect/platform/%
+    ADDON_INCLUDES_EXCLUDE += libs/libusb-win32/%
+	ADDON_INCLUDES_EXCLUDE += libs/libusb-1.0/%
 
 android/armeabi:	
 	
@@ -166,13 +166,13 @@ android/armeabi-v7a:
 osx:
 	# when parsing the file system looking for sources exclude this for all or
 	# a specific platform
-	ADDONS_SOURCES_EXCLUDE = libs/libfreenect/platform/%
-	ADDONS_SOURCES_EXCLUDE += libs/libusb-win32/%
+	ADDON_SOURCES_EXCLUDE = libs/libfreenect/platform/%
+	ADDON_SOURCES_EXCLUDE += libs/libusb-win32/%
 	
 	# when parsing the file system looking for include paths exclude this for all or
 	# a specific platform
-    ADDONS_INCLUDES_EXCLUDE = libs/libfreenect/platform/%
-    ADDONS_INCLUDES_EXCLUDE += libs/libusb-win32/%
+    ADDON_INCLUDES_EXCLUDE = libs/libfreenect/platform/%
+    ADDON_INCLUDES_EXCLUDE += libs/libusb-win32/%
     
 ios:
 
