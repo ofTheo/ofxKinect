@@ -20,9 +20,9 @@ OpenFrameworks is a cross platform open source toolkit for creative coding in C+
 
 [http://www.openframeworks.cc/](http://www.openframeworks.cc/)
 
-### NOTE: Does not currently support newer Xbox Kinect models > 1414 (1473, etc) or Kinect4Windows devices on Mac OSX
+### NOTE: Does not currently support newer Xbox Kinect models > 1414 (1473, etc) or Kinect4Windows devices on Mac OSX or Linux
 
-If you have an Xbox Kinect model 1473 or Kinect4Windows device, it will not currently work in ofxKinect on OSX. The [fix is in the works](https://github.com/OpenKinect/libfreenect/pull/325).
+If you have an Xbox Kinect model 1473 or Kinect4Windows device, it will not currently work in ofxKinect on OSX or Linux. The [fix is in the works](https://github.com/OpenKinect/libfreenect/pull/325).
 
 In the meantime, we suggest you get the *original* Xbox Kinect model 1414 instead ...
 
