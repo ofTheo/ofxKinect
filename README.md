@@ -97,7 +97,7 @@ Precompiled libfreenect Kinect drivers and an example Visual Studio 2010 solutio
 
 Make sure to install or update the libfreenect Kinect camera, motor, and audio drivers through Windows Device Manager by pointing it to the driver folder:
 <pre>
-libs/libusb/win/inf
+libs/libfreenect/platform/windows/inf
 </pre>
 
 You may need to manually update each driver individually if you've plugged it in before. ofxKinect will not work if the drivers are not installed.
