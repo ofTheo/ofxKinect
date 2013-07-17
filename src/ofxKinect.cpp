@@ -68,6 +68,7 @@ ofxKinect::ofxKinect() {
     
     currentLed = -1;
     bLedNeedsApplying = false;
+	bHasMotorControl = false;
 	
 	lastDeviceId = -1;
 	tryCount = 0;
@@ -175,6 +176,14 @@ bool ofxKinect::open(int id) {
 		return false;
 	}
 
+	if(serial == "0000000000000000") {
+		ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d does not have motor control", deviceId);
+		bHasMotorControl = false;
+	}
+	else {
+		bHasMotorControl = true;
+	}
+
 	lastDeviceId = deviceId;
 	timeSinceOpen = ofGetElapsedTimef();
 	bGotData = false;
@@ -199,6 +208,14 @@ bool ofxKinect::open(string serial) {
 		return false;
 	}
 	
+	if(serial == "0000000000000000") {
+		ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d does not have motor control", deviceId);
+		bHasMotorControl = false;
+	}
+	else {
+		bHasMotorControl = true;
+	}
+	
 	lastDeviceId = deviceId;
 	timeSinceOpen = ofGetElapsedTimef();
 	bGotData = false;
@@ -215,7 +232,9 @@ bool ofxKinect::open(string serial) {
 //---------------------------------------------------------------------------
 void ofxKinect::close() {
 	if(isThreadRunning()) {
-		waitForThread(true);
+		stopThread();
+		ofSleepMillis(10);
+		waitForThread(false);
 	}
 
 	deviceId = -1;
@@ -346,26 +365,6 @@ ofColor ofxKinect::getColorAt(const ofPoint & p) {
 }
 
 //---------------------------------------------------------------------------
-ofPoint ofxKinect::getRawAccel() {
-	return rawAccel;
-}
-
-//---------------------------------------------------------------------------
-ofPoint ofxKinect::getMksAccel() {
-	return mksAccel;
-}
-
-//---------------------------------------------------------------------------
-float ofxKinect::getAccelPitch(){
-	return ofRadToDeg(asin(getMksAccel().z/OFX_KINECT_GRAVITY));
-}
-
-//---------------------------------------------------------------------------
-float ofxKinect::getAccelRoll(){
-	return ofRadToDeg(asin(getMksAccel().x/OFX_KINECT_GRAVITY));
-}
-
-//---------------------------------------------------------------------------
 unsigned char * ofxKinect::getPixels() {
 	return videoPixels.getPixels();
 }
@@ -445,11 +444,44 @@ float ofxKinect::getFarClipping() {
     return farClipping;
 }
 
+//--------------------------------------------------------------------
+bool ofxKinect::hasAccelControl() {
+	return bHasMotorControl; // depends on motor for now
+}
+
+bool ofxKinect::hasCamTiltControl() {
+	return bHasMotorControl; // depends on motor for now
+}
+
+bool ofxKinect::hasLedControl() {
+	return bHasMotorControl; // depends on motor for now
+}
+
+//---------------------------------------------------------------------------
+ofPoint ofxKinect::getRawAccel() {
+	return rawAccel;
+}
+
+//---------------------------------------------------------------------------
+ofPoint ofxKinect::getMksAccel() {
+	return mksAccel;
+}
+
+//---------------------------------------------------------------------------
+float ofxKinect::getAccelPitch(){
+	return ofRadToDeg(asin(getMksAccel().z/OFX_KINECT_GRAVITY));
+}
+
+//---------------------------------------------------------------------------
+float ofxKinect::getAccelRoll(){
+	return ofRadToDeg(asin(getMksAccel().x/OFX_KINECT_GRAVITY));
+}
+
 // we update the value here, but apply it in kinect thread
 //--------------------------------------------------------------------
 bool ofxKinect::setCameraTiltAngle(float angleInDegrees) {
 
-	if(!bGrabberInited) {
+	if(!hasCamTiltControl() || !bGrabberInited) {
 		return false;
 	}
 
@@ -471,7 +503,7 @@ float ofxKinect::getCurrentCameraTiltAngle() {
 //--------------------------------------------------------------------
 
 void ofxKinect::setLed(ofxKinect::LedMode mode) {
-	if(mode == currentLed) {
+	if(!hasLedControl() || mode == currentLed) {
 		return;
 	}
     bLedNeedsApplying = true;
@@ -659,13 +691,7 @@ void ofxKinect::threadedFunction(){
 		freenect_start_video(kinectDevice);
 	}
 
-	// call platform specific processors (needed for Win)
-	if(freenect_process_events(kinectContext.getContext()) != 0) {
-		ofLog(OF_LOG_ERROR, "ofxKinect: Device %d freenect_process_events failed!", deviceId);
-		return;
-	}
-
-	while(isThreadRunning()) {
+	while(isThreadRunning() && freenect_process_events(kinectContext.getContext()) >= 0) {
 		
 		if(bTiltNeedsApplying) {
 			freenect_set_tilt_degs(kinectDevice, targetTiltAngleDeg);
@@ -691,9 +717,6 @@ void ofxKinect::threadedFunction(){
 		double dx,dy,dz;
 		freenect_get_mks_accel(tilt, &dx, &dy, &dz);
 		mksAccel.set(dx, dy, dz);
-
-		// ... and $0.02 for the scheduler
-		ofSleepMillis(10);
 	}
 
 	// finish up a tilt on exit
@@ -739,6 +762,8 @@ bool ofxKinectContext::init() {
 		bInited = false;
 		return false;
 	}
+	freenect_set_log_level(kinectContext, FREENECT_LOG_WARNING);
+	freenect_select_subdevices(kinectContext, (freenect_device_flags)(FREENECT_DEVICE_MOTOR | FREENECT_DEVICE_CAMERA));
 
 	bInited = true;
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Context inited");

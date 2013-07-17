@@ -21,8 +21,10 @@ xcuserdata
 # codeblocks project files
 *.depend
 *.layout
+*.cbTemp
 
 # visual studio project files
 *.vcxproj.user
 *.suo
 *.sdf
+*.opensdf
