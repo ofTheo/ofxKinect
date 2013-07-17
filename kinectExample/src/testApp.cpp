@@ -17,10 +17,12 @@ void testApp::setup() {
 	//kinect.open("A00362A08602047A");	// open a kinect using it's unique serial #
 	
 	// print the intrinsic IR sensor values
-	ofLogNotice() << "sensor-emitter dist: " << kinect.getSensorEmitterDistance() << "cm";
-	ofLogNotice() << "sensor-camera dist:  " << kinect.getSensorCameraDistance() << "cm";
-	ofLogNotice() << "zero plane pixel size: " << kinect.getZeroPlanePixelSize() << "mm";
-	ofLogNotice() << "zero plane dist: " << kinect.getZeroPlaneDistance() << "mm";
+	if(kinect.isConnected()) {
+		ofLogNotice() << "sensor-emitter dist: " << kinect.getSensorEmitterDistance() << "cm";
+		ofLogNotice() << "sensor-camera dist:  " << kinect.getSensorCameraDistance() << "cm";
+		ofLogNotice() << "zero plane pixel size: " << kinect.getZeroPlanePixelSize() << "mm";
+		ofLogNotice() << "zero plane dist: " << kinect.getZeroPlaneDistance() << "mm";
+	}
 	
 #ifdef USE_TWO_KINECTS
 	kinect2.init();
@@ -125,8 +127,9 @@ void testApp::draw() {
         reportStream << "accel is: " << ofToString(kinect.getMksAccel().x, 2) << " / "
         << ofToString(kinect.getMksAccel().y, 2) << " / "
         << ofToString(kinect.getMksAccel().z, 2) << endl;
-    }else{
-        reportStream << "Note: this is a newer Xbox Kinect or Kinect For Windows device.\n      motor / led / accel controls are not currently supported " << endl << endl; 
+    } else {
+        reportStream << "Note: this is a newer Xbox Kinect or Kinect For Windows device," << endl
+		<< "motor / led / accel controls are not currently supported" << endl << endl;
     }
     
 	reportStream << "press p to switch between images and point cloud, rotate the point cloud with the mouse" << endl

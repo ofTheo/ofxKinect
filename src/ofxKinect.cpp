@@ -68,6 +68,7 @@ ofxKinect::ofxKinect() {
     
     currentLed = -1;
     bLedNeedsApplying = false;
+	bHasMotorControl = false;
 	
 	lastDeviceId = -1;
 	tryCount = 0;
@@ -175,6 +176,14 @@ bool ofxKinect::open(int id) {
 		return false;
 	}
 
+	if(serial == "0000000000000000") {
+		ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d does not have motor control", deviceId);
+		bHasMotorControl = false;
+	}
+	else {
+		bHasMotorControl = true;
+	}
+
 	lastDeviceId = deviceId;
 	timeSinceOpen = ofGetElapsedTimef();
 	bGotData = false;
@@ -197,6 +206,14 @@ bool ofxKinect::open(string serial) {
 	
 	if(!kinectContext.open(*this, serial)) {
 		return false;
+	}
+	
+	if(serial == "0000000000000000") {
+		ofLog(OF_LOG_VERBOSE, "ofxKinect: Device %d does not have motor control", deviceId);
+		bHasMotorControl = false;
+	}
+	else {
+		bHasMotorControl = true;
 	}
 	
 	lastDeviceId = deviceId;
