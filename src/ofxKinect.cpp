@@ -691,13 +691,7 @@ void ofxKinect::threadedFunction(){
 		freenect_start_video(kinectDevice);
 	}
 
-	// call platform specific processors (needed for Win)
-	if(freenect_process_events(kinectContext.getContext()) != 0) {
-		ofLog(OF_LOG_ERROR, "ofxKinect: Device %d freenect_process_events failed!", deviceId);
-		return;
-	}
-
-	while(isThreadRunning()) {
+	while(isThreadRunning() && freenect_process_events(kinectContext.getContext()) >= 0) {
 		
 		if(bTiltNeedsApplying) {
 			freenect_set_tilt_degs(kinectDevice, targetTiltAngleDeg);
@@ -723,9 +717,6 @@ void ofxKinect::threadedFunction(){
 		double dx,dy,dz;
 		freenect_get_mks_accel(tilt, &dx, &dy, &dz);
 		mksAccel.set(dx, dy, dz);
-
-		// ... and $0.02 for the scheduler
-		ofSleepMillis(10);
 	}
 
 	// finish up a tilt on exit
@@ -771,6 +762,8 @@ bool ofxKinectContext::init() {
 		bInited = false;
 		return false;
 	}
+	freenect_set_log_level(kinectContext, FREENECT_LOG_WARNING);
+	freenect_select_subdevices(kinectContext, (freenect_device_flags)(FREENECT_DEVICE_MOTOR | FREENECT_DEVICE_CAMERA));
 
 	bInited = true;
 	ofLog(OF_LOG_VERBOSE, "ofxKinect: Context inited");
