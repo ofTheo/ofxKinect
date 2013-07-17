@@ -63,13 +63,14 @@ Warning: The develop branch will be in flux, so don't be surprised if things do 
 Running the Example Project
 ---------------------------
 
-The example projects are in the `example` folder.
+An exmaple project is provided in the `kinectExample` folder. As of OF 0.8.0, ofxKinect no longer ships with the platform poject files. Simply use the OpenFrameworks ProjectGenerator in `apps/projectGenerator` to generate the Xcode, VS2012, CodeBlocks projects and/or Makefiles by pointing it to the `kinectExample` folder and making sure to include the following addons:
+
+* ofxKinect (duh)
+* ofxOpenCv (for blob tracking in the example, not required by ofxKinect itself.)
 
 ### OSX
 
-Xcode3: Open the Xcode project and hit "Build and Run". You might want to choose "Release" instead of "Debug" for faster performance.
-
-Xcode4: Open the Xcode project, select the "ofxKinectExample" scheme, and hit "Run".
+Xcode4: Open the Xcode project, select the "kinectExample Debug" scheme, and hit "Run".
 
 ### Linux
 
@@ -93,7 +94,7 @@ Also, you can add a set of udev rules which allow you to run a kinect app withou
 
 ### Windows
 
-Precompiled libfreenect Kinect drivers and an example Visual Studio 2010 solution as well as a Codeblocks workspace are included.
+Precompiled libfreenect Kinect drivers and libusb-win32 libs are included for Windows.
 
 Make sure to install or update the libfreenect Kinect camera, motor, and audio drivers through Windows Device Manager by pointing it to the driver folder:
 <pre>
@@ -109,7 +110,7 @@ How to Create a New ofxKinect Project
 
 To develop your own project based on ofxKinect, simply copy the example project and rename it. You probably want to put it in your apps folder, for example, after copying:
 
-`openFrameworks/addons/ofxKinect/example/ => openFrameworks/apps/myApps/example/`
+`openFrameworks/addons/ofxKinect/kinectExample/ => openFrameworks/apps/myApps/example/`
 
 Then after renaming:
 
@@ -117,7 +118,7 @@ Then after renaming:
 
 ### Mac (Xcode):
 
-Rename the project in Xcode (do not rename the .xcodeproj file in Finder!): XCode Menu->Project->Rename (Xcode3) / Slow double click the project name and rename (Xcode4)
+Rename the project in Xcode (do not rename the .xcodeproj file in Finder!): Slow double click the project name and rename (Xcode4)
 
 ### Codeblocks (Win & Linux):
 
@@ -146,10 +147,8 @@ In the Xcode project browser:
   * create a new group "ofxKinect"
   * drag these directories from ofxKinect into this new group: ofxKinect/src & ofxKinect/libs
 * add a search path to the libusb headers: `../../../addons/ofxKinect/libs/libusb/include/libusb-1.0` to your project Target build settings
-  * Xcode3: under Targets->YourApp->Build->Header Search Paths (make sure All Configurations and All Settings are selected) and add the path
   * Xcode4: add the lib path to your Project.xconfig, see the example
 * add the path to the libusb precompiled library: `../../../addons/ofxKinect/libs/libusb-1.0/lib/osx/usb-1.0.a`
-  * Xcode3: under Targets->YourApp->Build->Library Search Paths (make sure All Configurations and All Settings are selected) and add the path
   * Xcode4: add the lib path to your Project.xconfig, see the example
   
 ### Linux (Makefiles & Codeblocks):
@@ -162,15 +161,6 @@ Edit the Makefile config files:
 	<pre>
 	USER_LIBS = -lusb-1.0
 	</pre>
-
-### Windows (VS & Codeblocks)
-
-Add the project search paths
-
-For libusb & freenect, link to the precompiled freenect library in:
-<pre>
-../../../addons/ofxKinect/libs/libfreenect/lib/vs2010/freenect.lib
-</pre>
 
 #### Windows (Visual Studio):
 
