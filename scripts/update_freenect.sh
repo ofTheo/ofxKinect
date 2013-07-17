@@ -20,7 +20,7 @@ rm $SRC/src/libfreenect.pc.in
 # we dont need freenect audio
 rm $SRC/include/libfreenect-audio.h
 rm $SRC/src/audio.c
-rm $SRC/src/loader.*
+rm $SRC/src/loader.c
 
 # no python either
 rm $SRC/src/fwfetcher.py
