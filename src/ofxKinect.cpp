@@ -285,14 +285,9 @@ void ofxKinect::update() {
 	}
 
 	if(this->lock()) {
-		int n = width * height;
-
 		depthPixelsRaw = depthPixelsRawBack;
 		videoPixels = videoPixelsBack;
-
-		// we have done the update
 		bNeedsUpdate = false;
-
 		this->unlock();
 
 		updateDepthPixels();
@@ -628,7 +623,7 @@ void ofxKinect::updateDepthLookupTable() {
 	unsigned int maxDepthLevels = 10001;
 	depthLookupTable.resize(maxDepthLevels);
 	depthLookupTable[0] = 0;
-	for(int i = 1; i < maxDepthLevels; i++) {
+	for(unsigned int i = 1; i < maxDepthLevels; i++) {
 		depthLookupTable[i] = ofMap(i, nearClipping, farClipping, nearColor, farColor, true);
 	}
 }
@@ -651,7 +646,6 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 
 	if(kinect->kinectDevice == dev) {
 		kinect->lock();
-		freenect_frame_mode curMode = freenect_get_current_depth_mode(dev);
 		kinect->depthPixelsRawBack.setFromPixels((unsigned short*) depth, width, height, 1);
 		kinect->bNeedsUpdate = true;
 		kinect->unlock();
@@ -925,17 +919,17 @@ void ofxKinectContext::listDevices(bool verbose) {
 		ofLog(OF_LOG_VERBOSE, stream.str());
 	}
 	else {
-		cout << stream.str() << endl;
+		ofLogNotice("ofxKinect") << stream.str();
 	}
 	stream.str("");
 	
-	for(int i = 0; i < deviceList.size(); ++i) {
+	for(unsigned int i = 0; i < deviceList.size(); ++i) {
 		stream << "    id: " << deviceList[i].id << " serial: " << deviceList[i].serial;
 		if(verbose) {
 			ofLog(OF_LOG_VERBOSE, stream.str());
 		}
 		else {
-			cout << stream.str() << endl;
+			ofLogNotice("ofxKinect") << stream.str();
 		}
 		stream.str("");
 	}
@@ -967,7 +961,7 @@ ofxKinect* ofxKinectContext::getKinect(freenect_device* dev) {
 }
 
 int ofxKinectContext::getDeviceIndex(int id) {
-	for(int i = 0; i < deviceList.size(); ++i) {
+	for(unsigned int i = 0; i < deviceList.size(); ++i) {
 		if(deviceList[i].id == id)
 			return i;
 	}
@@ -975,7 +969,7 @@ int ofxKinectContext::getDeviceIndex(int id) {
 }
 
 int ofxKinectContext::getDeviceIndex(string serial) {
-	for(int i = 0; i < deviceList.size(); ++i) {
+	for(unsigned int i = 0; i < deviceList.size(); ++i) {
 		if(deviceList[i].serial == serial)
 			return i;
 	}
@@ -1002,7 +996,7 @@ int ofxKinectContext::nextAvailableId() {
 	
 	// a brute force free index finder :D
 	std::map<int,ofxKinect*>::iterator iter;
-	for(int i = 0; i < deviceList.size(); ++i) {
+	for(unsigned int i = 0; i < deviceList.size(); ++i) {
 		iter = kinects.find(deviceList[i].id);
 		if(iter == kinects.end())
 			return deviceList[i].id;
