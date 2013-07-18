@@ -141,7 +141,7 @@ void testApp::draw() {
 
     if(kinect.hasCamTiltControl()) {
     	reportStream << "press UP and DOWN to change the tilt angle: " << angle << " degrees" << endl
-        << "press 1-5 & 0 to change the led mode (mac/linux only)" << endl;
+        << "press 1-5 & 0 to change the led mode" << endl;
     }
     
 	ofDrawBitmapString(reportStream.str(), 20, 652);

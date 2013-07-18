@@ -259,8 +259,6 @@ public:
 	
     /// set the current led color and/or blink mode,
 	/// only applied while the kinect is open
-	///
-	/// note: this currently only works on OSX & Linux, blinks green on Win
     void setLed(ofxKinect::LedMode mode);
 
 /// \section Draw
