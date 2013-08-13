@@ -53,9 +53,10 @@ ofxKinect::ofxKinect() {
 	// set defaults
 	bGrabberInited = false;
 
-	bNeedsUpdate = false;
-	bUpdateTex = false;
-	bIsFrameNew = false;
+	bNeedsUpdateVideo = false;
+	bNeedsUpdateDepth = false;
+	bIsFrameNewVideo = false;
+	bIsFrameNewDepth = false;
     
 	bIsVideoInfrared = false;
 	videoBytesPerPixel = 3;
@@ -105,9 +106,11 @@ bool ofxKinect::init(bool infrared, bool video, bool texture) {
 	// allocate
 	depthPixelsRaw.allocate(width, height, 1);
 	depthPixelsRawBack.allocate(width, height, 1);
+	depthPixelsRawIntra.allocate(width, height, 1);
 
 	videoPixels.allocate(width, height, videoBytesPerPixel);
 	videoPixelsBack.allocate(width, height, videoBytesPerPixel);
+	videoPixelsIntra.allocate(width, height, videoBytesPerPixel);
 
 	depthPixels.allocate(width, height, 1);
 	distancePixels.allocate(width, height, 1);
@@ -189,6 +192,8 @@ bool ofxKinect::open(int id) {
 	bGotData = false;
 
 	freenect_set_user(kinectDevice, this);
+	freenect_set_depth_buffer(kinectDevice, depthPixelsRawBack.getPixels());
+	freenect_set_video_buffer(kinectDevice, videoPixelsBack.getPixels());
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
 	freenect_set_video_callback(kinectDevice, &grabVideoFrame);
 
@@ -239,9 +244,10 @@ void ofxKinect::close() {
 
 	deviceId = -1;
 	serial = "";
-	bIsFrameNew = false;
-	bNeedsUpdate = false;
-	bUpdateTex = false;
+	bIsFrameNewVideo = false;
+	bNeedsUpdateVideo = false;
+	bIsFrameNewDepth = false;
+	bNeedsUpdateDepth = false;
 }
 
 //---------------------------------------------------------------------------
@@ -251,12 +257,17 @@ bool ofxKinect::isConnected() {
 
 //--------------------------------------------------------------------
 bool ofxKinect::isFrameNew() {
-	if(isThreadRunning()) {
-		bool curIsFrameNew = bIsFrameNew;
-		bIsFrameNew = false;
-		return curIsFrameNew;
-	}
-	return false;
+	return isFrameNewVideo() || isFrameNewDepth();
+}
+
+//--------------------------------------------------------------------
+bool ofxKinect::isFrameNewVideo(){
+	return bIsFrameNewVideo;
+}
+
+//--------------------------------------------------------------------
+bool ofxKinect::isFrameNewDepth(){
+	return bIsFrameNewDepth;
 }
 
 //----------------------------------------------------------
@@ -265,7 +276,7 @@ void ofxKinect::update() {
 		return;
 	}
 
-	if(!bNeedsUpdate && !bGotData && tryCount < 5 && ofGetElapsedTimef() - timeSinceOpen > 2.0 ){
+	if(!bNeedsUpdateVideo && !bNeedsUpdateDepth && !bGotData && tryCount < 5 && ofGetElapsedTimef() - timeSinceOpen > 2.0 ){
 		close();
 		ofLogWarning("ofxKinect") << "update(): device " << lastDeviceId << " isn't delivering data, reconnecting tries: " << tryCount+1;
 		kinectContext.buildDeviceList();
@@ -275,29 +286,42 @@ void ofxKinect::update() {
 		return;
 	}
 
-	if(!bNeedsUpdate){
-		return;
-	} else {
-		bIsFrameNew = true;
-		bUpdateTex = true;
+	if(bNeedsUpdateVideo){
+		bIsFrameNewVideo = true;
 		bGotData = true;
 		tryCount = 0;
+		if(this->lock()) {
+			swap(videoPixels,videoPixelsIntra);
+			bNeedsUpdateVideo = false;
+			this->unlock();
+		}
+
+		if(bUseTexture) {
+			videoTex.loadData(videoPixels.getPixels(), width, height, bIsVideoInfrared?GL_LUMINANCE:GL_RGB);
+		}
+	} else {
+		bIsFrameNewVideo = false;
 	}
 
-	if(this->lock()) {
-		depthPixelsRaw = depthPixelsRawBack;
-		videoPixels = videoPixelsBack;
-		bNeedsUpdate = false;
-		this->unlock();
+	if(bNeedsUpdateDepth){
+		bIsFrameNewDepth = true;
+		bGotData = true;
+		tryCount = 0;
+		if(this->lock()) {
+			swap(depthPixelsRaw, depthPixelsRawIntra);
+			bNeedsUpdateDepth = false;
+			this->unlock();
 
-		updateDepthPixels();
+			updateDepthPixels();
+		}
+
+		if(bUseTexture) {
+			depthTex.loadData(depthPixels.getPixels(), width, height, GL_LUMINANCE);
+		}
+	} else {
+		bIsFrameNewDepth = false;
 	}
 
-	if(bUseTexture) {
-		depthTex.loadData(depthPixels.getPixels(), width, height, GL_LUMINANCE);
-		videoTex.loadData(videoPixels.getPixels(), width, height, bIsVideoInfrared?GL_LUMINANCE:GL_RGB);
-		bUpdateTex = false;
-	}
 }
 
 //------------------------------------
@@ -646,9 +670,10 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 
 	if(kinect->kinectDevice == dev) {
 		kinect->lock();
-		kinect->depthPixelsRawBack.setFromPixels((unsigned short*) depth, width, height, 1);
-		kinect->bNeedsUpdate = true;
+		swap(kinect->depthPixelsRawBack,kinect->depthPixelsRawIntra);
+		kinect->bNeedsUpdateDepth = true;
 		kinect->unlock();
+		freenect_set_depth_buffer(kinect->kinectDevice,kinect->depthPixelsRawBack.getPixels());
     }
 }
 
@@ -659,10 +684,10 @@ void ofxKinect::grabVideoFrame(freenect_device *dev, void *video, uint32_t times
 
 	if(kinect->kinectDevice == dev) {
 		kinect->lock();
-		freenect_frame_mode curMode = freenect_get_current_video_mode(dev);
-		kinect->videoPixelsBack.setFromPixels((unsigned char*)video, width, height, curMode.data_bits_per_pixel/8);
-		kinect->bNeedsUpdate = true;
+		swap(kinect->videoPixelsBack,kinect->videoPixelsIntra);
+		kinect->bNeedsUpdateVideo = true;
 		kinect->unlock();
+		freenect_set_video_buffer(kinect->kinectDevice,kinect->videoPixelsBack.getPixels());
 	}
 }
 

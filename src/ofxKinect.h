@@ -103,6 +103,8 @@ public:
 
 	/// is the current frame new?
 	bool isFrameNew();
+	bool isFrameNewVideo();
+	bool isFrameNewDepth();
 
 	/// updates the pixel buffers and textures
 	///
@@ -366,6 +368,8 @@ private:
 
 	freenect_device* kinectDevice;      ///< kinect device handle
 
+	ofShortPixels depthPixelsRawIntra;	///< depth back
+	ofPixels videoPixelsIntra;			///< rgb back
 	ofShortPixels depthPixelsRawBack;	///< depth back
 	ofPixels videoPixelsBack;			///< rgb back
 
@@ -373,9 +377,8 @@ private:
 	void updateDepthLookupTable();
 	void updateDepthPixels();
 
-	bool bIsFrameNew;
-	bool bNeedsUpdate;
-	bool bUpdateTex;
+	bool bIsFrameNewVideo, bIsFrameNewDepth;
+	bool bNeedsUpdateVideo, bNeedsUpdateDepth;
 	bool bGrabVideo;
 	bool bUseRegistration;
 	bool bNearWhite;
