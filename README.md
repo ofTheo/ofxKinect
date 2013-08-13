@@ -80,7 +80,7 @@ First, make sure you've followed to "Add files to MinGW guide" in the [CodeBlock
 Running the Example Project
 ---------------------------
 
-An exmaple project is provided in the `kinectExample` folder. As of OF 0.8.0, ofxKinect no longer ships with the platform poject files. Simply use the OpenFrameworks ProjectGenerator in `apps/projectGenerator` to generate the Xcode, VS2012, CodeBlocks projects and/or Makefiles by pointing it to the `kinectExample` folder and making sure to include the following addons:
+An example project is provided in the `kinectExample` folder. As of OF 0.8.0, ofxKinect no longer ships with the platform project files. Simply use the OpenFrameworks ProjectGenerator in `apps/projectGenerator` to generate the Xcode, VS2012, CodeBlocks projects and/or Makefiles by pointing it to the `kinectExample` folder and making sure to include the following addons:
 
 * ofxKinect (duh)
 * ofxOpenCv (for blob tracking in the example, not required by ofxKinect itself.)
@@ -127,7 +127,7 @@ How to Create a New ofxKinect Project
 
 To develop your own project based on ofxKinect, simply copy the example project and rename it. You probably want to put it in your apps folder, for example, after copying:
 
-`openFrameworks/addons/ofxKinect/kinectExample/ => openFrameworks/apps/myApps/example/`
+`openFrameworks/addons/ofxKinect/kinectExample/ => openFrameworks/apps/myApps/kinectExample/`
 
 Then after renaming:
 
@@ -143,7 +143,7 @@ Close Codeblocks and rename the *.cbp and *.workspace files to the same name as 
 
 ### Windows (Visual Studio):
 
-Close Visual Studio and rename the *.sln file. Open the solution, right click on the project in the project broswer and select "Rename ...".
+Close Visual Studio and rename the *.sln file. Open the solution, right click on the project in the project browser and select "Rename ...".
 
 Adding ofxKinect to an Existing Project
 ---------------------------------------
@@ -154,7 +154,7 @@ openFrameworks/addons/ofxKinect/src
 </pre>
 as well as search paths for the addons (ofxOpenCv) and libs (freenect, libusb) required by ofxKinect.
 
-Don't forget to include the ofxOpenCv addon sources and oepncv libraries.
+Don't forget to include the ofxOpenCv addon sources and opencv libraries.
 
 ### Mac (Xcode):
 
@@ -212,7 +212,7 @@ Edit the Makefile config files:
 	* right-click on your project in the project tree
 	* select "Build options..."
 	* make sure the project name is selected in the tree (not release or debug)
-	* select the "Search diectories" tab, click add the search paths:
+	* select the "Search directories" tab, click add the search paths:
 	<pre>
 	..\\..\\..\addons\ofxKinect\src
 	..\\..\\..\addons\ofxKinect\libs\libfreenect\src
@@ -248,5 +248,4 @@ Developing ofxKinect
 
 Feel free to log bug reports and issues to the ofxKinect Github page: https://github.com/ofTheo/ofxKinect/issues
 
-If you wish to help in ofxKinect dvelopment, please refer to the wiki: https://github.com/ofTheo/ofxKinect/wiki/Developing-ofxKinect
-
+If you wish to help in ofxKinect development, please refer to the wiki: https://github.com/ofTheo/ofxKinect/wiki/Developing-ofxKinect
