@@ -1,7 +1,7 @@
 ofxKinect
 =========
 
-**Note: As of OpenFrameworks 0.8.0, ofxKinect has been integrated into the [OF core](https://github.com/openframeworks/openFrameworks). All future development of this addon will take place in the main OF Github repo so please log issues there.**
+**Note: As of OpenFrameworks 0.8.0, ofxKinect has been integrated into the OF core. All future development of this addon will take place in the [main OF Github repo](https://github.com/openframeworks/openFrameworks) so please log issues there.**
 
 **This repo will be left for anyone supporting old (pre-0.8.0+) OF projects and will not be updated. The final master branch is compatible with OF 0.8.0.**
 
