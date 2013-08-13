@@ -1,6 +1,10 @@
 ofxKinect
 =========
 
+**Note: As of OpenFrameworks 0.8.0, ofxKinect has been integrated into the [OF core](https://github.com/openframeworks/openFrameworks). All future development of this addon will take place in the main OF Github repo so please log issues there.**
+
+**This repo will be left for anyone supporting old (pre-0.8.0+) OF projects and will not be updated. The final master branch is compatible with OF 0.8.0.**
+
 Copyright (c) 2010-2013 ofxKinect Team
 
 MIT License.
@@ -59,6 +63,19 @@ git clone git://github.com/ofTheo/ofxKinect.git -b develop
 </pre> 
 
 Warning: The develop branch will be in flux, so don't be surprised if things do not always work as expected!
+
+#### Bug: ofxKinect 0.7.4 + Windows CodeBlocks 12.11 missing pthread
+
+If you're using Windows CodeBlocks 12.11 and OF/ofxKinect 0.7.4, you may see an issue where ofxKinect projects cannot compile/link due to missing the "pthread" library. This is due to CodeBlocks removing some built in libraries between versions 10.5 & 12.11.
+
+The fix is to manually add the pthread-win32 library which provides "pthread".
+
+First, make sure you've followed to "Add files to MinGW guide" in the [CodeBlocks 12.11 setup for OF guide](http://www.openframeworks.cc/setup/codeblocks/). Then, manually add pthreads-win32:
+
+1. download the compiled version: http://www.sourceware.org/pthreads-win32/index.html
+2. rename the lib file `Pre-built.2\lib\x86\libpthreadGC2.a` to `libpthread` and copy it into the MinGW folder for your CodeBlocks installation:
+`C:\Program Files (x86)\CodeBlocks\MinGW\lib`
+3. if they do not exist, copy the header (.h) files in `Pre-build.2\include` into  your CodeBlocks installation: `C:\Program Files (x86)\CodeBlocks\MinGW\include`
 
 Running the Example Project
 ---------------------------
