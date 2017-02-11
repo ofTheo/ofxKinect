@@ -280,6 +280,12 @@ public:
 	void drawDepth(const ofPoint& point);
 	void drawDepth(const ofRectangle& rect);
 
+	// draw the float distance texture
+	void drawDistance(float x, float y, float w, float h);
+	void drawDistance(float x, float y);
+	void drawDistance(const ofPoint& point);
+	void drawDistance(const ofRectangle& rect);
+
 /// \section Util
 
 	/// get the device id
@@ -333,6 +339,8 @@ protected:
 	bool bUseTexture;
 	ofTexture depthTex; ///< the depth texture
 	ofTexture videoTex; ///< the RGB texture
+	ofTexture distanceTex;
+
 	bool bGrabberInited;
 
 	ofPixels videoPixels;
